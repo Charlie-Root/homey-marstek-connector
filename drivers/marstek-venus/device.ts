@@ -43,6 +43,12 @@ export default class MarstekVenusDevice extends Homey.Device {
         // Default capability values
         await this.resetCapabilities();
 
+        // Register capability listeners
+        await this.registerCapabilityListener('battery_mode', this.onCapabilityBatteryMode.bind(this));
+
+        // Send initial requests to populate data immediately
+        await this.sendInitialRequests();
+
         if (this.getSetting('poll') !== false) {
             // Update the driver interval
             this.myDriver.pollIntervalUpdate();
@@ -60,10 +66,12 @@ export default class MarstekVenusDevice extends Homey.Device {
     async resetCapabilities() {
         const capabilities = [
             'battery_charging_state',      // Charte state (Possible values: "idle", "charging", "discharging")
+            'battery_mode',                // Battery mode (Possible values: "ai", "auto", "force_charge", "force_discharge")
             'meter_power',                 // Power remaining (In kWh)
             'measure_power',               // Power usage/delivery (In Watts)
             'measure_temperature',         // Main battery temperature (In degrees celcius)
             'measure_battery',             // State of Charge in %
+            'measure_rssi',                // WiFi signal strength (In dBm)
             'meter_power.imported',        // Total power imported (in kWh)
             'meter_power.exported',        // Total power exported (in kWh)
             'meter_power.load',            // Total power exported (in kWh)
@@ -71,6 +79,11 @@ export default class MarstekVenusDevice extends Homey.Device {
             'measure_power_offgrid',       // Current power usage of off-grid port (in W)
             'measure_power_pv',            // Current power usage of off-grid port (in W)
             'last_message_received',       // number of seconds the last received message
+            'measure_power.a',             // Phase A power (in W)
+            'measure_power.b',             // Phase B power (in W)
+            'measure_power.c',             // Phase C power (in W)
+            'measure_power.total',         // Total power (in W)
+            'measure_ct_state',            // CT status (0: not connected, 1: connected)
         ];
         for (const cap of capabilities) {
             if (!this.hasCapability(cap)) await this.addCapability(cap);
@@ -206,6 +219,41 @@ export default class MarstekVenusDevice extends Homey.Device {
                 if (!isNaN(result.ongrid_power)) await this.setCapabilityValue('measure_power_ongrid', result.ongrid_power * -1);
                 if (!isNaN(result.offgrid_power)) await this.setCapabilityValue('measure_power_offgrid', result.offgrid_power * -1);
                 if (!isNaN(result.pv_power)) await this.setCapabilityValue('measure_power_pv', result.pv_power * -1);
+
+                // WIFI status
+                if (!isNaN(result.rssi)) {
+                    if (this.debug) this.log('Setting RSSI capability:', result.rssi);
+                    await this.setCapabilityValue('measure_rssi', result.rssi);
+                }
+                if (result.ssid) await this.setSettings({ wifi_ssid: result.ssid });
+                if (result.sta_ip) await this.setSettings({ wifi_ip: result.sta_ip });
+                if (result.sta_gate) await this.setSettings({ wifi_gateway: result.sta_gate });
+                if (result.sta_mask) await this.setSettings({ wifi_subnet: result.sta_mask });
+                if (result.sta_dns) await this.setSettings({ wifi_dns: result.sta_dns });
+
+                // Current battery mode
+                if (result.mode) {
+                    const mode = result.mode.toLowerCase();
+                    // Only set battery_mode if it's a setable mode
+                    if (['ai', 'auto', 'force_charge', 'force_discharge'].includes(mode)) {
+                        await this.setCapabilityValue('battery_mode', mode);
+                    }
+                }
+
+                // EM status
+                if (result.ct_state !== undefined) {
+                    const currentCtState = await this.getCapabilityValue('measure_ct_state');
+                    const newCtState = result.ct_state.toString();
+                    if (currentCtState !== newCtState) {
+                        await this.setCapabilityValue('measure_ct_state', newCtState);
+                        // Trigger flow
+                        await this.homey.flow.getTriggerCard('marstek_ct_state_changed').trigger(this, { state: result.ct_state });
+                    }
+                }
+                if (!isNaN(result.a_power)) await this.setCapabilityValue('measure_power.a', result.a_power);
+                if (!isNaN(result.b_power)) await this.setCapabilityValue('measure_power.b', result.b_power);
+                if (!isNaN(result.c_power)) await this.setCapabilityValue('measure_power.c', result.c_power);
+                if (!isNaN(result.total_power)) await this.setCapabilityValue('measure_power.total', result.total_power);
             }
 
         }
@@ -259,7 +307,72 @@ export default class MarstekVenusDevice extends Homey.Device {
         if (this.debug) this.log('MarstekVenusDevice has been uninitialized');
     }
 
-    /** Retrieve our current debug setting, based on actual setting and version 
+    /**
+     * Send a command to the battery device.
+     * @param {object} command JSON command to send
+     */
+    async sendCommand(command: object) {
+        const address = this.getStoreValue('address');
+        if (!address) {
+            this.error('No address stored for device');
+            return;
+        }
+        const message = JSON.stringify(command);
+        await this.myDriver.getSocket().send(message, address);
+    }
+
+    /**
+     * Send initial requests to populate data immediately after device addition.
+     */
+    async sendInitialRequests() {
+        const socket = this.myDriver.getSocket();
+        if (!socket) return;
+
+        const messages = [
+            '{"id":1,"method":"ES.GetStatus","params":{"id":0}}',
+            '{"id":2,"method":"ES.GetMode","params":{"id":0}}',
+            '{"id":3,"method":"EM.GetStatus","params":{"id":0}}'
+        ];
+
+        for (const msg of messages) {
+            try {
+                await socket.broadcast(msg);
+                await new Promise(resolve => setTimeout(resolve, 500)); // delay between requests
+            } catch (err) {
+                this.error('Error sending initial request', err);
+            }
+        }
+    }
+
+    /**
+     * Handle battery_mode capability changes.
+     * @param {string} value The new mode value
+     */
+    async onCapabilityBatteryMode(value: string) {
+        if (this.debug) this.log('Setting battery mode to', value);
+        switch (value) {
+            case 'ai':
+                await this.myDriver.setModeManualDisable(this);
+                await this.myDriver.setModeAI(this);
+                break;
+            case 'auto':
+                await this.myDriver.setModeManualDisable(this);
+                await this.myDriver.setModeAuto(this);
+                break;
+            case 'force_charge':
+                const chargePower = this.getSetting('force_charge_power') || 2500;
+                await this.myDriver.setModeManual(this, "00:01", "23:59", ["0", "1", "2", "3", "4", "5", "6"], -chargePower, true);
+                break;
+            case 'force_discharge':
+                const dischargePower = this.getSetting('force_discharge_power') || 800;
+                await this.myDriver.setModeManual(this, "00:01", "23:59", ["0", "1", "2", "3", "4", "5", "6"], dischargePower, true);
+                break;
+            default:
+                throw new Error(`Unknown mode: ${value}`);
+        }
+    }
+
+    /** Retrieve our current debug setting, based on actual setting and version
      * @returns {boolean} True when debug logging is enabled (through settings or test version)
      */
     get debug(): boolean {

@@ -3,6 +3,8 @@
     "title": "Standard batteriindstillinger",
     "subtitle": "Inden søgningen startes, indtast venligst standardindstillingerne for nyopdagede batterier:",
     "pollInterval": "Standard polling-interval (sekunder)",
-    "pollEnabled": "Aktivér polling som standard"
+    "pollEnabled": "Aktivér polling som standard",
+    "deviceAddress": "Enheds IP-adresse (valgfri, for direkte opdagelse hvis broadcast fejler)",
+    "devicePort": "Enheds port (valgfri, standard 30000)"
   }
 }

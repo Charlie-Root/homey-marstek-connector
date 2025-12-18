@@ -1,0 +1,93 @@
+{
+  "id": "marstek_manual_mode_text",
+  "title": {
+    "en": "Set battery mode to 'Manual' (text input)",
+    "nl": "Stel batterijweiser in op 'Handmatig' (tekst invoer)",
+    "da": "Indstil batteritilstand til 'Manuel' (tekst input)",
+    "de": "Batteriemodus auf 'Manuell' einstellen (Text-Eingabe)",
+    "es": "Establecer el modo de batería en 'Manual' (entrada de texto)",
+    "fr": "Définir le mode de batterie sur 'Manuel' (saisie texte)",
+    "it": "Imposta la modalità batteria su 'Manuale' (input testo)",
+    "no": "Sett batterimodus til 'Manuell' (tekst input)",
+    "sv": "Ställ in batteriläge på 'Manuell' (textinmatning)",
+    "pl": "Ustaw tryb baterii na 'Ręczny' (wejście tekstowe)",
+    "ru": "Установить режим батареи на 'Ручной' (текстовый ввод)",
+    "ko": "'수동'으로 배터리 모드 설정 (텍스트 입력)"
+  },
+  "titleFormatted": {
+    "en": "Set battery mode to 'Manual' from [[start_time]] for 2 hours daily with [[power]] Watt and enable [[enable]]",
+    "nl": "Stel batterijweiser in op 'Handmatig' van [[start_time]] voor 2 uur dagelijks met [[power]] Watt en inschakelen [[enable]]",
+    "da": "Indstil batteritilstand til 'Manuel' fra [[start_time]] i 2 timer dagligt med [[power]] Watt og aktiver [[enable]]",
+    "de": "Batteriemodus auf 'Manuell' einstellen von [[start_time]] für 2 Stunden täglich mit [[power]] Watt und aktivieren [[enable]]",
+    "es": "Establecer el modo de batería en 'Manual' desde [[start_time]] por 2 horas diarias con [[power]] Vatios y habilitar [[enable]]",
+    "fr": "Définir le mode de batterie sur 'Manuel' à partir de [[start_time]] pendant 2 heures par jour avec [[power]] Watt et activer [[enable]]",
+    "it": "Imposta la modalità batteria su 'Manuale' da [[start_time]] per 2 ore al giorno con [[power]] Watt e abilita [[enable]]",
+    "no": "Sett batterimodus til 'Manuell' fra [[start_time]] i 2 timer daglig med [[power]] Watt og aktiver [[enable]]",
+    "sv": "Ställ in batteriläge på 'Manuell' från [[start_time]] i 2 timmar dagligen med [[power]] Watt och aktivera [[enable]]",
+    "pl": "Ustaw tryb baterii na 'Ręczny' od [[start_time]] przez 2 godziny dziennie z [[power]] Watami i włącz [[enable]]",
+    "ru": "Установить режим батареи на 'Ручной' с [[start_time]] на 2 часа ежедневно с [[power]] Ватт и включить [[enable]]",
+    "ko": "[[start_time]]부터 매일 2시간 동안 [[power]] 와트로 '수동' 배터리 모드 설정 및 [[enable]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus"
+    },
+    {
+      "name": "start_time",
+      "type": "text",
+      "title": {
+        "en": "Start time (HH:MM)",
+        "nl": "Starttijd (HH:MM)",
+        "da": "Starttid (HH:MM)",
+        "de": "Startzeit (HH:MM)",
+        "es": "Hora de inicio (HH:MM)",
+        "fr": "Heure de début (HH:MM)",
+        "it": "Ora di inizio (HH:MM)",
+        "no": "Starttid (HH:MM)",
+        "sv": "Starttid (HH:MM)",
+        "pl": "Czas rozpoczęcia (HH:MM)",
+        "ru": "Время начала (HH:MM)",
+        "ko": "시작 시간 (HH:MM)"
+      }
+    },
+    {
+      "name": "power",
+      "type": "number",
+      "title": {
+        "en": "Watt (negative = charge)",
+        "nl": "Watt (negatief = opladen)",
+        "da": "Watt (negativ = opladning)",
+        "de": "Watt (negativ = aufladen)",
+        "es": "Vatios (negativo = carga)",
+        "fr": "Watt (négatif = charge)",
+        "it": "Watt (negativo = carica)",
+        "no": "Watt (negativ = lading)",
+        "sv": "Watt (negativ = laddning)",
+        "pl": "Waty (ujemny = ładowanie)",
+        "ru": "Вт (отрицательный = зарядка)",
+        "ko": "와트 (음수 = 충전)"
+      },
+      "step": 1
+    },
+    {
+      "name": "enable",
+      "type": "checkbox",
+      "title": {
+        "en": "Enable schedule",
+        "nl": "Planning inschakelen",
+        "da": "Aktiver tidsplan",
+        "de": "Zeitplan aktivieren",
+        "es": "Habilitar horario",
+        "fr": "Activer le programme",
+        "it": "Abilita pianificazione",
+        "no": "Aktiver tidsplan",
+        "sv": "Aktivera schema",
+        "pl": "Włącz harmonogram",
+        "ru": "Включить расписание",
+        "ko": "일정 활성화"
+      }
+    }
+  ]
+}

@@ -3,6 +3,7 @@
     "title": "Impostazioni predefinite della batteria",
     "subtitle": "Prima di avviare la scoperta, inserisci le impostazioni predefinite per le nuove batterie scoperte:",
     "pollInterval": "Intervallo di polling predefinito (secondi)",
-    "pollEnabled": "Abilita polling di default"
+    "pollEnabled": "Abilita polling di default",
+    "deviceAddress": "Indirizzo IP del dispositivo (opzionale, per scoperta diretta se il broadcast fallisce)"
   }
 }

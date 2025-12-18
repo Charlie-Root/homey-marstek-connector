@@ -14,6 +14,16 @@
 
     <form class="homey-form">
         <div class="homey-form-group">
+            <!-- device address -->
+            <fieldset class="homey-form-fieldset">
+                <label class="homey-form-label" for="deviceAddress" data-i18n="settings.deviceAddress"></label>
+                <input class="homey-form-input" id="deviceAddress" type="text" placeholder="192.168.1.100" />
+            </fieldset>
+            <!-- device port -->
+            <fieldset class="homey-form-fieldset">
+                <label class="homey-form-label" for="devicePort" data-i18n="settings.devicePort"></label>
+                <input class="homey-form-input" id="devicePort" type="number" placeholder="30000" min="1" max="65535" />
+            </fieldset>
             <!-- polling interval -->
             <fieldset class="homey-form-fieldset">
                 <label class="homey-form-label" for="pollInterval" data-i18n="settings.pollInterval"></label>
@@ -31,6 +41,8 @@
     </form>
 
     <script>
+        const elemAddress = document.getElementById('deviceAddress');
+        const elemPort = document.getElementById('devicePort');
         const elemInterval = document.getElementById('pollInterval');
         const elemEnabled = document.getElementById('pollEnabled');
 
@@ -41,6 +53,14 @@
         });
 
         // Change setting immediately on any change
+        elemAddress.addEventListener('change', async (event) => {
+            const address = elemAddress.value.trim();
+            await Homey.emit('saveDeviceAddress', address);
+        });
+        elemPort.addEventListener('change', async (event) => {
+            const port = parseInt(elemPort.value, 10);
+            await Homey.emit('saveDevicePort', port);
+        });
         elemInterval.addEventListener('change', async (event) => {
             const frequency = parseInt(elemInterval.value, 10);
             await Homey.emit('savePollInterval', frequency);

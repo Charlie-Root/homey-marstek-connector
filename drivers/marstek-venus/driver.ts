@@ -1,5 +1,5 @@
-import Homey from 'homey';
-import dgram from 'dgram';               // For UDP binding and sending
+import * as Homey from 'homey';
+import * as dgram from 'dgram';               // For UDP binding and sending
 import MarstekSocket from '../../lib/marstek-api';
 
 // Import our loaded config
@@ -7,7 +7,7 @@ import { config } from '../../lib/config';
 
 // Interface definition for battery messages
 interface MessagePayload {
-    method: 'ES.GetStatus' | 'Bat.GetStatus';
+    method: 'ES.GetStatus' | 'ES.GetMode' | 'EM.GetStatus' | 'Bat.GetStatus' | 'Wifi.GetStatus';
     params: { id: number };
 }
 interface PollRequest {
@@ -31,15 +31,13 @@ export default class MarstekVenusDriver extends Homey.Driver {
     // Cast pointer to our app
     private socket?: MarstekSocket = undefined;
 
-    // Index of the message currently being broadcast.
-    private pollMessage: number = 0;
-
-    // Rotating list of messages that should be broadcast to request device status.
+    // List of messages that should be broadcast to request device status.
     private pollMessages: PollRequest[] = [
         { payload: { method: 'ES.GetStatus', params: { id: 0 } }, broadcast: false },
-        { payload: { method: 'ES.GetStatus', params: { id: 0 } }, broadcast: false },
         { payload: { method: 'Bat.GetStatus', params: { id: 0 } }, broadcast: true },
-        { payload: { method: 'ES.GetStatus', params: { id: 0 } }, broadcast: false },
+        { payload: { method: 'Wifi.GetStatus', params: { id: 0 } }, broadcast: false },
+        { payload: { method: 'ES.GetMode', params: { id: 0 } }, broadcast: false },
+        { payload: { method: 'EM.GetStatus', params: { id: 0 } }, broadcast: false },
     ];
 
     // Interval handle for the poll loop.
@@ -51,6 +49,10 @@ export default class MarstekVenusDriver extends Homey.Driver {
     // Identifiers of devices currently participating in polling.
     private pollDevices: Array<string> = [];
 
+    // Device address and port for direct discovery during pairing.
+    private deviceAddress?: string = undefined;
+    private devicePort?: number = undefined;
+
     /**
      * Called when the driver is initialised.
      * Sets up flow listeners and logs driver startup.
@@ -58,6 +60,13 @@ export default class MarstekVenusDriver extends Homey.Driver {
      */
     async onInit() {
         if (this.debug) this.log('MarstekVenusDriver has been initialized');
+        // Log Homey environment details for debugging
+        this.log('Homey environment details:', {
+            version: this.homey.manifest.version,
+            debug: this.debug,
+            platform: process.platform,
+            nodeVersion: process.version
+        });
         await this.registerFlowListeners();
     }
 
@@ -81,15 +90,33 @@ export default class MarstekVenusDriver extends Homey.Driver {
      */
     async onPair(session: Homey.Driver.PairSession): Promise<void> {
         // List devices template is handled using broadcast resolved device detection
-        session.setHandler('list_devices', async () => this.broadcastDetect());
+        session.setHandler('list_devices', async () => this.broadcastDetect(this.deviceAddress, this.devicePort));
 
         // Received when a view has changed
-        session.setHandler('showView', async (viewId) => {
+        session.setHandler('showView', async (viewId: string) => {
             // Apply default values to settings form
             if (viewId === 'show_settings') {
                 const interval: number = this.homey.settings.get('default_poll_interval') || 60;
                 const enabled: boolean = this.homey.settings.get('default_poll_enabled') || false;
                 await session.emit('initPollSettings', { interval, enabled });
+            }
+        });
+
+        // Event is emitted from HTML form
+        session.setHandler('saveDeviceAddress', async (address: string) => {
+            if (this.debug) this.log('saveDeviceAddress', address);
+            if (typeof address === 'string') {
+                this.deviceAddress = address || undefined;
+            }
+        });
+
+        // Event is emitted from HTML form
+        session.setHandler('saveDevicePort', async (port: number) => {
+            if (this.debug) this.log('saveDevicePort', port);
+            if (typeof port === 'number' && !Number.isNaN(port) && port > 0 && port <= 65535) {
+                this.devicePort = port;
+            } else {
+                this.devicePort = undefined;
             }
         });
 
@@ -120,67 +147,68 @@ export default class MarstekVenusDriver extends Homey.Driver {
     }
 
     /**
-     * Broadcasts a status request to the connected devices based on the rotating poll configuration.
-     * @returns {Promise<void>} Resolves once the message has been broadcast.
+     * Broadcasts status requests to the connected devices for all poll messages.
+     * @returns {Promise<void>} Resolves once all messages have been sent.
      */
     async poll() {
         const socket = this.getSocket();
         if (socket) {
-            try {
-                const pollRequest = this.pollMessages[this.pollMessage];
-                const message: MarsteRequest = {
-                    id: this.getUniqueID(),
-                    ...pollRequest.payload,
-                };
-                const json = JSON.stringify(message);
-                // if message is broadcast type, only send message as broadcast
-                if (pollRequest.broadcast) {
-                    if (this.debug) this.log('Ready to broadcast:', json);
-                    await socket.broadcast(json);
-                } else {
-                    // if not forced broadcast, send to each device individually (except when device configured for broadcast)
-                    const devices = this.getDevices();
-                    let alsoBroadcast: boolean = false;
-                    for (const device of devices) {
-                        try {
-                            const broadcastSetting: boolean = !!device.getSetting('broadcast');
-                            if (broadcastSetting) alsoBroadcast = true;
-                            if (!broadcastSetting) {
-                                const src = device.getSetting('src');
-                                if (!src) throw new Error('Device without a "src" setting');
+            for (const pollRequest of this.pollMessages) {
+                try {
+                    const message: MarsteRequest = {
+                        id: this.getUniqueID(),
+                        ...pollRequest.payload,
+                    };
+                    const json = JSON.stringify(message);
+                    // if message is broadcast type, only send message as broadcast
+                    if (pollRequest.broadcast) {
+                        if (this.debug) this.log('Ready to broadcast:', json);
+                        await socket.broadcast(json);
+                    } else {
+                        // if not forced broadcast, send to each device individually (except when device configured for broadcast)
+                        const devices = this.getDevices();
+                        let alsoBroadcast: boolean = false;
+                        for (const device of devices) {
+                            try {
+                                const broadcastSetting: boolean = !!device.getSetting('broadcast');
+                                if (broadcastSetting) alsoBroadcast = true;
+                                if (!broadcastSetting) {
+                                    const src = device.getSetting('src');
+                                    if (!src) throw new Error('Device without a "src" setting');
 
-                                const index = this.pollDevices.indexOf(src);
-                                if (index < 0) {
-                                    if (this.debug) this.log('Device not part of polling array:', src);
-                                    continue;
+                                    const index = this.pollDevices.indexOf(src);
+                                    if (index < 0) {
+                                        if (this.debug) this.log('Device not part of polling array:', src);
+                                        continue;
+                                    }
+
+                                    const address = device.getStoreValue('address');
+                                    if (!address) {
+                                        this.error('Device missing IP; next broadcast may fix this.');
+                                        continue;
+                                    }
+
+                                    if (this.debug) this.log('Ready to send:', json, address);
+                                    await socket.send(json, address);
+
+                                    // Wait 100ms between sends to avoid overwhelming
+                                    await new Promise<void>((resolve) => this.homey.setTimeout(resolve, 100));
                                 }
-
-                                const address = device.getStoreValue('address');
-                                if (!address) {
-                                    this.error('Device missing IP; next broadcast may fix this.');
-                                    continue;
-                                }
-
-                                if (this.debug) this.log('Ready to send:', json, address);
-                                await socket.send(json, address);
-
-                                // Wait 1 second between sends
-                                await new Promise<void>((resolve) => this.homey.setTimeout(resolve, 1000));
+                            } catch (err) {
+                                this.error('Error sending to device:', err);
                             }
-                        } catch (err) {
-                            this.error('Error sending to device:', err);
+                        }
+                        // if at least one device is configured for broadcast, also send broadcast
+                        if (alsoBroadcast) {
+                            if (this.debug) this.log('Also broadcasting:', json);
+                            await socket.broadcast(json);
                         }
                     }
-                    // if at least one device is configured for broadcast, also send broadcast
-                    if (alsoBroadcast) {
-                        if (this.debug) this.log('Also broadcasting:', json);
-                        await socket.broadcast(json);
-                    }
+                    // Wait 200ms between different message types
+                    await new Promise<void>((resolve) => this.homey.setTimeout(resolve, 200));
+                } catch (err) {
+                    this.error('Error transmitting:', err);
                 }
-            } catch (err) {
-                this.error('Error transmitting:', err);
-            } finally {
-                this.pollMessage = (this.pollMessage + 1) % this.pollMessages.length;
             }
         }
     }
@@ -311,6 +339,20 @@ export default class MarstekVenusDriver extends Homey.Driver {
                 seconds: number | string,
             }) => this.setModePassive(device, power, seconds),
         );
+        register(
+            'marstek_manual_mode_text',
+            async ({
+                device,
+                start_time,
+                power,
+                enable,
+            }: {
+                device: Homey.Device,
+                start_time: string,
+                power: number,
+                enable: boolean,
+            }) => this.setModeManualText(device, start_time, power, enable),
+        );
     }
 
     /**
@@ -376,14 +418,14 @@ export default class MarstekVenusDriver extends Homey.Driver {
     async setModeManual(device: Homey.Device, start_time: string, end_time: string, days: string[], power: number, enable: boolean) {
         const bitArray = [...'00000000'];
         days.forEach((day: string) => {
-            bitArray[parseInt(day)] = '1';
+            bitArray[7 - parseInt(day)] = '1';
         });
         const bitString = bitArray.join('');
         const bitValue = parseInt(bitString, 2);
         const config = {
             mode: 'Manual',
             manual_cfg: {
-                time_num: 9,
+                time_num: 0,
                 start_time,
                 end_time,
                 week_set: bitValue,
@@ -436,6 +478,48 @@ export default class MarstekVenusDriver extends Homey.Driver {
             },
         };
 
+        await this.setModeConfiguration(device, config);
+    }
+
+    /**
+     * Configures the device for manual mode using text inputs.
+     * @param {Homey.device} device Target device instance.
+     * @param {string} start_time Start time (HH:MM) as text.
+     * @param {number} power Target power setting for manual mode.
+     * @param {boolean} enable Whether the manual schedule should be enabled.
+     * @returns {Promise<void>} Resolves once the command succeeds.
+     */
+    async setModeManualText(device: Homey.Device, start_time: string, power: number, enable: boolean) {
+        // Calculate end_time as start_time + 2 hours
+        const [hours, minutes] = start_time.split(':').map(Number);
+        let endHours = hours + 2;
+        let endMinutes = minutes;
+        if (endHours >= 24) {
+            endHours -= 24;
+        }
+        const end_time = `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+        // Days are always all days
+        const dayArray = ['0', '1', '2', '3', '4', '5', '6'];
+        await this.setModeManual(device, start_time, end_time, dayArray, power, enable);
+    }
+
+    /**
+     * Disables any active manual mode schedule.
+     * @param {Homey.device} device - Target device instance.
+     * @returns {Promise<void>} Resolves once the command succeeds.
+     */
+    async setModeManualDisable(device: Homey.Device) {
+        const config = {
+            mode: 'Manual',
+            manual_cfg: {
+                time_num: 0,
+                start_time: "00:01",
+                end_time: "23:59",
+                week_set: 127,
+                power: 0,
+                enable: 0,
+            },
+        };
         await this.setModeConfiguration(device, config);
     }
 
@@ -537,9 +621,12 @@ export default class MarstekVenusDriver extends Homey.Driver {
 
     /**
      * Discovers Marstek Venus devices by broadcasting a detection message and collecting responses.
+     * If an address is provided, sends directly to that address instead of broadcasting.
+     * @param {string} [address] Optional IP address to send detection message to.
+     * @param {number} [port] Optional port to send detection message to (defaults to 30000).
      * @returns {Promise<Array<{name: string, data: {id: string}, settings: object, store: object}>>} Resolves with the discovered devices.
      */
-    async broadcastDetect(): Promise<Array<any>> {
+    async broadcastDetect(address?: string, port?: number): Promise<Array<any>> {
         const devices: Array<any> = [];
         const socket = this.getSocket();
         return new Promise((resolve, reject) => {
@@ -576,20 +663,26 @@ export default class MarstekVenusDriver extends Homey.Driver {
 
             // Message to detect batteries as documented in the API
             const message = '{"id":"Homey-Detect","method":"Marstek.GetDevice","params":{"ble_mac":"0"}}';
-            if (this.debug) this.log('Detection broadcasting:', message);
-            socket.broadcast(message).then(() => {
-                // Start broadcasting message
-                const interval = this.homey.setInterval(async () => {
-                    await socket.broadcast(message);
-                }, 2000);
-                // Stop broadcasting after 9 seconds (Homey waits 10 seconds before timeout)
+            const sendMessage = async () => {
+                if (address) {
+                    if (this.debug) this.log('Detection sending to', address + ':' + (port || 30000), ':', message);
+                    await socket.send(message, address, port);
+                } else {
+                    if (this.debug) this.log('Detection broadcasting:', message);
+                    await socket.broadcast(message, port);
+                }
+            };
+            sendMessage().then(() => {
+                // Start sending/broadcasting message
+                const interval = this.homey.setInterval(sendMessage, 2000);
+                // Stop after 9 seconds (Homey waits 10 seconds before timeout)
                 this.homey.setTimeout(() => {
                     this.homey.clearInterval(interval);
                     socket.off(handler);
                     resolve(devices);
                 }, 9000);
             }).catch((reason: Error) => {
-                this.error('Error broadcasting message:', reason);
+                this.error('Error sending/broadcasting message:', reason);
                 socket.off(handler);
                 reject(reason);
             });

@@ -1,0 +1,25 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Wi-Fi RSSI",
+    "nl": "WiFi RSSI",
+    "da": "WiFi RSSI",
+    "de": "WiFi RSSI",
+    "es": "RSSI WiFi",
+    "fr": "RSSI WiFi",
+    "it": "RSSI WiFi",
+    "no": "WiFi RSSI",
+    "sv": "WiFi RSSI",
+    "pl": "RSSI WiFi",
+    "ru": "WiFi RSSI",
+    "ko": "WiFi RSSI"
+  },
+  "units": "dBm",
+  "decimals": 0,
+  "min": -100,
+  "max": 0,
+  "chartType": "line",
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}

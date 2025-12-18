@@ -1,0 +1,56 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "CT State",
+    "nl": "CT Status",
+    "da": "CT Status",
+    "de": "CT Status",
+    "es": "Estado CT",
+    "fr": "État CT",
+    "it": "Stato CT",
+    "no": "CT Status",
+    "sv": "CT Status",
+    "pl": "Stan CT",
+    "ru": "Состояние CT",
+    "ko": "CT 상태"
+  },
+  "values": [
+    {
+      "id": "0",
+      "title": {
+        "en": "Not Connected",
+        "nl": "Niet Verbonden",
+        "da": "Ikke Tilsluttet",
+        "de": "Nicht Verbunden",
+        "es": "No Conectado",
+        "fr": "Non Connecté",
+        "it": "Non Connesso",
+        "no": "Ikke Tilkoblet",
+        "sv": "Inte Ansluten",
+        "pl": "Nie Podłączony",
+        "ru": "Не Подключено",
+        "ko": "연결되지 않음"
+      }
+    },
+    {
+      "id": "1",
+      "title": {
+        "en": "Connected",
+        "nl": "Verbonden",
+        "da": "Tilsluttet",
+        "de": "Verbunden",
+        "es": "Conectado",
+        "fr": "Connecté",
+        "it": "Connesso",
+        "no": "Tilkoblet",
+        "sv": "Ansluten",
+        "pl": "Podłączony",
+        "ru": "Подключено",
+        "ko": "연결됨"
+      }
+    }
+  ],
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}

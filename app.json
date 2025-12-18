@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.niewold.marstek",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "compatibility": ">=12.5.0",
   "sdk": 3,
   "brandColor": "#555555",
@@ -52,6 +52,64 @@
   "source": "https://github.com/eniewold/homey-marstek-connector",
   "homeyCommunityTopicId": 143139,
   "flow": {
+    "triggers": [
+      {
+        "title": {
+          "en": "CT State changed",
+          "nl": "CT Status gewijzigd",
+          "da": "CT Status ændret",
+          "de": "CT Status geändert",
+          "es": "Estado CT cambiado",
+          "fr": "État CT changé",
+          "it": "Stato CT cambiato",
+          "no": "CT Status endret",
+          "sv": "CT Status ändrad",
+          "pl": "Stan CT zmieniony",
+          "ru": "Состояние CT изменено",
+          "ko": "CT 상태 변경됨"
+        },
+        "titleFormatted": {
+          "en": "CT State changed to [[state]]",
+          "nl": "CT Status gewijzigd naar [[state]]",
+          "da": "CT Status ændret til [[state]]",
+          "de": "CT Status geändert zu [[state]]",
+          "es": "Estado CT cambiado a [[state]]",
+          "fr": "État CT changé à [[state]]",
+          "it": "Stato CT cambiato a [[state]]",
+          "no": "CT Status endret til [[state]]",
+          "sv": "CT Status ändrad till [[state]]",
+          "pl": "Stan CT zmieniony na [[state]]",
+          "ru": "Состояние CT изменено на [[state]]",
+          "ko": "CT 상태가 [[state]]로 변경됨"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus"
+          },
+          {
+            "name": "state",
+            "type": "number",
+            "title": {
+              "en": "State",
+              "nl": "Status",
+              "da": "Status",
+              "de": "Status",
+              "es": "Estado",
+              "fr": "État",
+              "it": "Stato",
+              "no": "Status",
+              "sv": "Status",
+              "pl": "Stan",
+              "ru": "Состояние",
+              "ko": "상태"
+            }
+          }
+        ],
+        "id": "marstek_ct_state_changed"
+      }
+    ],
     "actions": [
       {
         "id": "marstek_ai_mode",
@@ -353,6 +411,99 @@
         ]
       },
       {
+        "id": "marstek_manual_mode_text",
+        "title": {
+          "en": "Set battery mode to 'Manual' (text input)",
+          "nl": "Stel batterijweiser in op 'Handmatig' (tekst invoer)",
+          "da": "Indstil batteritilstand til 'Manuel' (tekst input)",
+          "de": "Batteriemodus auf 'Manuell' einstellen (Text-Eingabe)",
+          "es": "Establecer el modo de batería en 'Manual' (entrada de texto)",
+          "fr": "Définir le mode de batterie sur 'Manuel' (saisie texte)",
+          "it": "Imposta la modalità batteria su 'Manuale' (input testo)",
+          "no": "Sett batterimodus til 'Manuell' (tekst input)",
+          "sv": "Ställ in batteriläge på 'Manuell' (textinmatning)",
+          "pl": "Ustaw tryb baterii na 'Ręczny' (wejście tekstowe)",
+          "ru": "Установить режим батареи на 'Ручной' (текстовый ввод)",
+          "ko": "'수동'으로 배터리 모드 설정 (텍스트 입력)"
+        },
+        "titleFormatted": {
+          "en": "Set battery mode to 'Manual' from [[start_time]] for 2 hours daily with [[power]] Watt and enable [[enable]]",
+          "nl": "Stel batterijweiser in op 'Handmatig' van [[start_time]] voor 2 uur dagelijks met [[power]] Watt en inschakelen [[enable]]",
+          "da": "Indstil batteritilstand til 'Manuel' fra [[start_time]] i 2 timer dagligt med [[power]] Watt og aktiver [[enable]]",
+          "de": "Batteriemodus auf 'Manuell' einstellen von [[start_time]] für 2 Stunden täglich mit [[power]] Watt und aktivieren [[enable]]",
+          "es": "Establecer el modo de batería en 'Manual' desde [[start_time]] por 2 horas diarias con [[power]] Vatios y habilitar [[enable]]",
+          "fr": "Définir le mode de batterie sur 'Manuel' à partir de [[start_time]] pendant 2 heures par jour avec [[power]] Watt et activer [[enable]]",
+          "it": "Imposta la modalità batteria su 'Manuale' da [[start_time]] per 2 ore al giorno con [[power]] Watt e abilita [[enable]]",
+          "no": "Sett batterimodus til 'Manuell' fra [[start_time]] i 2 timer daglig med [[power]] Watt og aktiver [[enable]]",
+          "sv": "Ställ in batteriläge på 'Manuell' från [[start_time]] i 2 timmar dagligen med [[power]] Watt och aktivera [[enable]]",
+          "pl": "Ustaw tryb baterii na 'Ręczny' od [[start_time]] przez 2 godziny dziennie z [[power]] Watami i włącz [[enable]]",
+          "ru": "Установить режим батареи на 'Ручной' с [[start_time]] на 2 часа ежедневно с [[power]] Ватт и включить [[enable]]",
+          "ko": "[[start_time]]부터 매일 2시간 동안 [[power]] 와트로 '수동' 배터리 모드 설정 및 [[enable]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus"
+          },
+          {
+            "name": "start_time",
+            "type": "text",
+            "title": {
+              "en": "Start time (HH:MM)",
+              "nl": "Starttijd (HH:MM)",
+              "da": "Starttid (HH:MM)",
+              "de": "Startzeit (HH:MM)",
+              "es": "Hora de inicio (HH:MM)",
+              "fr": "Heure de début (HH:MM)",
+              "it": "Ora di inizio (HH:MM)",
+              "no": "Starttid (HH:MM)",
+              "sv": "Starttid (HH:MM)",
+              "pl": "Czas rozpoczęcia (HH:MM)",
+              "ru": "Время начала (HH:MM)",
+              "ko": "시작 시간 (HH:MM)"
+            }
+          },
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Watt (negative = charge)",
+              "nl": "Watt (negatief = opladen)",
+              "da": "Watt (negativ = opladning)",
+              "de": "Watt (negativ = aufladen)",
+              "es": "Vatios (negativo = carga)",
+              "fr": "Watt (négatif = charge)",
+              "it": "Watt (negativo = carica)",
+              "no": "Watt (negativ = lading)",
+              "sv": "Watt (negativ = laddning)",
+              "pl": "Waty (ujemny = ładowanie)",
+              "ru": "Вт (отрицательный = зарядка)",
+              "ko": "와트 (음수 = 충전)"
+            },
+            "step": 1
+          },
+          {
+            "name": "enable",
+            "type": "checkbox",
+            "title": {
+              "en": "Enable schedule",
+              "nl": "Planning inschakelen",
+              "da": "Aktiver tidsplan",
+              "de": "Zeitplan aktivieren",
+              "es": "Habilitar horario",
+              "fr": "Activer le programme",
+              "it": "Abilita pianificazione",
+              "no": "Aktiver tidsplan",
+              "sv": "Aktivera schema",
+              "pl": "Włącz harmonogram",
+              "ru": "Включить расписание",
+              "ko": "일정 활성화"
+            }
+          }
+        ]
+      },
+      {
         "id": "marstek_passive_mode",
         "title": {
           "en": "Set battery 'Passive' mode to Power (W) for (S) seconds",
@@ -450,6 +601,7 @@
       "class": "battery",
       "capabilities": [
         "battery_charging_state",
+        "battery_mode",
         "meter_power",
         "meter_power.imported",
         "meter_power.exported",
@@ -459,7 +611,13 @@
         "measure_power_offgrid",
         "measure_temperature",
         "measure_battery",
-        "last_message_received"
+        "last_message_received",
+        "measure_rssi",
+        "measure_power.a",
+        "measure_power.b",
+        "measure_power.c",
+        "measure_power.total",
+        "measure_ct_state"
       ],
       "energy": {
         "homeBattery": true,
@@ -514,6 +672,82 @@
             "ru": "Потреблено (или вне сети)",
             "ko": "로드(또는 오프 그리드) 소모됨"
           }
+        },
+        "measure_temperature": {
+          "uiComponent": "sensor",
+          "decimals": 1,
+          "min": -20,
+          "max": 60,
+          "chartType": "line"
+        }
+      },
+      "capabilityGroups": {
+        "battery_group": {
+          "name": {
+            "en": "Battery",
+            "nl": "Batterij",
+            "da": "Batteri",
+            "de": "Batterie",
+            "es": "Batería",
+            "fr": "Batterie",
+            "it": "Batteria",
+            "no": "Batteri",
+            "sv": "Batteri",
+            "pl": "Bateria",
+            "ru": "Батарея",
+            "ko": "배터리"
+          },
+          "capabilities": [
+            "battery_charging_state",
+            "measure_battery",
+            "battery_mode"
+          ]
+        },
+        "temperature_group": {
+          "name": {
+            "en": "Temperature",
+            "nl": "Temperatuur",
+            "da": "Temperatur",
+            "de": "Temperatur",
+            "es": "Temperatura",
+            "fr": "Température",
+            "it": "Temperatura",
+            "no": "Temperatur",
+            "sv": "Temperatur",
+            "pl": "Temperatura",
+            "ru": "Температура",
+            "ko": "온도"
+          },
+          "capabilities": [
+            "measure_temperature"
+          ]
+        },
+        "statistics_group": {
+          "name": {
+            "en": "Statistics",
+            "nl": "Statistieken",
+            "da": "Statistikker",
+            "de": "Statistiken",
+            "es": "Estadísticas",
+            "fr": "Statistiques",
+            "it": "Statistiche",
+            "no": "Statistikk",
+            "sv": "Statistik",
+            "pl": "Statystyki",
+            "ru": "Статистика",
+            "ko": "통계"
+          },
+          "capabilities": [
+            "meter_power",
+            "meter_power.imported",
+            "meter_power.exported",
+            "meter_power.load",
+            "measure_power",
+            "measure_power_ongrid",
+            "measure_power_offgrid",
+            "last_message_received",
+            "measure_rssi"
+          ]
         }
       },
       "platforms": [
@@ -801,6 +1035,207 @@
                 "ko": "펌웨어"
               },
               "value": "(unknown)"
+            },
+            {
+              "id": "wifi_ssid",
+              "type": "label",
+              "label": {
+                "en": "WiFi SSID",
+                "nl": "WiFi SSID",
+                "da": "WiFi SSID",
+                "de": "WiFi SSID",
+                "es": "SSID WiFi",
+                "fr": "SSID WiFi",
+                "it": "SSID WiFi",
+                "no": "WiFi SSID",
+                "sv": "WiFi SSID",
+                "pl": "SSID WiFi",
+                "ru": "WiFi SSID",
+                "ko": "WiFi SSID"
+              },
+              "value": "(unknown)"
+            },
+            {
+              "id": "wifi_rssi",
+              "type": "label",
+              "label": {
+                "en": "WiFi Signal Strength",
+                "nl": "WiFi Signaalsterkte",
+                "da": "WiFi Signalstyrke",
+                "de": "WiFi Signalstärke",
+                "es": "Fuerza de la señal WiFi",
+                "fr": "Force du signal WiFi",
+                "it": "Forza del segnale WiFi",
+                "no": "WiFi Signalstyrke",
+                "sv": "WiFi Signalstyrka",
+                "pl": "Siła sygnału WiFi",
+                "ru": "Сила сигнала WiFi",
+                "ko": "WiFi 신호 강도"
+              },
+              "value": "(unknown)"
+            },
+            {
+              "id": "wifi_ip",
+              "type": "label",
+              "label": {
+                "en": "WiFi IP Address",
+                "nl": "WiFi IP-adres",
+                "da": "WiFi IP-adresse",
+                "de": "WiFi IP-Adresse",
+                "es": "Dirección IP WiFi",
+                "fr": "Adresse IP WiFi",
+                "it": "Indirizzo IP WiFi",
+                "no": "WiFi IP-adresse",
+                "sv": "WiFi IP-adress",
+                "pl": "Adres IP WiFi",
+                "ru": "IP-адрес WiFi",
+                "ko": "WiFi IP 주소"
+              },
+              "value": "(unknown)"
+            },
+            {
+              "id": "wifi_gateway",
+              "type": "label",
+              "label": {
+                "en": "WiFi Gateway",
+                "nl": "WiFi Gateway",
+                "da": "WiFi Gateway",
+                "de": "WiFi Gateway",
+                "es": "Puerta de enlace WiFi",
+                "fr": "Passerelle WiFi",
+                "it": "Gateway WiFi",
+                "no": "WiFi Gateway",
+                "sv": "WiFi Gateway",
+                "pl": "Brama WiFi",
+                "ru": "Шлюз WiFi",
+                "ko": "WiFi 게이트웨이"
+              },
+              "value": "(unknown)"
+            },
+            {
+              "id": "wifi_subnet",
+              "type": "label",
+              "label": {
+                "en": "WiFi Subnet Mask",
+                "nl": "WiFi Subnetmasker",
+                "da": "WiFi Subnetmaske",
+                "de": "WiFi Subnetzmaske",
+                "es": "Máscara de subred WiFi",
+                "fr": "Masque de sous-réseau WiFi",
+                "it": "Maschera di sottorete WiFi",
+                "no": "WiFi Subnettmaske",
+                "sv": "WiFi Subnätmask",
+                "pl": "Maska podsieci WiFi",
+                "ru": "Маска подсети WiFi",
+                "ko": "WiFi 서브넷 마스크"
+              },
+              "value": "(unknown)"
+            },
+            {
+              "id": "wifi_dns",
+              "type": "label",
+              "label": {
+                "en": "WiFi DNS",
+                "nl": "WiFi DNS",
+                "da": "WiFi DNS",
+                "de": "WiFi DNS",
+                "es": "DNS WiFi",
+                "fr": "DNS WiFi",
+                "it": "DNS WiFi",
+                "no": "WiFi DNS",
+                "sv": "WiFi DNS",
+                "pl": "DNS WiFi",
+                "ru": "DNS WiFi",
+                "ko": "WiFi DNS"
+              },
+              "value": "(unknown)"
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Force Charge/Discharge Settings",
+            "nl": "Forceer Laden/Ontladen Instellingen",
+            "da": "Tving Opladning/Afladning Indstillinger",
+            "de": "Einstellungen für erzwungenes Laden/Entladen",
+            "es": "Configuración de Carga/Descarga Forzada",
+            "fr": "Paramètres de Charge/Décharge Forcée",
+            "it": "Impostazioni Carica/Scarica Forzata",
+            "no": "Tving Ladning/Utladning Innstillinger",
+            "sv": "Tving Laddning/Utladdning Inställningar",
+            "pl": "Ustawienia Wymuszania Ładowania/Rozładowania",
+            "ru": "Настройки Принудительной Зарядки/Разрядки",
+            "ko": "강제 충전/방전 설정"
+          },
+          "children": [
+            {
+              "id": "force_charge_power",
+              "type": "number",
+              "label": {
+                "en": "Force Charge Power (W)",
+                "nl": "Forceer Laadvermogen (W)",
+                "da": "Tving Opladningseffekt (W)",
+                "de": "Erzwungene Ladeleistung (W)",
+                "es": "Potencia de Carga Forzada (W)",
+                "fr": "Puissance de Charge Forcée (W)",
+                "it": "Potenza Carica Forzata (W)",
+                "no": "Tving Ladningseffekt (W)",
+                "sv": "Tving Laddningseffekt (W)",
+                "pl": "Moc Wymuszania Ładowania (W)",
+                "ru": "Мощность Принудительной Зарядки (Вт)",
+                "ko": "강제 충전 전력 (W)"
+              },
+              "value": 2500,
+              "min": 0,
+              "units": {
+                "en": "W",
+                "nl": "W",
+                "da": "W",
+                "de": "W",
+                "es": "W",
+                "fr": "W",
+                "it": "W",
+                "no": "W",
+                "sv": "W",
+                "pl": "W",
+                "ru": "Вт",
+                "ko": "W"
+              }
+            },
+            {
+              "id": "force_discharge_power",
+              "type": "number",
+              "label": {
+                "en": "Force Discharge Power (W)",
+                "nl": "Forceer Ontlaadvermogen (W)",
+                "da": "Tving Afladningseffekt (W)",
+                "de": "Erzwungene Entladeleistung (W)",
+                "es": "Potencia de Descarga Forzada (W)",
+                "fr": "Puissance de Décharge Forcée (W)",
+                "it": "Potenza Scarica Forzata (W)",
+                "no": "Tving Utladningseffekt (W)",
+                "sv": "Tving Utladdningseffekt (W)",
+                "pl": "Moc Wymuszania Rozładowania (W)",
+                "ru": "Мощность Принудительной Разрядки (Вт)",
+                "ko": "강제 방전 전력 (W)"
+              },
+              "value": 800,
+              "min": 0,
+              "units": {
+                "en": "W",
+                "nl": "W",
+                "da": "W",
+                "de": "W",
+                "es": "W",
+                "fr": "W",
+                "it": "W",
+                "no": "W",
+                "sv": "W",
+                "pl": "W",
+                "ru": "Вт",
+                "ko": "W"
+              }
             }
           ]
         }
@@ -1029,6 +1464,96 @@
     }
   ],
   "capabilities": {
+    "battery_mode": {
+      "type": "enum",
+      "title": {
+        "en": "Battery Mode",
+        "nl": "Batterijmodus",
+        "da": "Batteritilstand",
+        "de": "Batteriemodus",
+        "es": "Modo de batería",
+        "fr": "Mode de batterie",
+        "it": "Modalità batteria",
+        "no": "Batterimodus",
+        "sv": "Batteriläge",
+        "pl": "Tryb baterii",
+        "ru": "Режим батареи",
+        "ko": "배터리 모드"
+      },
+      "values": [
+        {
+          "id": "ai",
+          "title": {
+            "en": "AI",
+            "nl": "AI",
+            "da": "AI",
+            "de": "AI",
+            "es": "IA",
+            "fr": "IA",
+            "it": "AI",
+            "no": "AI",
+            "sv": "AI",
+            "pl": "AI",
+            "ru": "ИИ",
+            "ko": "AI"
+          }
+        },
+        {
+          "id": "auto",
+          "title": {
+            "en": "Self-Consumption",
+            "nl": "Zelfverbruik",
+            "da": "Selvforbrug",
+            "de": "Eigenverbrauch",
+            "es": "Autoconsumo",
+            "fr": "Autoconsommation",
+            "it": "Autoconsumo",
+            "no": "Selvforbruk",
+            "sv": "Självförbrukning",
+            "pl": "Samowystarczalność",
+            "ru": "Самопотребление",
+            "ko": "자가 소비"
+          }
+        },
+        {
+          "id": "force_charge",
+          "title": {
+            "en": "Force Charge",
+            "nl": "Forceer Laden",
+            "da": "Tving Opladning",
+            "de": "Laden Erzwingen",
+            "es": "Forzar Carga",
+            "fr": "Forcer Charge",
+            "it": "Forza Carica",
+            "no": "Tving Ladning",
+            "sv": "Tving Laddning",
+            "pl": "Wymuś Ładowanie",
+            "ru": "Принудительная Зарядка",
+            "ko": "강제 충전"
+          }
+        },
+        {
+          "id": "force_discharge",
+          "title": {
+            "en": "Force Discharge",
+            "nl": "Forceer Ontladen",
+            "da": "Tving Afladning",
+            "de": "Entladen Erzwingen",
+            "es": "Forzar Descarga",
+            "fr": "Forcer Décharge",
+            "it": "Forza Scarica",
+            "no": "Tving Utladning",
+            "sv": "Tving Utladdning",
+            "pl": "Wymuś Rozładowanie",
+            "ru": "Принудительная Разрядка",
+            "ko": "강제 방전"
+          }
+        }
+      ],
+      "getable": true,
+      "setable": true,
+      "uiComponent": "picker"
+    },
     "last_message_received": {
       "type": "number",
       "title": {
@@ -1050,6 +1575,167 @@
       "uiComponent": "sensor",
       "insights": false,
       "icon": "/assets/clock-outline-badged.svg"
+    },
+    "measure_ct_state": {
+      "type": "enum",
+      "title": {
+        "en": "CT State",
+        "nl": "CT Status",
+        "da": "CT Status",
+        "de": "CT Status",
+        "es": "Estado CT",
+        "fr": "État CT",
+        "it": "Stato CT",
+        "no": "CT Status",
+        "sv": "CT Status",
+        "pl": "Stan CT",
+        "ru": "Состояние CT",
+        "ko": "CT 상태"
+      },
+      "values": [
+        {
+          "id": "0",
+          "title": {
+            "en": "Not Connected",
+            "nl": "Niet Verbonden",
+            "da": "Ikke Tilsluttet",
+            "de": "Nicht Verbunden",
+            "es": "No Conectado",
+            "fr": "Non Connecté",
+            "it": "Non Connesso",
+            "no": "Ikke Tilkoblet",
+            "sv": "Inte Ansluten",
+            "pl": "Nie Podłączony",
+            "ru": "Не Подключено",
+            "ko": "연결되지 않음"
+          }
+        },
+        {
+          "id": "1",
+          "title": {
+            "en": "Connected",
+            "nl": "Verbonden",
+            "da": "Tilsluttet",
+            "de": "Verbunden",
+            "es": "Conectado",
+            "fr": "Connecté",
+            "it": "Connesso",
+            "no": "Tilkoblet",
+            "sv": "Ansluten",
+            "pl": "Podłączony",
+            "ru": "Подключено",
+            "ko": "연결됨"
+          }
+        }
+      ],
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
+    "measure_power_a": {
+      "type": "number",
+      "title": {
+        "en": "Phase A Power",
+        "nl": "Fase A Vermogen",
+        "da": "Fase A Effekt",
+        "de": "Phase A Leistung",
+        "es": "Potencia Fase A",
+        "fr": "Puissance Phase A",
+        "it": "Potenza Fase A",
+        "no": "Fase A Effekt",
+        "sv": "Fas A Effekt",
+        "pl": "Moc Fazy A",
+        "ru": "Мощность Фазы A",
+        "ko": "A상 전력"
+      },
+      "units": {
+        "en": "W",
+        "nl": "W",
+        "da": "W",
+        "de": "W",
+        "es": "W",
+        "fr": "W",
+        "it": "W",
+        "no": "W",
+        "sv": "W",
+        "pl": "W",
+        "ru": "Вт",
+        "ko": "W"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "decimals": 1
+    },
+    "measure_power_b": {
+      "type": "number",
+      "title": {
+        "en": "Phase B Power",
+        "nl": "Fase B Vermogen",
+        "da": "Fase B Effekt",
+        "de": "Phase B Leistung",
+        "es": "Potencia Fase B",
+        "fr": "Puissance Phase B",
+        "it": "Potenza Fase B",
+        "no": "Fase B Effekt",
+        "sv": "Fas B Effekt",
+        "pl": "Moc Fazy B",
+        "ru": "Мощность Фазы B",
+        "ko": "B상 전력"
+      },
+      "units": {
+        "en": "W",
+        "nl": "W",
+        "da": "W",
+        "de": "W",
+        "es": "W",
+        "fr": "W",
+        "it": "W",
+        "no": "W",
+        "sv": "W",
+        "pl": "W",
+        "ru": "Вт",
+        "ko": "W"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "decimals": 1
+    },
+    "measure_power_c": {
+      "type": "number",
+      "title": {
+        "en": "Phase C Power",
+        "nl": "Fase C Vermogen",
+        "da": "Fase C Effekt",
+        "de": "Phase C Leistung",
+        "es": "Potencia Fase C",
+        "fr": "Puissance Phase C",
+        "it": "Potenza Fase C",
+        "no": "Fase C Effekt",
+        "sv": "Fas C Effekt",
+        "pl": "Moc Fazy C",
+        "ru": "Мощность Фазы C",
+        "ko": "C상 전력"
+      },
+      "units": {
+        "en": "W",
+        "nl": "W",
+        "da": "W",
+        "de": "W",
+        "es": "W",
+        "fr": "W",
+        "it": "W",
+        "no": "W",
+        "sv": "W",
+        "pl": "W",
+        "ru": "Вт",
+        "ko": "W"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "decimals": 1
     },
     "measure_power_offgrid": {
       "type": "number",
@@ -1158,6 +1844,66 @@
       "decimals": 2,
       "uiComponent": "sensor",
       "icon": "/assets/sun.svg"
+    },
+    "measure_power_total": {
+      "type": "number",
+      "title": {
+        "en": "Total Power",
+        "nl": "Totaal Vermogen",
+        "da": "Total Effekt",
+        "de": "Gesamtleistung",
+        "es": "Potencia Total",
+        "fr": "Puissance Totale",
+        "it": "Potenza Totale",
+        "no": "Total Effekt",
+        "sv": "Total Effekt",
+        "pl": "Całkowita Moc",
+        "ru": "Общая Мощность",
+        "ko": "총 전력"
+      },
+      "units": {
+        "en": "W",
+        "nl": "W",
+        "da": "W",
+        "de": "W",
+        "es": "W",
+        "fr": "W",
+        "it": "W",
+        "no": "W",
+        "sv": "W",
+        "pl": "W",
+        "ru": "Вт",
+        "ko": "W"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "decimals": 1
+    },
+    "measure_rssi": {
+      "type": "number",
+      "title": {
+        "en": "Wi-Fi RSSI",
+        "nl": "WiFi RSSI",
+        "da": "WiFi RSSI",
+        "de": "WiFi RSSI",
+        "es": "RSSI WiFi",
+        "fr": "RSSI WiFi",
+        "it": "RSSI WiFi",
+        "no": "WiFi RSSI",
+        "sv": "WiFi RSSI",
+        "pl": "RSSI WiFi",
+        "ru": "WiFi RSSI",
+        "ko": "WiFi RSSI"
+      },
+      "units": "dBm",
+      "decimals": 0,
+      "min": -100,
+      "max": 0,
+      "chartType": "line",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
     }
   }
 }

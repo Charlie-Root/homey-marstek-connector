@@ -1,21 +1,23 @@
-import os from 'os';
-import ip from 'ip';            // For converting broadcast IP address
-import dgram from 'dgram';      // For UDP binding and sending
+import * as os from 'os';
+import * as ip from 'ip';            // For converting broadcast IP address
+import * as dgram from 'dgram';      // For UDP binding and sending
 
-import Homey from 'homey';
+import * as Homey from 'homey';
 
 // Load homey config
 import { config } from './config';
 
 /**
- * @description Manages UDP socket communication specific for Marstek Venus home batteries
+ * @description Manages UDP socket communication specific for Marstek Venus home batteries.
+ * Uses dynamic local port binding to avoid conflicts, while communicating with devices on port 30000.
  * @class
  */
 export default class MarstekSocket {
 
     // Private properties
     private parent?: Homey.Driver = undefined;
-    private port: number = 30000;
+    private remotePort: number = 30000; // Port used for communication with Marstek devices
+    private localPort: number = 0;      // Local binding port (0 = dynamic/OS assigned)
     private connected: boolean = false;
     private socket?: dgram.Socket;
     private handlers: Array<Function> = [];
@@ -61,7 +63,8 @@ export default class MarstekSocket {
     }
 
     /**
-     * Connects to the Marstek device over an UDP socket.
+     * Creates and binds a UDP socket for communication with Marstek devices.
+     * Binds to a dynamic local port to avoid conflicts with other applications.
      * @async
      * @returns {Promise<dgram.Socket>} Socket that is connected
      */
@@ -87,7 +90,7 @@ export default class MarstekSocket {
                     type: 'udp4',
                     //    reuseAddr: true,
                     //    reusePort: true,
-                }, async (message, remote) => {
+                }, async (message: Buffer, remote: dgram.RemoteInfo) => {
                     // ignore messages from our own broadcast
                     if (remote.address !== this.getLocalIPAddress()) {
                         this.log('Message received from', remote.address);
@@ -101,13 +104,27 @@ export default class MarstekSocket {
                     }
                 });
 
-                // Bind to our IP address(es)
+                // Log network interface details before binding
+                const iface = this.getInterface();
+                this.log('Network interface details:', {
+                    address: iface?.address,
+                    netmask: iface?.netmask,
+                    family: iface?.family,
+                    internal: iface?.internal
+                });
+
+                // Log broadcast address calculation
+                const broadcast = this.getBroadcastAddress();
+                this.log('Broadcast address:', broadcast);
+                this.log('Local IP address:', this.getLocalIPAddress());
+
+                // Bind to our IP address(es) using dynamic local port
                 this.socket.bind({
-                    port: this.port,    // Although variable, this is set to 30000
-                    address: undefined, // make sure to bind to all local addresses
-                    exclusive: true,    // exclusive usage, we are the only one listening on this port
+                    port: this.localPort, // Dynamic port assignment to avoid conflicts
+                    address: undefined,   // Bind to all local addresses
+                    exclusive: false,     // Allow shared binding since port is dynamic
                 }, () => {
-                    this.log('Socket bound to port', this.port);
+                    this.log('Socket bound to dynamic local port', this.socket?.address()?.port);
                     // Make sure to receive all broadcasted messages (catch in case of binding problems)
                     try {
                         if (!this.socket) throw new Error('Socket not available after binding');
@@ -125,7 +142,7 @@ export default class MarstekSocket {
                 });
 
                 // Handle error events
-                this.socket.on('error', (err) => {
+                this.socket.on('error', (err: Error) => {
                     this.error('onError', err);
                     this.disconnect();
                     this.connected = false;
@@ -191,29 +208,32 @@ export default class MarstekSocket {
     /**
      * Broadcast a string message over the socket. Open socket when needed.
      * @param {string} message String message to transmit
+     * @param {number} [port] Port to broadcast to, defaults to this.remotePort
      */
-    async broadcast(message: string) {
-        await this.transmit(message);
+    async broadcast(message: string, port?: number) {
+        await this.transmit(message, undefined, port);
     }
 
     /**
      * Send given message over the socket. Open socket when needed.
      * @param {string} message String message to transmit
      * @param {string} address IP address to transmit to
+     * @param {number} [port] Port to transmit to, defaults to this.remotePort
      */
-    async send(message: string, address: string) {
+    async send(message: string, address: string, port?: number) {
         // Check for address
         if (!address) throw new Error('[api] No address given to transmit to');
         // Transmit
-        await this.transmit(message, address);
+        await this.transmit(message, address, port);
     }
 
     /**
-     * Transmit given message over socket (broadcast when no address is given)
+     * Transmit given message over socket to the remote port (broadcast when no address is given)
      * @param {string} message String message to transmit
      * @param {string} [address] IP address to transmit to, leave empty to broadcast message
+     * @param {number} [port] Port to transmit to, defaults to this.remotePort
      */
-    async transmit(message: string, address?: string) {
+    async transmit(message: string, address?: string, port?: number) {
         // Try to connect, if not connected
         if (!this.connected) {
             try {
@@ -230,12 +250,15 @@ export default class MarstekSocket {
             this.log('No target address given, using broadcast address', address);
         }
 
+        // Use provided port or default remotePort
+        const targetPort = port || this.remotePort;
+
         // Send using promise
         await new Promise((resolve, reject) => {
             try {
-                this.log('Transmit:', message, address);
+                this.log('Transmit:', message, 'to', address + ':' + targetPort);
                 const buffer = Buffer.from(message);
-                this.socket?.send(buffer, 0, buffer.length, this.port, address, (err, bytes) => {
+                this.socket?.send(buffer, 0, buffer.length, targetPort, address, (err: Error | null, bytes: number) => {
                     if (err) {
                         this.error('Error transmitting message:', err, address);
                         reject(err);

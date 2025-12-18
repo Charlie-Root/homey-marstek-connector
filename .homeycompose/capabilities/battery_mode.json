@@ -1,0 +1,90 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Battery Mode",
+    "nl": "Batterijmodus",
+    "da": "Batteritilstand",
+    "de": "Batteriemodus",
+    "es": "Modo de batería",
+    "fr": "Mode de batterie",
+    "it": "Modalità batteria",
+    "no": "Batterimodus",
+    "sv": "Batteriläge",
+    "pl": "Tryb baterii",
+    "ru": "Режим батареи",
+    "ko": "배터리 모드"
+  },
+  "values": [
+    {
+      "id": "ai",
+      "title": {
+        "en": "AI",
+        "nl": "AI",
+        "da": "AI",
+        "de": "AI",
+        "es": "IA",
+        "fr": "IA",
+        "it": "AI",
+        "no": "AI",
+        "sv": "AI",
+        "pl": "AI",
+        "ru": "ИИ",
+        "ko": "AI"
+      }
+    },
+    {
+      "id": "auto",
+      "title": {
+        "en": "Self-Consumption",
+        "nl": "Zelfverbruik",
+        "da": "Selvforbrug",
+        "de": "Eigenverbrauch",
+        "es": "Autoconsumo",
+        "fr": "Autoconsommation",
+        "it": "Autoconsumo",
+        "no": "Selvforbruk",
+        "sv": "Självförbrukning",
+        "pl": "Samowystarczalność",
+        "ru": "Самопотребление",
+        "ko": "자가 소비"
+      }
+    },
+    {
+      "id": "force_charge",
+      "title": {
+        "en": "Force Charge",
+        "nl": "Forceer Laden",
+        "da": "Tving Opladning",
+        "de": "Laden Erzwingen",
+        "es": "Forzar Carga",
+        "fr": "Forcer Charge",
+        "it": "Forza Carica",
+        "no": "Tving Ladning",
+        "sv": "Tving Laddning",
+        "pl": "Wymuś Ładowanie",
+        "ru": "Принудительная Зарядка",
+        "ko": "강제 충전"
+      }
+    },
+    {
+      "id": "force_discharge",
+      "title": {
+        "en": "Force Discharge",
+        "nl": "Forceer Ontladen",
+        "da": "Tving Afladning",
+        "de": "Entladen Erzwingen",
+        "es": "Forzar Descarga",
+        "fr": "Forcer Décharge",
+        "it": "Forza Scarica",
+        "no": "Tving Utladning",
+        "sv": "Tving Utladdning",
+        "pl": "Wymuś Rozładowanie",
+        "ru": "Принудительная Разрядка",
+        "ko": "강제 방전"
+      }
+    }
+  ],
+  "getable": true,
+  "setable": true,
+  "uiComponent": "picker"
+}

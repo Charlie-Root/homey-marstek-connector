@@ -1,0 +1,35 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Phase A Power",
+    "nl": "Fase A Vermogen",
+    "da": "Fase A Effekt",
+    "de": "Phase A Leistung",
+    "es": "Potencia Fase A",
+    "fr": "Puissance Phase A",
+    "it": "Potenza Fase A",
+    "no": "Fase A Effekt",
+    "sv": "Fas A Effekt",
+    "pl": "Moc Fazy A",
+    "ru": "Мощность Фазы A",
+    "ko": "A상 전력"
+  },
+  "units": {
+    "en": "W",
+    "nl": "W",
+    "da": "W",
+    "de": "W",
+    "es": "W",
+    "fr": "W",
+    "it": "W",
+    "no": "W",
+    "sv": "W",
+    "pl": "W",
+    "ru": "Вт",
+    "ko": "W"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "decimals": 1
+}

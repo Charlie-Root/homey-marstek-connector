@@ -3,6 +3,8 @@
     "title": "Standard-Batterieeinstellungen",
     "subtitle": "Bitte geben Sie die Standardeinstellungen für neu entdeckte Batterien ein, bevor die Erkennung gestartet wird:",
     "pollInterval": "Standard-Abfrageintervall (Sekunden)",
-    "pollEnabled": "Abfrage standardmäßig aktivieren"
+    "pollEnabled": "Abfrage standardmäßig aktivieren",
+    "deviceAddress": "Geräte-IP-Adresse (optional, für direkte Erkennung, falls Broadcast fehlschlägt)",
+    "devicePort": "Geräte-Port (optional, Standard 30000)"
   }
 }

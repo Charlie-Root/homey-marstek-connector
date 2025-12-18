@@ -1,6 +1,6 @@
 {
   "name": "com.niewold.marstek",
-  "version": "1.0.0",
+  "version": "0.8.9",
   "scripts": {
     "dev": "homey app run --remote",
     "build": "tsc",

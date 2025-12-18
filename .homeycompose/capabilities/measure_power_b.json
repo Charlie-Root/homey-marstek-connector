@@ -1,0 +1,35 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Phase B Power",
+    "nl": "Fase B Vermogen",
+    "da": "Fase B Effekt",
+    "de": "Phase B Leistung",
+    "es": "Potencia Fase B",
+    "fr": "Puissance Phase B",
+    "it": "Potenza Fase B",
+    "no": "Fase B Effekt",
+    "sv": "Fas B Effekt",
+    "pl": "Moc Fazy B",
+    "ru": "Мощность Фазы B",
+    "ko": "B상 전력"
+  },
+  "units": {
+    "en": "W",
+    "nl": "W",
+    "da": "W",
+    "de": "W",
+    "es": "W",
+    "fr": "W",
+    "it": "W",
+    "no": "W",
+    "sv": "W",
+    "pl": "W",
+    "ru": "Вт",
+    "ko": "W"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "decimals": 1
+}

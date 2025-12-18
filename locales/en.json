@@ -3,6 +3,8 @@
     "title": "Default Battery Settings",
     "subtitle": "Before the discovery is started, please enter default settings for newly discovered batteries:",
     "pollInterval": "Default polling interval (seconds)",
-    "pollEnabled": "Enable polling by default"
+    "pollEnabled": "Enable polling by default",
+    "deviceAddress": "Device IP address (optional, for direct discovery if broadcast fails)",
+    "devicePort": "Device port (optional, defaults to 30000)"
   }
 }

@@ -3,6 +3,8 @@
     "title": "Standaard Batterijinstellingen",
     "subtitle": "Voordat de ontdekking wordt gestart, voer de standaardinstellingen voor nieuw ontdekte batterijen in:",
     "pollInterval": "Standaard peilingsinterval (seconden)",
-    "pollEnabled": "Peiling standaard inschakelen"
+    "pollEnabled": "Peiling standaard inschakelen",
+    "deviceAddress": "Apparaat IP-adres (optioneel, voor directe ontdekking als broadcast mislukt)",
+    "devicePort": "Apparaat poort (optioneel, standaard 30000)"
   }
 }

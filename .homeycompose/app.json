@@ -1,6 +1,6 @@
 {
   "id": "com.niewold.marstek",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "compatibility": ">=12.5.0",
   "sdk": 3,
   "brandColor": "#555555",
@@ -39,6 +39,43 @@
     "energy"
   ],
   "permissions": [],
+  "capabilities": {
+    "measure_rssi": {
+      "type": "number",
+      "title": {
+        "en": "WiFi Signal Strength",
+        "nl": "WiFi Signaalsterkte",
+        "da": "WiFi Signalstyrke",
+        "de": "WiFi Signalstärke",
+        "es": "Fuerza de la señal WiFi",
+        "fr": "Force du signal WiFi",
+        "it": "Forza del segnale WiFi",
+        "no": "WiFi Signalstyrke",
+        "sv": "WiFi Signalstyrka",
+        "pl": "Siła sygnału WiFi",
+        "ru": "Сила сигнала WiFi",
+        "ko": "WiFi 신호 강도"
+      },
+      "units": {
+        "en": "dBm",
+        "nl": "dBm",
+        "da": "dBm",
+        "de": "dBm",
+        "es": "dBm",
+        "fr": "dBm",
+        "it": "dBm",
+        "no": "dBm",
+        "sv": "dBm",
+        "pl": "dBm",
+        "ru": "dBm",
+        "ko": "dBm"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "decimals": 0
+    }
+  },
   "images": {
     "small": "/assets/images/small.jpg",
     "large": "/assets/images/large.jpg",

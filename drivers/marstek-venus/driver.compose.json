@@ -16,6 +16,7 @@
   "class": "battery",
   "capabilities": [
     "battery_charging_state",
+    "battery_mode",
     "meter_power",
     "meter_power.imported",
     "meter_power.exported",
@@ -25,7 +26,13 @@
     "measure_power_offgrid",
     "measure_temperature",
     "measure_battery",
-    "last_message_received"
+    "last_message_received",
+    "measure_rssi",
+    "measure_power.a",
+    "measure_power.b",
+    "measure_power.c",
+    "measure_power.total",
+    "measure_ct_state"
   ],
   "energy": {
     "homeBattery": true,
@@ -80,6 +87,82 @@
         "ru": "Потреблено (или вне сети)",
         "ko": "로드(또는 오프 그리드) 소모됨"
       }
+    },
+    "measure_temperature": {
+      "uiComponent": "sensor",
+      "decimals": 1,
+      "min": -20,
+      "max": 60,
+      "chartType": "line"
+    }
+  },
+  "capabilityGroups": {
+    "battery_group": {
+      "name": {
+        "en": "Battery",
+        "nl": "Batterij",
+        "da": "Batteri",
+        "de": "Batterie",
+        "es": "Batería",
+        "fr": "Batterie",
+        "it": "Batteria",
+        "no": "Batteri",
+        "sv": "Batteri",
+        "pl": "Bateria",
+        "ru": "Батарея",
+        "ko": "배터리"
+      },
+      "capabilities": [
+        "battery_charging_state",
+        "measure_battery",
+        "battery_mode"
+      ]
+    },
+    "temperature_group": {
+      "name": {
+        "en": "Temperature",
+        "nl": "Temperatuur",
+        "da": "Temperatur",
+        "de": "Temperatur",
+        "es": "Temperatura",
+        "fr": "Température",
+        "it": "Temperatura",
+        "no": "Temperatur",
+        "sv": "Temperatur",
+        "pl": "Temperatura",
+        "ru": "Температура",
+        "ko": "온도"
+      },
+      "capabilities": [
+        "measure_temperature"
+      ]
+    },
+    "statistics_group": {
+      "name": {
+        "en": "Statistics",
+        "nl": "Statistieken",
+        "da": "Statistikker",
+        "de": "Statistiken",
+        "es": "Estadísticas",
+        "fr": "Statistiques",
+        "it": "Statistiche",
+        "no": "Statistikk",
+        "sv": "Statistik",
+        "pl": "Statystyki",
+        "ru": "Статистика",
+        "ko": "통계"
+      },
+      "capabilities": [
+        "meter_power",
+        "meter_power.imported",
+        "meter_power.exported",
+        "meter_power.load",
+        "measure_power",
+        "measure_power_ongrid",
+        "measure_power_offgrid",
+        "last_message_received",
+        "measure_rssi"
+      ]
     }
   },
   "platforms": [

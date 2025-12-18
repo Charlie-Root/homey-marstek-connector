@@ -3,6 +3,7 @@
     "title": "Standardinställningar för batteri",
     "subtitle": "Innan sökningen startas, ange standardinställningar för nyligen upptäckta batterier:",
     "pollInterval": "Standard avläsningsintervall (sekunder)",
-    "pollEnabled": "Aktivera avläsning som standard"
+    "pollEnabled": "Aktivera avläsning som standard",
+    "deviceAddress": "Enhetens IP-adress (valfritt, för direkt upptäckt om broadcast misslyckas)"
   }
 }

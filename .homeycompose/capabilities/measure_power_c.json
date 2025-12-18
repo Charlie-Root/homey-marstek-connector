@@ -1,0 +1,35 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Phase C Power",
+    "nl": "Fase C Vermogen",
+    "da": "Fase C Effekt",
+    "de": "Phase C Leistung",
+    "es": "Potencia Fase C",
+    "fr": "Puissance Phase C",
+    "it": "Potenza Fase C",
+    "no": "Fase C Effekt",
+    "sv": "Fas C Effekt",
+    "pl": "Moc Fazy C",
+    "ru": "Мощность Фазы C",
+    "ko": "C상 전력"
+  },
+  "units": {
+    "en": "W",
+    "nl": "W",
+    "da": "W",
+    "de": "W",
+    "es": "W",
+    "fr": "W",
+    "it": "W",
+    "no": "W",
+    "sv": "W",
+    "pl": "W",
+    "ru": "Вт",
+    "ko": "W"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "decimals": 1
+}

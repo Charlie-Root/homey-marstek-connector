@@ -3,6 +3,7 @@
     "title": "Paramètres de batterie par défaut",
     "subtitle": "Avant de commencer la découverte, veuillez entrer les paramètres par défaut pour les nouvelles batteries découvertes :",
     "pollInterval": "Intervalle de sondage par défaut (secondes)",
-    "pollEnabled": "Activer le sondage par défaut"
+    "pollEnabled": "Activer le sondage par défaut",
+    "deviceAddress": "Adresse IP de l'appareil (optionnel, pour découverte directe si la diffusion échoue)"
   }
 }

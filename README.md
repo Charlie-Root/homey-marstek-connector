@@ -12,14 +12,18 @@ When a device is detected and communication is working, the device will display 
 - Current power output or intake (Watt)
 - Battery Temperature
 - Charge and discharge totals (kWh)
+- Phase A/B/C Power (Watt)
+- Total Power (Watt)
+- CT State (Connected/Not Connected)
+- Current Battery Mode
 
-You can also send commands to the battery to change the operating mode to 'Manual', 'AI', 'Passive' or 'Auto'. These commands can be transmitted using Homey flows ('Then...').
+You can control the battery mode directly from the device page (AI, Auto, Force Charge, Force Discharge) or send commands to change the operating mode to 'Manual', 'AI', 'Passive' or 'Auto' using Homey flows ('Then...'). Force Charge and Force Discharge power levels are configurable in device settings. A simplified manual mode flow card allows setting manual mode with text input for start time and auto-calculated 2-hour duration.
 
 ## REQUIREMENTS
 
 This app requires Homey and a Marstek Venus battery system.
 
-- When using the **local API driver** the Homey and battery must be connected to the same network with the local API enabled (see below). Auto-detection of Marstek Venus batteries is supported on the same local network and when IP range is 192.168.x.y; it will search within the last octet (y) from 1 to 254.
+- When using the **local API driver** the Homey and battery must be connected to the same network with the local API enabled (see below). Auto-detection of Marstek Venus batteries is supported on the same local network; it will search within the last octet (y) from 1 to 254.
 - When using the **cloud driver** you need an active Marstek cloud/app account. During pairing Homey will ask for the username and password to authenticate with the Marstek cloud service.
 
 ### DEVICE PAIRING (CLOUD)
@@ -31,8 +35,7 @@ Choose the “Marstek Venus (Cloud)” device during pairing, sign in with your 
 The Local API is disabled by default, this needs te be enabled on the Marstek Venus battery system. This can be done in two ways:
 - Use the BLE Test Tool (https://rweijnen.github.io/marstek-venus-monitor/latest/) on your smartphone (or laptop) near the battery. Connect and use 'Enable Local API (30000)' button in 'System' tab.
 - Contact Marstek support to have them enable the Local API for you. This can take a few days.
-
-*The local API must be enabled for port number 30000 (on each device). Currently no other port numbers are supported.*
+- In the settings of the Marstek Venus battery syste using the APP (newer versions), make sure the 'Local API' is enabled and the port number is set to 30000.
 
 ## STEP BY STEP INSTRUCTIONS
 
@@ -48,6 +51,7 @@ You can devices from both API and Cloud. See settings of each battery for additi
 
 ## VERSION HISTORY
 
+- 0.8.9 - Added direct battery mode control from device page (AI, Auto, Force Charge, Force Discharge). Added current mode display. Added configurable force charge/discharge power settings. Added EM.GetStatus polling for phase powers and CT state. Added simplified manual mode flow card with auto-calculated 2-hour duration.
 - 0.8.8 - UDP broadcast or sending individual UDP packages to individual batteries is now configurable (defaults to broadcast).
 - 0.8.7 - The 'ES.GetStatus' messages are no longer using UDP broadcast but now directly target the IP address of the device, sending out one request per device.
 - 0.8.6 - Debugging added when message details source does not match configured source(s).
@@ -82,9 +86,8 @@ You can devices from both API and Cloud. See settings of each battery for additi
 
 - This app uses the 'API over UDP' features as mentioned in the API documentation. 
 - The app is developed and tested with a Venus E v2.0 battery system (firmware v153, communication module 202409090159). Let me know if any other models work as well!
-- When the device can't be auto-detected, please check if the Marstek Venus battery is powered on and connected to the same network as Homey.
+- When the device can't be auto-detected you can manually add the device using the IP address of the battery. If the device is not found, please check if the Marstek Venus battery is powered on and connected to the same network as Homey.
 - Support for multiple Marstek Venus batteries is implemented, but since I only have one battery to test with, some is uncharted.
-- Only UDP port 30000 is currently supported on the local API.
 - When upgrading the app, it might be needed to remove already added battery devices first and then adding them again. 
 - The Marstek Cloud API is undocumented, so things might change without notice.
 - Battery mode changes have an automatic retry for a maximum of 5 tries with a 15 seconds timeout.

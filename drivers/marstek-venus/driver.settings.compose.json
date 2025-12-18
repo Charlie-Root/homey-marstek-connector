@@ -249,6 +249,207 @@
           "ko": "펌웨어"
         },
         "value": "(unknown)"
+      },
+      {
+        "id": "wifi_ssid",
+        "type": "label",
+        "label": {
+          "en": "WiFi SSID",
+          "nl": "WiFi SSID",
+          "da": "WiFi SSID",
+          "de": "WiFi SSID",
+          "es": "SSID WiFi",
+          "fr": "SSID WiFi",
+          "it": "SSID WiFi",
+          "no": "WiFi SSID",
+          "sv": "WiFi SSID",
+          "pl": "SSID WiFi",
+          "ru": "WiFi SSID",
+          "ko": "WiFi SSID"
+        },
+        "value": "(unknown)"
+      },
+      {
+        "id": "wifi_rssi",
+        "type": "label",
+        "label": {
+          "en": "WiFi Signal Strength",
+          "nl": "WiFi Signaalsterkte",
+          "da": "WiFi Signalstyrke",
+          "de": "WiFi Signalstärke",
+          "es": "Fuerza de la señal WiFi",
+          "fr": "Force du signal WiFi",
+          "it": "Forza del segnale WiFi",
+          "no": "WiFi Signalstyrke",
+          "sv": "WiFi Signalstyrka",
+          "pl": "Siła sygnału WiFi",
+          "ru": "Сила сигнала WiFi",
+          "ko": "WiFi 신호 강도"
+        },
+        "value": "(unknown)"
+      },
+      {
+        "id": "wifi_ip",
+        "type": "label",
+        "label": {
+          "en": "WiFi IP Address",
+          "nl": "WiFi IP-adres",
+          "da": "WiFi IP-adresse",
+          "de": "WiFi IP-Adresse",
+          "es": "Dirección IP WiFi",
+          "fr": "Adresse IP WiFi",
+          "it": "Indirizzo IP WiFi",
+          "no": "WiFi IP-adresse",
+          "sv": "WiFi IP-adress",
+          "pl": "Adres IP WiFi",
+          "ru": "IP-адрес WiFi",
+          "ko": "WiFi IP 주소"
+        },
+        "value": "(unknown)"
+      },
+      {
+        "id": "wifi_gateway",
+        "type": "label",
+        "label": {
+          "en": "WiFi Gateway",
+          "nl": "WiFi Gateway",
+          "da": "WiFi Gateway",
+          "de": "WiFi Gateway",
+          "es": "Puerta de enlace WiFi",
+          "fr": "Passerelle WiFi",
+          "it": "Gateway WiFi",
+          "no": "WiFi Gateway",
+          "sv": "WiFi Gateway",
+          "pl": "Brama WiFi",
+          "ru": "Шлюз WiFi",
+          "ko": "WiFi 게이트웨이"
+        },
+        "value": "(unknown)"
+      },
+      {
+        "id": "wifi_subnet",
+        "type": "label",
+        "label": {
+          "en": "WiFi Subnet Mask",
+          "nl": "WiFi Subnetmasker",
+          "da": "WiFi Subnetmaske",
+          "de": "WiFi Subnetzmaske",
+          "es": "Máscara de subred WiFi",
+          "fr": "Masque de sous-réseau WiFi",
+          "it": "Maschera di sottorete WiFi",
+          "no": "WiFi Subnettmaske",
+          "sv": "WiFi Subnätmask",
+          "pl": "Maska podsieci WiFi",
+          "ru": "Маска подсети WiFi",
+          "ko": "WiFi 서브넷 마스크"
+        },
+        "value": "(unknown)"
+      },
+      {
+        "id": "wifi_dns",
+        "type": "label",
+        "label": {
+          "en": "WiFi DNS",
+          "nl": "WiFi DNS",
+          "da": "WiFi DNS",
+          "de": "WiFi DNS",
+          "es": "DNS WiFi",
+          "fr": "DNS WiFi",
+          "it": "DNS WiFi",
+          "no": "WiFi DNS",
+          "sv": "WiFi DNS",
+          "pl": "DNS WiFi",
+          "ru": "DNS WiFi",
+          "ko": "WiFi DNS"
+        },
+        "value": "(unknown)"
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Force Charge/Discharge Settings",
+      "nl": "Forceer Laden/Ontladen Instellingen",
+      "da": "Tving Opladning/Afladning Indstillinger",
+      "de": "Einstellungen für erzwungenes Laden/Entladen",
+      "es": "Configuración de Carga/Descarga Forzada",
+      "fr": "Paramètres de Charge/Décharge Forcée",
+      "it": "Impostazioni Carica/Scarica Forzata",
+      "no": "Tving Ladning/Utladning Innstillinger",
+      "sv": "Tving Laddning/Utladdning Inställningar",
+      "pl": "Ustawienia Wymuszania Ładowania/Rozładowania",
+      "ru": "Настройки Принудительной Зарядки/Разрядки",
+      "ko": "강제 충전/방전 설정"
+    },
+    "children": [
+      {
+        "id": "force_charge_power",
+        "type": "number",
+        "label": {
+          "en": "Force Charge Power (W)",
+          "nl": "Forceer Laadvermogen (W)",
+          "da": "Tving Opladningseffekt (W)",
+          "de": "Erzwungene Ladeleistung (W)",
+          "es": "Potencia de Carga Forzada (W)",
+          "fr": "Puissance de Charge Forcée (W)",
+          "it": "Potenza Carica Forzata (W)",
+          "no": "Tving Ladningseffekt (W)",
+          "sv": "Tving Laddningseffekt (W)",
+          "pl": "Moc Wymuszania Ładowania (W)",
+          "ru": "Мощность Принудительной Зарядки (Вт)",
+          "ko": "강제 충전 전력 (W)"
+        },
+        "value": 2500,
+        "min": 0,
+        "units": {
+          "en": "W",
+          "nl": "W",
+          "da": "W",
+          "de": "W",
+          "es": "W",
+          "fr": "W",
+          "it": "W",
+          "no": "W",
+          "sv": "W",
+          "pl": "W",
+          "ru": "Вт",
+          "ko": "W"
+        }
+      },
+      {
+        "id": "force_discharge_power",
+        "type": "number",
+        "label": {
+          "en": "Force Discharge Power (W)",
+          "nl": "Forceer Ontlaadvermogen (W)",
+          "da": "Tving Afladningseffekt (W)",
+          "de": "Erzwungene Entladeleistung (W)",
+          "es": "Potencia de Descarga Forzada (W)",
+          "fr": "Puissance de Décharge Forcée (W)",
+          "it": "Potenza Scarica Forzata (W)",
+          "no": "Tving Utladningseffekt (W)",
+          "sv": "Tving Utladdningseffekt (W)",
+          "pl": "Moc Wymuszania Rozładowania (W)",
+          "ru": "Мощность Принудительной Разрядки (Вт)",
+          "ko": "강제 방전 전력 (W)"
+        },
+        "value": 800,
+        "min": 0,
+        "units": {
+          "en": "W",
+          "nl": "W",
+          "da": "W",
+          "de": "W",
+          "es": "W",
+          "fr": "W",
+          "it": "W",
+          "no": "W",
+          "sv": "W",
+          "pl": "W",
+          "ru": "Вт",
+          "ko": "W"
+        }
       }
     ]
   }
