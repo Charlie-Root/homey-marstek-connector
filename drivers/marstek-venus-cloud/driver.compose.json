@@ -21,7 +21,15 @@
     "measure_power.discharge",
     "last_message_received",
     "measure_battery_profit_daily",
-    "measure_battery_profit_hourly"
+    "measure_battery_profit_hourly",
+    "measure_battery_charge_energy_daily",
+    "measure_battery_discharge_energy_daily",
+    "measure_battery_savings_daily",
+    "measure_battery_cost_daily",
+    "measure_battery_net_profit_daily",
+    "measure_calculation_timestamp",
+    "measure_current_energy_price",
+    "measure_calculation_method"
   ],
   "energy": {
     "homeBattery": true
@@ -110,6 +118,150 @@
       },
       "decimals": 2,
       "units": "€/h"
+    },
+    "measure_battery_charge_energy_daily": {
+      "title": {
+        "en": "Daily Charge Energy",
+        "nl": "Dagelijkse Laadenergie",
+        "da": "Daglig Opladningsenergi",
+        "de": "Tägliche Ladeenergie",
+        "es": "Energía de Carga Diaria",
+        "fr": "Énergie de Charge Quotidienne",
+        "it": "Energia di Carica Giornaliera",
+        "no": "Daglig Ladeenergi",
+        "sv": "Daglig Laddningsenergi",
+        "pl": "Dzienna Energia Ładowania",
+        "ru": "Ежедневная Энергия Зарядки",
+        "ko": "일일 충전 에너지"
+      },
+      "decimals": 3,
+      "units": "kWh"
+    },
+    "measure_battery_discharge_energy_daily": {
+      "title": {
+        "en": "Daily Discharge Energy",
+        "nl": "Dagelijkse Ontlaadenergie",
+        "da": "Daglig Afladningsenergi",
+        "de": "Tägliche Entladeenergie",
+        "es": "Energía de Descarga Diaria",
+        "fr": "Énergie de Décharge Quotidienne",
+        "it": "Energia di Scarica Giornaliera",
+        "no": "Daglig Utladningsenergi",
+        "sv": "Daglig Urladdningsenergi",
+        "pl": "Dzienna Energia Rozładowania",
+        "ru": "Ежедневная Энергия Разрядки",
+        "ko": "일일 방전 에너지"
+      },
+      "decimals": 3,
+      "units": "kWh"
+    },
+    "measure_battery_savings_daily": {
+      "title": {
+        "en": "Daily Savings",
+        "nl": "Dagelijkse Besparingen",
+        "da": "Daglige Besparelser",
+        "de": "Tägliche Einsparungen",
+        "es": "Ahorros Diarios",
+        "fr": "Économies Quotidiennes",
+        "it": "Risparmi Giornalieri",
+        "no": "Daglige Besparelser",
+        "sv": "Dagliga Besparingar",
+        "pl": "Dzienne Oszczędności",
+        "ru": "Ежедневная Экономия",
+        "ko": "일일 절약액"
+      },
+      "decimals": 2,
+      "units": "€"
+    },
+    "measure_battery_cost_daily": {
+      "title": {
+        "en": "Daily Cost",
+        "nl": "Dagelijkse Kosten",
+        "da": "Daglige Omkostninger",
+        "de": "Tägliche Kosten",
+        "es": "Coste Diario",
+        "fr": "Coût Quotidien",
+        "it": "Costo Giornaliero",
+        "no": "Daglige Kostnader",
+        "sv": "Dagliga Kostnader",
+        "pl": "Dzienne Koszty",
+        "ru": "Ежедневная Стоимость",
+        "ko": "일일 비용"
+      },
+      "decimals": 2,
+      "units": "€"
+    },
+    "measure_battery_net_profit_daily": {
+      "title": {
+        "en": "Daily Net Profit",
+        "nl": "Dagelijkse Nettowinst",
+        "da": "Daglig Nettofortjeneste",
+        "de": "Täglicher Nettogewinn",
+        "es": "Ganancia Neta Diaria",
+        "fr": "Profit Net Quotidien",
+        "it": "Profitto Netto Giornaliero",
+        "no": "Daglig Nettofortjeneste",
+        "sv": "Daglig Nettovinst",
+        "pl": "Dzienny Zysk Netto",
+        "ru": "Ежедневная Чистая Прибыль",
+        "ko": "일일 순이익"
+      },
+      "decimals": 2,
+      "units": "€"
+    },
+    "measure_calculation_timestamp": {
+      "title": {
+        "en": "Last Calculation",
+        "nl": "Laatste Berekening",
+        "da": "Sidste Beregning",
+        "de": "Letzte Berechnung",
+        "es": "Último Cálculo",
+        "fr": "Dernier Calcul",
+        "it": "Ultimo Calcolo",
+        "no": "Siste Beregning",
+        "sv": "Senaste Beräkning",
+        "pl": "Ostatnie Obliczenie",
+        "ru": "Последний Расчет",
+        "ko": "마지막 계산"
+      },
+      "decimals": 0,
+      "units": "timestamp"
+    },
+    "measure_current_energy_price": {
+      "title": {
+        "en": "Energy Price",
+        "nl": "Energieprijs",
+        "da": "Energipris",
+        "de": "Energiepreis",
+        "es": "Precio de Energía",
+        "fr": "Prix de l'Énergie",
+        "it": "Prezzo Energia",
+        "no": "Energipris",
+        "sv": "Energipris",
+        "pl": "Cena Energii",
+        "ru": "Цена Энергии",
+        "ko": "에너지 가격"
+      },
+      "decimals": 4,
+      "units": "€/kWh"
+    },
+    "measure_calculation_method": {
+      "title": {
+        "en": "Calculation Method",
+        "nl": "Berekeningsmethode",
+        "da": "Beregningsmetode",
+        "de": "Berechnungsmethode",
+        "es": "Método de Cálculo",
+        "fr": "Méthode de Calcul",
+        "it": "Metodo di Calcolo",
+        "no": "Beregningsmetode",
+        "sv": "Beräkningsmetod",
+        "pl": "Metoda Obliczeń",
+        "ru": "Метод Расчета",
+        "ko": "계산 방법"
+      },
+      "decimals": 0,
+      "units": "method"
     }
   },
   "platforms": [

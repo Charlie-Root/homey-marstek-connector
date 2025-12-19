@@ -3,6 +3,9 @@
   "title": {
     "en": "Export Statistics Data"
   },
+  "titleFormatted": {
+    "en": "Export [[format]] statistics for [[timeRange]] period"
+  },
   "description": {
     "en": "Export battery statistics data in JSON or CSV format for external analysis"
   },

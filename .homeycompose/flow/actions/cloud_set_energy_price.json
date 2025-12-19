@@ -14,6 +14,20 @@
     "ru": "Установить цену энергии за кВт·ч",
     "ko": "kWh당 에너지 가격 설정"
   },
+  "titleFormatted": {
+    "en": "Set energy price to [[price]] €/kWh for cloud device",
+    "nl": "Stel energieprijs in op [[price]] €/kWh voor cloud apparaat",
+    "da": "Indstil energipris til [[price]] €/kWh for cloud enhed",
+    "de": "Energiepreis auf [[price]] €/kWh für Cloud-Gerät einstellen",
+    "es": "Establecer precio de energía a [[price]] €/kWh para dispositivo en la nube",
+    "fr": "Définir le prix de l'énergie à [[price]] €/kWh pour l'appareil cloud",
+    "it": "Imposta prezzo energia a [[price]] €/kWh per dispositivo cloud",
+    "no": "Sett energipris til [[price]] €/kWh for sky-enhet",
+    "sv": "Ställ in energipris till [[price]] €/kWh för molnenhet",
+    "pl": "Ustaw cenę energii na [[price]] €/kWh dla urządzenia w chmurze",
+    "ru": "Установить цену энергии [[price]] €/кВт·ч для облачного устройства",
+    "ko": "클라우드 기기의 에너지 가격을 [[price]] €/kWh로 설정"
+  },
   "args": [
     {
       "name": "device",

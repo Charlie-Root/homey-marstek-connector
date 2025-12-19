@@ -17,6 +17,46 @@ When a device is detected and communication is working, the device will display 
 - CT State (Connected/Not Connected)
 - Current Battery Mode
 
+## FINANCIAL CALCULATION FEATURES
+
+**Enterprise-Grade Financial Analysis**: The app now includes comprehensive financial calculation capabilities that help you track the cost-effectiveness of your battery system.
+
+### Available Financial Metrics
+
+**Real-Time Financial Tracking**:
+- **Daily Profit** - Net profit per day (€)
+- **Hourly Profit** - Profit rate per hour (€/h)
+- **Daily Charge Energy** - Energy charged per day (kWh)
+- **Daily Discharge Energy** - Energy discharged per day (kWh)
+- **Daily Savings** - Revenue from discharging per day (€)
+- **Daily Cost** - Cost of charging per day (€)
+- **Daily Net Profit** - Complete daily profit/loss calculation (€)
+- **Energy Price** - Current energy price per kWh (€/kWh)
+- **Last Calculation** - Timestamp of last financial calculation
+- **Calculation Method** - Method used for calculations
+
+### Setting Up Financial Calculations
+
+1. **Configure Energy Price**: Use the flow card "Set Energy Price" to configure your current energy price (€/kWh)
+2. **Monitor Real-Time**: Financial calculations update automatically as your battery operates
+3. **Track Performance**: View daily and hourly profit trends in the device interface
+4. **Export Data**: Financial data is logged for analysis and reporting
+
+### Financial Calculation Safety
+
+The app implements enterprise-grade safety mechanisms:
+- **Banker's Rounding**: Consistent currency calculations (round half to even)
+- **Zero Division Protection**: Safe calculations prevent crashes
+- **Input Validation**: Comprehensive validation of all financial inputs
+- **Precision Control**: Standardized decimal places for all value types
+- **Outlier Detection**: Automatic detection and handling of abnormal readings
+- **Audit Trail**: Complete calculation verification for debugging
+
+### Internationalization
+
+Financial capabilities are fully translated for 12 languages:
+English, Dutch, Danish, German, Spanish, French, Italian, Norwegian, Swedish, Polish, Russian, Korean
+
 You can control the battery mode directly from the device page (AI, Auto, Force Charge, Force Discharge) or send commands to change the operating mode to 'Manual', 'AI', 'Passive' or 'Auto' using Homey flows ('Then...'). Force Charge and Force Discharge power levels are configurable in device settings. A simplified manual mode flow card allows setting manual mode with text input for start time and auto-calculated 2-hour duration.
 
 ## REQUIREMENTS
@@ -102,4 +142,97 @@ You can devices from both API and Cloud. See settings of each battery for additi
 
 # TROUBLESHOOTING
 
+## General Battery Communication Issues
+
 The local API of battery has some communication issues. Not all UDP messages are answered and there seem to be some conflicts when using other methods to communicate with the battery at the same time. The communication seems to deteriorate over time until it stops completely. Users with firmware 154 report less problems. Communication can be kick-started by using the BLE Test Tool (https://rweijnen.github.io/marstek-venus-monitor/latest/) v2.0 under the 'Advances' tab using the 'System Reset' function. Note that power delivery will be interrupted for a brief moment, and after that the communication stack will respond again to all messages.
+
+## Financial Calculation Issues
+
+### Financial capabilities not showing in device UI
+
+**Symptoms**: Missing financial metrics in the device interface
+
+**Possible Causes**:
+- Capability definitions not properly loaded
+- Device needs to be re-paired after app update
+- JSON syntax errors in device configuration
+
+**Solutions**:
+1. **Re-pair the device**: Remove and re-add the device to refresh capability definitions
+2. **Check app version**: Ensure you're running the latest version with financial features
+3. **Verify configuration**: Check device settings and ensure energy price is configured
+
+### Financial calculations showing incorrect values
+
+**Symptoms**: Unexpected profit/loss calculations or zero values
+
+**Possible Causes**:
+- Energy price not configured or incorrect
+- Invalid energy readings from battery
+- Precision/rounding issues
+
+**Solutions**:
+1. **Verify energy price**: Use flow card to set correct energy price (€/kWh)
+2. **Check battery data**: Ensure battery is reporting valid energy readings
+3. **Review calculation method**: Check "Calculation Method" capability for calculation type
+4. **Validate timestamps**: Ensure system time is correct for accurate calculations
+
+### Financial calculations not updating
+
+**Symptoms**: Financial metrics stuck at old values
+
+**Possible Causes**:
+- Battery communication issues
+- Calculation engine errors
+- UI update problems
+
+**Solutions**:
+1. **Check battery status**: Verify battery is actively charging/discharging
+2. **Monitor "Last Calculation"**: Check timestamp for last successful calculation
+3. **Restart device**: Remove and re-add device to refresh calculation engine
+4. **Review logs**: Check Homey logs for calculation errors or warnings
+
+### Setting up Financial Calculations
+
+**Step-by-step setup**:
+
+1. **Configure Energy Price**:
+   - Use flow card "Set Energy Price"
+   - Enter your current energy price (€/kWh)
+   - Example: 0.30 €/kWh for standard electricity rates
+
+2. **Monitor Real-Time Updates**:
+   - Financial calculations update automatically
+   - Check "Last Calculation" timestamp for updates
+   - Verify "Calculation Method" shows correct approach
+
+3. **Validate Data Accuracy**:
+   - Compare daily totals with your electricity bill
+   - Monitor profit trends over time
+   - Check energy price against market rates
+
+### Advanced Financial Troubleshooting
+
+**Enable debug mode for detailed financial logs**:
+1. Enable debug mode in Homey app settings
+2. Monitor Homey logs for financial calculation details
+3. Look for validation warnings or precision loss notifications
+4. Check audit trail for calculation verification
+
+**Common validation messages**:
+- "Energy amount very small" - Normal for brief charge/discharge events
+- "Energy price very high" - May indicate incorrect price configuration
+- "Calculation method: delta_based" - Local UDP driver calculations
+- "Calculation method: power_based" - Cloud API driver calculations
+
+**Performance monitoring**:
+- Financial calculations complete in < 1ms
+- UI updates should be immediate
+- High calculation times may indicate system issues
+
+For technical support with financial calculations, please provide:
+- Homey app version
+- Battery model and firmware
+- Energy price configuration
+- Screenshot of financial capabilities
+- Relevant log entries

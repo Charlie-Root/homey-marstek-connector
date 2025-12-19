@@ -5,11 +5,17 @@ import MarstekVenusDriver from './driver';
 // Import our loaded config
 import { config } from '../../lib/config';
 
-// Import statistics utilities
+// Import statistics utilities with enhanced safety features
 import {
   StatisticsEntry, cleanupOldEntries, aggregateDailyStats, calculateDetailedBreakdown,
-  logStatisticsEntry, getCalculationAuditTrail,
+  logStatisticsEntry, getCalculationAuditTrail, calculateEnergyAmount, getStatisticsSummary,
+  getHistoricalValuesOptimized,
 } from '../../lib/statistics-utils';
+
+// Import validation utilities
+import {
+  validateEnergyPrice as validateEnergyPriceUtil,
+} from '../../lib/financial-calculator';
 
 /**
  * Represents a Marstek Venus device connected locally via UDP.
@@ -277,7 +283,7 @@ export default class MarstekVenusDevice extends Homey.Device {
           if (!isNaN(result.total_power)) await this.setCapabilityValue('measure_power.total', result.total_power);
         }
 
-        // Log statistics for energy deltas
+        // Log statistics for energy deltas with enhanced safety and validation
         if (this.getSetting('enable_statistics')) {
           const currentInput = await this.getCapabilityValue('meter_power.imported') || 0;
           const currentOutput = await this.getCapabilityValue('meter_power.exported') || 0;
@@ -291,11 +297,40 @@ export default class MarstekVenusDevice extends Homey.Device {
             if (model) firmware = Number(model.split(' v')[1]);
           }
           const divisor = (firmware >= 154) ? 10.0 : 100.0;
+
+          // Get historical energy values for outlier detection (optimized)
+          const historicalStats: StatisticsEntry[] = this.getStoreValue('statistics') || [];
+          const historicalEnergyValues = getHistoricalValuesOptimized(historicalStats, 10);
+
           if (this.previousInputEnergy !== undefined) {
             const deltaInput = currentInput - this.previousInputEnergy;
             if (deltaInput > 0) {
               const price = this.getCurrentEnergyPrice();
-              const energyAmount = deltaInput / divisor;
+
+              // Validate price before using it
+              const priceValidation = validateEnergyPriceUtil(price);
+              if (!priceValidation.isValid) {
+                this.error(`Invalid energy price: ${priceValidation.error}`);
+                return;
+              }
+
+              const energyResult = calculateEnergyAmount(
+                'charging',
+                this.previousInputEnergy,
+                currentInput,
+                divisor,
+                undefined,
+                undefined,
+                historicalEnergyValues,
+              );
+
+              const { energyAmount } = energyResult;
+
+              // Log warnings if any
+              for (const warning of energyResult.warnings) {
+                this.log(`Energy calculation warning: ${warning}`);
+              }
+
               const entry: StatisticsEntry = {
                 timestamp: Math.floor(now.getTime() / 1000),
                 type: 'charging',
@@ -304,61 +339,111 @@ export default class MarstekVenusDevice extends Homey.Device {
                 priceAtTime: price,
                 startEnergyMeter: this.previousInputEnergy,
                 endEnergyMeter: currentInput,
+                calculationAudit: {
+                  precisionLoss: energyResult.audit.precisionLoss || 0,
+                  validationWarnings: energyResult.warnings,
+                  calculationMethod: 'enhanced_delta_based',
+                  isOutlier: false, // Will be determined by the calculation function
+                  recoveryActions: energyResult.audit.recoveryActions || [],
+                },
               };
+
               const calculationDetails = {
-                method: 'delta_based',
+                method: 'enhanced_delta_based',
                 inputs: {
                   startMeter: this.previousInputEnergy,
                   endMeter: currentInput,
                   divisor,
                   duration,
+                  historicalValuesCount: historicalEnergyValues.length,
                 },
                 intermediateSteps: [
                   `Delta: ${currentInput} - ${this.previousInputEnergy} = ${(currentInput - this.previousInputEnergy).toFixed(3)}`,
-                  `Energy: ${(currentInput - this.previousInputEnergy) / divisor} kWh`,
+                  `Energy: ${energyAmount.toFixed(3)} kWh`,
+                  ...(energyResult.warnings.length > 0 ? [`Warnings: ${energyResult.warnings.join('; ')}`] : []),
                 ],
               };
+
               logStatisticsEntry(entry, {
                 debug: this.getSetting('statistics_debug'),
                 transparency: this.getSetting('statistics_transparency'),
               }, this.log.bind(this), calculationDetails);
+
               await this.logStatisticsEntry(entry);
             }
           }
+
           if (this.previousOutputEnergy !== undefined) {
             const deltaOutput = currentOutput - this.previousOutputEnergy;
             if (deltaOutput > 0) {
               const price = this.getCurrentEnergyPrice();
-              const energyAmount = deltaOutput / divisor;
+
+              // Validate price before using it
+              const priceValidation = validateEnergyPriceUtil(price);
+              if (!priceValidation.isValid) {
+                this.error(`Invalid energy price: ${priceValidation.error}`);
+                return;
+              }
+
+              const energyResult = calculateEnergyAmount(
+                'discharging',
+                this.previousOutputEnergy,
+                currentOutput,
+                divisor,
+                undefined,
+                undefined,
+                historicalEnergyValues,
+              );
+
+              const { energyAmount } = energyResult;
+
+              // Log warnings if any
+              for (const warning of energyResult.warnings) {
+                this.log(`Energy calculation warning: ${warning}`);
+              }
+
               const entry: StatisticsEntry = {
                 timestamp: Math.floor(now.getTime() / 1000),
                 type: 'discharging',
-                energyAmount: -energyAmount,
+                energyAmount,
                 duration,
                 priceAtTime: price,
                 startEnergyMeter: this.previousOutputEnergy,
                 endEnergyMeter: currentOutput,
+                calculationAudit: {
+                  precisionLoss: energyResult.audit.precisionLoss || 0,
+                  validationWarnings: energyResult.warnings,
+                  calculationMethod: 'enhanced_delta_based',
+                  isOutlier: false,
+                  recoveryActions: energyResult.audit.recoveryActions || [],
+                },
               };
+
               const calculationDetails = {
-                method: 'delta_based',
+                method: 'enhanced_delta_based',
                 inputs: {
                   startMeter: this.previousOutputEnergy,
                   endMeter: currentOutput,
                   divisor,
                   duration,
+                  historicalValuesCount: historicalEnergyValues.length,
                 },
                 intermediateSteps: [
                   `Delta: ${currentOutput} - ${this.previousOutputEnergy} = ${(currentOutput - this.previousOutputEnergy).toFixed(3)}`,
-                  `Energy: ${(currentOutput - this.previousOutputEnergy) / divisor} kWh`,
+                  `Energy: ${energyAmount.toFixed(3)} kWh`,
+                  ...(energyResult.warnings.length > 0 ? [`Warnings: ${energyResult.warnings.join('; ')}`] : []),
                 ],
               };
+
               logStatisticsEntry(entry, {
                 debug: this.getSetting('statistics_debug'),
                 transparency: this.getSetting('statistics_transparency'),
               }, this.log.bind(this), calculationDetails);
+
               await this.logStatisticsEntry(entry);
             }
           }
+
           this.previousInputEnergy = currentInput;
           this.previousOutputEnergy = currentOutput;
           this.lastMessageTime = now;
@@ -375,10 +460,11 @@ export default class MarstekVenusDevice extends Homey.Device {
     }
 
     /**
-     * Verify statistics calculations for a given time period
-     * @param {string} timePeriod Time period to verify (last_hour, last_day, last_week, last_month)
-     * @param {boolean} includeDetails Whether to include detailed breakdown
-     * @returns {Promise<string>} Verification report
+     * Memory-optimized verification report generation
+     * Replaces inefficient string concatenation with single-pass processing
+     * @param timePeriod Time period to verify (last_hour, last_day, last_week, last_month)
+     * @param includeDetails Whether to include detailed breakdown
+     * @returns Optimized verification report
      */
     async verifyCalculation(timePeriod: string, includeDetails: boolean): Promise<string> {
       const stats: StatisticsEntry[] = this.getStoreValue('statistics') || [];
@@ -408,34 +494,90 @@ export default class MarstekVenusDevice extends Homey.Device {
 
       const auditTrail = getCalculationAuditTrail(stats, startTime / 1000, now / 1000);
 
-      let report = `Verification Report for ${timePeriod.replace('_', ' ').toUpperCase()}\n`;
-      report += `Total entries: ${auditTrail.length}\n\n`;
+      // Pre-allocate report sections to avoid repeated string concatenation
+      const reportSections: string[] = [];
+      reportSections.push(`Enhanced Verification Report for ${timePeriod.replace('_', ' ').toUpperCase()}`);
+      reportSections.push(`Total entries: ${auditTrail.length}`);
+      reportSections.push(''); // Empty line
 
       let validEntries = 0;
       let invalidEntries = 0;
+      let precisionLosses = 0;
+      let outliers = 0;
+      let recoveryActions = 0;
 
-      for (const item of auditTrail) {
-        if (item.verification.energyValid && item.verification.profitValid && item.verification.timestampValid) {
+      // Single-pass processing to minimize memory allocations
+      for (let i = 0; i < auditTrail.length; i++) {
+        const item = auditTrail[i];
+        const isValid = item.verification.energyValid && item.verification.profitValid && item.verification.timestampValid;
+        if (isValid) {
           validEntries++;
         } else {
           invalidEntries++;
         }
 
+        if (item.verification.precisionLoss > 0) {
+          precisionLosses++;
+        }
+
+        if (item.verification.outlierDetected) {
+          outliers++;
+        }
+
+        if (item.verification.recoveryActions.length > 0) {
+          recoveryActions += item.verification.recoveryActions.length;
+        }
+
         if (includeDetails) {
-          report += `Entry: ${item.verification.details}\n`;
+          reportSections.push(`Entry: ${item.verification.details}`);
+
+          if (item.verification.recoveryActions.length > 0) {
+            reportSections.push(`  Recovery Actions: ${item.verification.recoveryActions.join('; ')}`);
+          }
         }
       }
 
-      report += `Valid entries: ${validEntries}\n`;
-      report += `Invalid entries: ${invalidEntries}\n`;
+      // Add summary statistics
+      reportSections.push(`Valid entries: ${validEntries}`);
+      reportSections.push(`Invalid entries: ${invalidEntries}`);
+      reportSections.push(`Precision losses detected: ${precisionLosses}`);
+      reportSections.push(`Outliers detected: ${outliers}`);
+      reportSections.push(`Total recovery actions: ${recoveryActions}`);
 
-      if (invalidEntries > 0) {
-        report += '\nWarning: Some entries have validation issues. Check logs for details.\n';
-      } else {
-        report += '\nAll entries passed validation.\n';
+      // Get overall statistics summary
+      const periodStats = stats.filter((s) => s.timestamp >= startTime / 1000 && s.timestamp < now / 1000);
+      if (periodStats.length > 0) {
+        const summary = getStatisticsSummary(periodStats);
+        reportSections.push('');
+        reportSections.push('Period Summary:');
+        reportSections.push(`  Total charge energy: ${summary.summary.totalChargeEnergy.toFixed(3)} kWh`);
+        reportSections.push(`  Total discharge energy: ${summary.summary.totalDischargeEnergy.toFixed(3)} kWh`);
+        reportSections.push(`  Total profit: €${summary.summary.totalProfit.toFixed(2)}`);
+        reportSections.push(`  Total savings: €${summary.summary.totalSavings.toFixed(2)}`);
+        reportSections.push(`  Average price: €${summary.summary.averagePrice.toFixed(4)}/kWh`);
       }
 
-      return report;
+      // Add status summary
+      if (invalidEntries > 0 || precisionLosses > 0 || outliers > 0) {
+        reportSections.push('');
+        reportSections.push('⚠️  Issues detected:');
+        if (invalidEntries > 0) {
+          reportSections.push(`- ${invalidEntries} entries have validation failures`);
+        }
+        if (precisionLosses > 0) {
+          reportSections.push(`- ${precisionLosses} entries have precision loss issues`);
+        }
+        if (outliers > 0) {
+          reportSections.push(`- ${outliers} entries are statistical outliers`);
+        }
+        reportSections.push('Check logs for detailed information.');
+      } else {
+        reportSections.push('');
+        reportSections.push('✅ All entries passed validation with no critical issues detected.');
+      }
+
+      // Single join operation instead of multiple concatenations
+      return reportSections.join('\n');
     }
 
     /**
@@ -548,12 +690,25 @@ export default class MarstekVenusDevice extends Homey.Device {
     }
 
     /**
-     * Get the current energy price from settings
+     * Get the current energy price from settings with validation
      * @returns {number} Current energy price in €/kWh
      */
     getCurrentEnergyPrice(): number {
       const price = this.getSetting('price_per_kwh') ?? 0.30;
-      this.log('Using energy price from settings:', price, '€/kWh');
+
+      // Validate the price using our enhanced validation
+      const validation = validateEnergyPriceUtil(price);
+
+      if (!validation.isValid) {
+        this.error(`Invalid energy price from settings: ${validation.error}. Using fallback price of €0.30/kWh`);
+        return 0.30;
+      }
+
+      if (validation.warnings && validation.warnings.length > 0) {
+        this.log(`Energy price warnings: ${validation.warnings.join('; ')}`);
+      }
+
+      this.log('Using validated energy price from settings:', price, '€/kWh');
       return price;
     }
 

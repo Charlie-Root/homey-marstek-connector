@@ -39,7 +39,7 @@
     "energy"
   ],
   "permissions": [
-
+    "homey:manager:api"
   ],
   "capabilities": {
     "measure_rssi": {
@@ -212,5 +212,12 @@
       ],
       "driver": "marstek-venus-cloud"
     }
-  ]
+  ],
+  "contributors": {
+    "developers": [
+      {
+        "name": "Wieger Bontekoe"
+      }
+    ]
+  }
 }

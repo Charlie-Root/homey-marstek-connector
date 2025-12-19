@@ -5,11 +5,17 @@ import type MarstekCloud from '../../lib/marstek-cloud';
 // Import our loaded config
 import { config } from '../../lib/config';
 
-// Import statistics utilities
+// Import statistics utilities with enhanced safety features
 import {
   StatisticsEntry, calculateEnergyAmount, cleanupOldEntries, aggregateDailyStats, calculateDetailedBreakdown,
-  logStatisticsEntry, getCalculationAuditTrail,
+  logStatisticsEntry, getCalculationAuditTrail, getStatisticsSummary,
+  getHistoricalValuesOptimized,
 } from '../../lib/statistics-utils';
+
+// Import validation utilities
+import {
+  validateEnergyPrice as validateEnergyPriceUtil,
+} from '../../lib/financial-calculator';
 
 /**
  * Represents a Marstek Venus device connected via the Marstek cloud APIs.
@@ -223,37 +229,59 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
       await this.setCapabilityValue('measure_power.charge', status.charge);
       await this.setCapabilityValue('measure_power.discharge', status.discharge);
 
-      // Statistics tracking
+      // Statistics tracking with enhanced safety and validation
       if (this.getSetting('enable_statistics')) {
         const currentChargingState = status.charge > 0 ? 'charging' : status.discharge > 0 ? 'discharging' : 'idle';
         const now = new Date(status.report_time * 1000);
         const timeDiffHours = this.timestamp ? (now.getTime() - this.timestamp.getTime()) / (1000 * 60 * 60) : 0;
+
+        // Get historical energy values for outlier detection (optimized)
+        const historicalStats: StatisticsEntry[] = this.getStoreValue('statistics') || [];
+        const historicalEnergyValues = getHistoricalValuesOptimized(historicalStats, 10);
 
         if (this.previousChargingState !== currentChargingState) {
           // Log previous event
           if (this.previousChargingState && this.previousChargingState !== 'idle' && this.eventStartTime) {
             const duration = (now.getTime() - this.eventStartTime.getTime()) / 60000;
             const price = this.getCurrentEnergyPrice();
+
+            // Validate price before using it
+            const priceValidation = validateEnergyPriceUtil(price);
+            if (!priceValidation.isValid) {
+              this.error(`Invalid energy price: ${priceValidation.error}`);
+              return;
+            }
+
             const entry: StatisticsEntry = {
               timestamp: Math.floor(this.eventStartTime.getTime() / 1000),
               type: this.previousChargingState as 'charging' | 'discharging',
               energyAmount: this.cumulativeEnergy,
               duration,
               priceAtTime: price,
+              calculationAudit: {
+                precisionLoss: 0,
+                validationWarnings: [],
+                calculationMethod: 'enhanced_power_based',
+                isOutlier: false,
+                recoveryActions: [],
+              },
             };
+
             const power = this.previousChargingState === 'charging' ? status.charge : status.discharge;
             const calculationDetails = {
-              method: 'power_based',
+              method: 'enhanced_power_based',
               inputs: {
                 power,
                 timeDiffHours,
                 cumulativeEnergy: this.cumulativeEnergy,
+                historicalValuesCount: historicalEnergyValues.length,
               },
               intermediateSteps: [
                 `Power: ${power} W, Time: ${timeDiffHours} hours`,
-                `Energy: ${calculateEnergyAmount(this.previousChargingState as 'charging' | 'discharging', undefined, undefined, undefined, power, timeDiffHours)} kWh`,
+                `Energy: ${this.cumulativeEnergy.toFixed(3)} kWh`,
               ],
             };
+
             logStatisticsEntry(entry, {
               debug: this.getSetting('statistics_debug'),
               transparency: this.getSetting('statistics_transparency'),
@@ -272,14 +300,24 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
         } else if (currentChargingState !== 'idle' && timeDiffHours > 0) {
           // Accumulate energy during active state
           const power = currentChargingState === 'charging' ? status.charge : status.discharge;
-          this.cumulativeEnergy += calculateEnergyAmount(
-            currentChargingState,
+
+          // Use enhanced calculateEnergyAmount with outlier detection
+          const energyResult = calculateEnergyAmount(
+            currentChargingState as 'charging' | 'discharging',
             undefined,
             undefined,
             undefined,
             power,
             timeDiffHours,
+            historicalEnergyValues,
           );
+
+          this.cumulativeEnergy += energyResult.energyAmount;
+
+          // Log warnings if any
+          for (const warning of energyResult.warnings) {
+            this.log(`Energy accumulation warning: ${warning}`);
+          }
         }
       }
       // Update profit capabilities if statistics are enabled
@@ -289,12 +327,25 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
     }
 
     /**
-     * Get the current energy price from settings
+     * Get the current energy price from settings with validation
      * @returns {number} Current energy price in €/kWh
      */
     getCurrentEnergyPrice(): number {
       const price = this.getSetting('price_per_kwh') ?? 0.30;
-      this.log('Using energy price from settings:', price, '€/kWh');
+
+      // Validate the price using our enhanced validation
+      const validation = validateEnergyPriceUtil(price);
+
+      if (!validation.isValid) {
+        this.error(`Invalid energy price from settings: ${validation.error}. Using fallback price of €0.30/kWh`);
+        return 0.30;
+      }
+
+      if (validation.warnings && validation.warnings.length > 0) {
+        this.log(`Energy price warnings: ${validation.warnings.join('; ')}`);
+      }
+
+      this.log('Using validated energy price from settings:', price, '€/kWh');
       return price;
     }
 
@@ -490,10 +541,10 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
     }
 
     /**
-     * Verify statistics calculations for a given time period
+     * Memory-optimized verification report generation for cloud device
      * @param {string} timePeriod Time period to verify (last_hour, last_day, last_week, last_month)
      * @param {boolean} includeDetails Whether to include detailed breakdown
-     * @returns {Promise<string>} Verification report
+     * @returns {Promise<string>} Optimized verification report
      */
     async verifyCalculation(timePeriod: string, includeDetails: boolean): Promise<string> {
       const stats: StatisticsEntry[] = this.getStoreValue('statistics') || [];
@@ -523,34 +574,90 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
 
       const auditTrail = getCalculationAuditTrail(stats, startTime / 1000, currentTime / 1000);
 
-      let report = `Verification Report for ${timePeriod.replace('_', ' ').toUpperCase()}\n`;
-      report += `Total entries: ${auditTrail.length}\n\n`;
+      // Pre-allocate report sections to avoid repeated string concatenation
+      const reportSections: string[] = [];
+      reportSections.push(`Enhanced Verification Report for ${timePeriod.replace('_', ' ').toUpperCase()}`);
+      reportSections.push(`Total entries: ${auditTrail.length}`);
+      reportSections.push(''); // Empty line
 
       let validEntries = 0;
       let invalidEntries = 0;
+      let precisionLosses = 0;
+      let outliers = 0;
+      let recoveryActions = 0;
 
-      for (const item of auditTrail) {
-        if (item.verification.energyValid && item.verification.profitValid && item.verification.timestampValid) {
+      // Single-pass processing to minimize memory allocations
+      for (let i = 0; i < auditTrail.length; i++) {
+        const item = auditTrail[i];
+        const isValid = item.verification.energyValid && item.verification.profitValid && item.verification.timestampValid;
+        if (isValid) {
           validEntries++;
         } else {
           invalidEntries++;
         }
 
+        if (item.verification.precisionLoss > 0) {
+          precisionLosses++;
+        }
+
+        if (item.verification.outlierDetected) {
+          outliers++;
+        }
+
+        if (item.verification.recoveryActions.length > 0) {
+          recoveryActions += item.verification.recoveryActions.length;
+        }
+
         if (includeDetails) {
-          report += `Entry: ${item.verification.details}\n`;
+          reportSections.push(`Entry: ${item.verification.details}`);
+
+          if (item.verification.recoveryActions.length > 0) {
+            reportSections.push(`  Recovery Actions: ${item.verification.recoveryActions.join('; ')}`);
+          }
         }
       }
 
-      report += `Valid entries: ${validEntries}\n`;
-      report += `Invalid entries: ${invalidEntries}\n`;
+      // Add summary statistics
+      reportSections.push(`Valid entries: ${validEntries}`);
+      reportSections.push(`Invalid entries: ${invalidEntries}`);
+      reportSections.push(`Precision losses detected: ${precisionLosses}`);
+      reportSections.push(`Outliers detected: ${outliers}`);
+      reportSections.push(`Total recovery actions: ${recoveryActions}`);
 
-      if (invalidEntries > 0) {
-        report += '\nWarning: Some entries have validation issues. Check logs for details.\n';
-      } else {
-        report += '\nAll entries passed validation.\n';
+      // Get overall statistics summary
+      const periodStats = stats.filter((s) => s.timestamp >= startTime / 1000 && s.timestamp < currentTime / 1000);
+      if (periodStats.length > 0) {
+        const summary = getStatisticsSummary(periodStats);
+        reportSections.push('');
+        reportSections.push('Period Summary:');
+        reportSections.push(`  Total charge energy: ${summary.summary.totalChargeEnergy.toFixed(3)} kWh`);
+        reportSections.push(`  Total discharge energy: ${summary.summary.totalDischargeEnergy.toFixed(3)} kWh`);
+        reportSections.push(`  Total profit: €${summary.summary.totalProfit.toFixed(2)}`);
+        reportSections.push(`  Total savings: €${summary.summary.totalSavings.toFixed(2)}`);
+        reportSections.push(`  Average price: €${summary.summary.averagePrice.toFixed(4)}/kWh`);
       }
 
-      return report;
+      // Add status summary
+      if (invalidEntries > 0 || precisionLosses > 0 || outliers > 0) {
+        reportSections.push('');
+        reportSections.push('⚠️  Issues detected:');
+        if (invalidEntries > 0) {
+          reportSections.push(`- ${invalidEntries} entries have validation failures`);
+        }
+        if (precisionLosses > 0) {
+          reportSections.push(`- ${precisionLosses} entries have precision loss issues`);
+        }
+        if (outliers > 0) {
+          reportSections.push(`- ${outliers} entries are statistical outliers`);
+        }
+        reportSections.push('Check logs for detailed information.');
+      } else {
+        reportSections.push('');
+        reportSections.push('✅ All entries passed validation with no critical issues detected.');
+      }
+
+      // Single join operation instead of multiple concatenations
+      return reportSections.join('\n');
     }
 }
 
