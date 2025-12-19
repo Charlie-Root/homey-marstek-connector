@@ -1,0 +1,22 @@
+{
+  "id": "measure_calculation_timestamp",
+  "type": "number",
+  "title": {
+    "en": "Last Calculation Timestamp"
+  },
+  "desc": {
+    "en": "Timestamp of the last statistics calculation"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "insights": true,
+  "decimals": 0,
+  "units": {
+    "en": "seconds"
+  },
+  "options": {
+    "uiComponent": "sensor",
+    "decimals": 0
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "id": "export_statistics",
+  "title": {
+    "en": "Export Statistics Data"
+  },
+  "description": {
+    "en": "Export battery statistics data in JSON or CSV format for external analysis"
+  },
+  "args": [
+    {
+      "name": "format",
+      "type": "dropdown",
+      "title": {
+        "en": "Export Format"
+      },
+      "desc": {
+        "en": "Choose the format for exporting statistics data"
+      },
+      "values": [
+        {
+          "id": "json",
+          "title": {
+            "en": "JSON"
+          }
+        },
+        {
+          "id": "csv",
+          "title": {
+            "en": "CSV"
+          }
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "timeRange",
+      "type": "dropdown",
+      "title": {
+        "en": "Time Range"
+      },
+      "desc": {
+        "en": "Select the time range for statistics export"
+      },
+      "values": [
+        {
+          "id": "daily",
+          "title": {
+            "en": "Daily"
+          }
+        },
+        {
+          "id": "monthly",
+          "title": {
+            "en": "Monthly"
+          }
+        },
+        {
+          "id": "yearly",
+          "title": {
+            "en": "Yearly"
+          }
+        }
+      ],
+      "required": true
+    }
+  ],
+  "result": {
+    "type": "string",
+    "title": {
+      "en": "Exported Data"
+    },
+    "desc": {
+      "en": "The exported statistics data in the selected format"
+    }
+  }
+}

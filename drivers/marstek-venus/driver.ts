@@ -372,6 +372,18 @@ export default class MarstekVenusDriver extends Homey.Driver {
                 price: number,
             }) => this.setEnergyPrice(device, price),
       );
+      register(
+        'verify_calculation',
+        async ({
+          device,
+          timePeriod,
+          includeDetails,
+        }: {
+                device: Homey.Device,
+                timePeriod: string,
+                includeDetails: boolean,
+            }) => (device as any).verifyCalculation(timePeriod, includeDetails),
+      );
     }
 
     /**

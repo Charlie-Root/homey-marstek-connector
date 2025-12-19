@@ -1,0 +1,22 @@
+{
+  "id": "measure_current_energy_price",
+  "type": "number",
+  "title": {
+    "en": "Current Energy Price"
+  },
+  "desc": {
+    "en": "Current energy price used for calculations"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "insights": true,
+  "decimals": 4,
+  "units": {
+    "en": "EUR/kWh"
+  },
+  "options": {
+    "uiComponent": "sensor",
+    "decimals": 4
+  }
+}

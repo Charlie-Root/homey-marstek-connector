@@ -4,7 +4,7 @@
  */
 
 export interface StatisticsEntry {
-  timestamp: number; // Unix timestamp in milliseconds
+  timestamp: number; // Unix timestamp in seconds
   type: 'charging' | 'discharging'; // Event type
   energyAmount: number; // Energy transferred in kWh (positive for charge, negative for discharge)
   duration: number; // Duration in minutes
@@ -87,7 +87,7 @@ export function aggregateDailyStats(entries: StatisticsEntry[]): DailyStats[] {
   const dailyMap = new Map<string, DailyStats>();
 
   for (const entry of entries) {
-    const date = new Date(entry.timestamp).toISOString().split('T')[0];
+    const date = new Date(entry.timestamp * 1000).toISOString().split('T')[0];
     if (!dailyMap.has(date)) {
       dailyMap.set(date, {
         date,
@@ -118,14 +118,154 @@ export function aggregateDailyStats(entries: StatisticsEntry[]): DailyStats[] {
 }
 
 /**
+ * Calculates detailed breakdown metrics for daily statistics.
+ * @param entries - Array of statistics entries
+ * @returns Object with detailed breakdown metrics
+ */
+export function calculateDetailedBreakdown(entries: StatisticsEntry[]) {
+  const dailyStats = aggregateDailyStats(entries);
+  const today = new Date().toISOString().split('T')[0];
+  const todayStat = dailyStats.find((ds) => ds.date === today);
+
+  if (!todayStat) {
+    return {
+      chargeEnergy: 0,
+      dischargeEnergy: 0,
+      savings: 0,
+      cost: 0,
+      netProfit: 0,
+    };
+  }
+
+  // Calculate detailed breakdown
+  let chargeEnergy = 0;
+  let dischargeEnergy = 0;
+  let savings = 0;
+  let cost = 0;
+
+  for (const entry of todayStat.events) {
+    if (entry.type === 'charging') {
+      chargeEnergy += Math.abs(entry.energyAmount);
+      if (entry.priceAtTime) {
+        cost += Math.abs(entry.energyAmount) * entry.priceAtTime;
+      }
+    } else if (entry.type === 'discharging') {
+      dischargeEnergy += Math.abs(entry.energyAmount);
+      if (entry.priceAtTime) {
+        savings += Math.abs(entry.energyAmount) * entry.priceAtTime;
+      }
+    }
+  }
+
+  const netProfit = savings - cost;
+
+  return {
+    chargeEnergy,
+    dischargeEnergy,
+    savings,
+    cost,
+    netProfit,
+  };
+}
+
+/**
  * Cleans up old statistics entries beyond retention days.
  * @param entries - Array of statistics entries
  * @param retentionDays - Number of days to retain
  * @returns Filtered array of entries
  */
 export function cleanupOldEntries(entries: StatisticsEntry[], retentionDays: number): StatisticsEntry[] {
-  const cutoff = Date.now() - (retentionDays * 24 * 60 * 60 * 1000);
+  const cutoff = Date.now() / 1000 - (retentionDays * 24 * 60 * 60);
   return entries.filter((entry) => entry.timestamp >= cutoff);
+}
+
+/**
+ * Logs a statistics entry with detailed calculation information for audit and verification.
+ * @param entry - The statistics entry to log
+ * @param settings - Statistics settings for transparency mode
+ * @param logger - Logger function (e.g., this.log from Homey device)
+ * @param calculationDetails - Additional calculation details
+ */
+export function logStatisticsEntry(
+  entry: StatisticsEntry,
+  settings: { debug: boolean; transparency: boolean },
+  logger: (message: string) => void,
+  calculationDetails?: {
+    method: string,
+    inputs: Record<string, any>,
+    intermediateSteps?: any[],
+  },
+): void {
+  if (!settings.debug && !settings.transparency) return;
+
+  const timestamp = new Date(entry.timestamp * 1000).toISOString();
+  const baseLog = `[${timestamp}] ${entry.type.toUpperCase()} - Energy: ${entry.energyAmount.toFixed(3)} kWh, Duration: ${entry.duration} min`;
+
+  if (entry.priceAtTime) {
+    const profitSavings = calculateProfitSavings(entry);
+    const priceInfo = `, Price: €${entry.priceAtTime.toFixed(4)}/kWh, Profit/Savings: €${profitSavings.toFixed(2)}`;
+    logger(`${baseLog}${priceInfo}`);
+  } else {
+    logger(`${baseLog}, Price: N/A`);
+  }
+
+  if (settings.transparency && calculationDetails) {
+    logger(`  Calculation Method: ${calculationDetails.method}`);
+    logger(`  Inputs: ${JSON.stringify(calculationDetails.inputs, null, 2)}`);
+    if (calculationDetails.intermediateSteps) {
+      logger(`  Intermediate Steps: ${JSON.stringify(calculationDetails.intermediateSteps, null, 2)}`);
+    }
+  }
+
+  if (entry.startEnergyMeter !== undefined && entry.endEnergyMeter !== undefined) {
+    logger(`  Meter Reading: ${entry.startEnergyMeter} -> ${entry.endEnergyMeter}`);
+  }
+}
+
+/**
+ * Retrieves the calculation audit trail for a given time period.
+ * @param entries - Array of statistics entries
+ * @param startTime - Start timestamp (inclusive)
+ * @param endTime - End timestamp (exclusive)
+ * @returns Array of audit trail entries with calculation details
+ */
+export function getCalculationAuditTrail(
+  entries: StatisticsEntry[],
+  startTime: number,
+  endTime: number,
+): Array<{
+  entry: StatisticsEntry,
+  verification: {
+    energyValid: boolean,
+    profitValid: boolean,
+    timestampValid: boolean,
+    details: string,
+  },
+}> {
+  const filteredEntries = entries.filter((e) => e.timestamp >= startTime && e.timestamp < endTime);
+
+  return filteredEntries.map((entry) => {
+    const energyValid = !isNaN(entry.energyAmount) && entry.energyAmount !== 0;
+    const profitSavings = calculateProfitSavings(entry);
+    const profitValid = !isNaN(profitSavings);
+    const timestampValid = entry.timestamp > 0 && entry.timestamp <= Date.now() / 1000;
+
+    let details = `Energy: ${entry.energyAmount.toFixed(3)} kWh (${energyValid ? 'valid' : 'invalid'})`;
+    if (entry.priceAtTime) {
+      details += `, Profit/Savings: €${profitSavings.toFixed(2)} (${profitValid ? 'valid' : 'invalid'})`;
+    }
+    details += `, Timestamp: ${new Date(entry.timestamp).toISOString()} (${timestampValid ? 'valid' : 'invalid'})`;
+
+    return {
+      entry,
+      verification: {
+        energyValid,
+        profitValid,
+        timestampValid,
+        details,
+      },
+    };
+  });
 }
 
 /**

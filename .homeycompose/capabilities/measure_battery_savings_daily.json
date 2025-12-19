@@ -1,0 +1,37 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Daily Savings",
+    "nl": "Dagelijkse Besparingen",
+    "da": "Daglig Besparelser",
+    "de": "Tägliche Einsparungen",
+    "es": "Ahorros Diarios",
+    "fr": "Économies Quotidiennes",
+    "it": "Risparmi Giornalieri",
+    "no": "Daglige Besparelser",
+    "sv": "Dagliga Besparingar",
+    "pl": "Dzienne Oszczędności",
+    "ru": "Ежедневная Экономия",
+    "ko": "일일 절약"
+  },
+  "units": {
+    "en": "EUR",
+    "nl": "EUR",
+    "da": "EUR",
+    "de": "EUR",
+    "es": "EUR",
+    "fr": "EUR",
+    "it": "EUR",
+    "no": "EUR",
+    "sv": "EUR",
+    "pl": "EUR",
+    "ru": "EUR",
+    "ko": "EUR"
+  },
+  "decimals": 2,
+  "min": 0,
+  "chartType": "line",
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}

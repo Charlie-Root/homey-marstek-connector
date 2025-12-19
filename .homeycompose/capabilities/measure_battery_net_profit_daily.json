@@ -1,0 +1,37 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Daily Net Profit",
+    "nl": "Dagelijkse Netto Winst",
+    "da": "Daglig Netto Fortjeneste",
+    "de": "Täglicher Nettogewinn",
+    "es": "Beneficio Neto Diario",
+    "fr": "Profit Net Quotidien",
+    "it": "Profitto Netto Giornaliero",
+    "no": "Daglig Netto Fortjeneste",
+    "sv": "Daglig Netto Vinst",
+    "pl": "Dzienny Zysk Netto",
+    "ru": "Ежедневная Чистая Прибыль",
+    "ko": "일일 순이익"
+  },
+  "units": {
+    "en": "EUR",
+    "nl": "EUR",
+    "da": "EUR",
+    "de": "EUR",
+    "es": "EUR",
+    "fr": "EUR",
+    "it": "EUR",
+    "no": "EUR",
+    "sv": "EUR",
+    "pl": "EUR",
+    "ru": "EUR",
+    "ko": "EUR"
+  },
+  "decimals": 2,
+  "min": 0,
+  "chartType": "line",
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}

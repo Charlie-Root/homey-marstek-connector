@@ -1,0 +1,17 @@
+{
+  "id": "measure_calculation_method",
+  "type": "string",
+  "title": {
+    "en": "Calculation Method"
+  },
+  "desc": {
+    "en": "Current calculation method being used"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "insights": false,
+  "options": {
+    "uiComponent": "sensor"
+  }
+}

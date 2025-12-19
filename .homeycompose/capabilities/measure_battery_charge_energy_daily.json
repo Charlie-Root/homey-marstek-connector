@@ -1,0 +1,37 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Daily Charge Energy",
+    "nl": "Dagelijkse Laadenergie",
+    "da": "Daglig Opladeenergi",
+    "de": "Tägliche Ladeenergie",
+    "es": "Energía de Carga Diaria",
+    "fr": "Énergie de Charge Quotidienne",
+    "it": "Energia di Carica Giornaliera",
+    "no": "Daglig Ladeenergi",
+    "sv": "Daglig Laddningsenergi",
+    "pl": "Dzienna Energia Ładowania",
+    "ru": "Ежедневная Энергия Зарядки",
+    "ko": "일일 충전 에너지"
+  },
+  "units": {
+    "en": "kWh",
+    "nl": "kWh",
+    "da": "kWh",
+    "de": "kWh",
+    "es": "kWh",
+    "fr": "kWh",
+    "it": "kWh",
+    "no": "kWh",
+    "sv": "kWh",
+    "pl": "kWh",
+    "ru": "кВт·ч",
+    "ko": "kWh"
+  },
+  "decimals": 2,
+  "min": 0,
+  "chartType": "line",
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}

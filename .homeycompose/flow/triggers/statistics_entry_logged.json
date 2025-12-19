@@ -1,0 +1,106 @@
+{
+  "id": "statistics_entry_logged",
+  "title": {
+    "en": "Statistics Entry Logged"
+  },
+  "description": {
+    "en": "Triggered when a new statistics entry is logged"
+  },
+  "args": [
+    {
+      "name": "entryType",
+      "type": "dropdown",
+      "title": {
+        "en": "Entry Type"
+      },
+      "desc": {
+        "en": "Type of statistics entry to trigger on"
+      },
+      "values": [
+        {
+          "id": "charge",
+          "title": {
+            "en": "Charge Energy"
+          }
+        },
+        {
+          "id": "discharge",
+          "title": {
+            "en": "Discharge Energy"
+          }
+        },
+        {
+          "id": "savings",
+          "title": {
+            "en": "Savings"
+          }
+        },
+        {
+          "id": "cost",
+          "title": {
+            "en": "Cost"
+          }
+        },
+        {
+          "id": "net_profit",
+          "title": {
+            "en": "Net Profit"
+          }
+        }
+      ],
+      "required": true
+    }
+  ],
+  "tokens": [
+    {
+      "name": "timestamp",
+      "type": "number",
+      "title": {
+        "en": "Timestamp"
+      },
+      "desc": {
+        "en": "Timestamp of when the statistics entry was logged"
+      }
+    },
+    {
+      "name": "value",
+      "type": "number",
+      "title": {
+        "en": "Value"
+      },
+      "desc": {
+        "en": "Value of the statistics entry"
+      }
+    },
+    {
+      "name": "calculation_details",
+      "type": "string",
+      "title": {
+        "en": "Calculation Details"
+      },
+      "desc": {
+        "en": "Detailed calculation information for this entry"
+      }
+    },
+    {
+      "name": "energy_price",
+      "type": "number",
+      "title": {
+        "en": "Energy Price"
+      },
+      "desc": {
+        "en": "Energy price used for this calculation"
+      }
+    },
+    {
+      "name": "calculation_method",
+      "type": "string",
+      "title": {
+        "en": "Calculation Method"
+      },
+      "desc": {
+        "en": "Method used for this calculation"
+      }
+    }
+  ]
+}

@@ -7,7 +7,8 @@ import { config } from '../../lib/config';
 
 // Import statistics utilities
 import {
-  StatisticsEntry, calculateEnergyAmount, cleanupOldEntries, getDefaultStatisticsSettings, aggregateDailyStats,
+  StatisticsEntry, calculateEnergyAmount, cleanupOldEntries, aggregateDailyStats, calculateDetailedBreakdown,
+  logStatisticsEntry, getCalculationAuditTrail,
 } from '../../lib/statistics-utils';
 
 /**
@@ -127,6 +128,14 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
       await this.setCapabilityValue('last_message_received', null);
       await this.setCapabilityValue('measure_battery_profit_daily', null);
       await this.setCapabilityValue('measure_battery_profit_hourly', null);
+      await this.setCapabilityValue('measure_battery_charge_energy_daily', null);
+      await this.setCapabilityValue('measure_battery_discharge_energy_daily', null);
+      await this.setCapabilityValue('measure_battery_savings_daily', null);
+      await this.setCapabilityValue('measure_battery_cost_daily', null);
+      await this.setCapabilityValue('measure_battery_net_profit_daily', null);
+      await this.setCapabilityValue('measure_calculation_timestamp', null);
+      await this.setCapabilityValue('measure_current_energy_price', null);
+      await this.setCapabilityValue('measure_calculation_method', null);
     }
 
     /**
@@ -226,13 +235,29 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
             const duration = (now.getTime() - this.eventStartTime.getTime()) / 60000;
             const price = this.getCurrentEnergyPrice();
             const entry: StatisticsEntry = {
-              timestamp: this.eventStartTime.getTime(),
+              timestamp: Math.floor(this.eventStartTime.getTime() / 1000),
               type: this.previousChargingState as 'charging' | 'discharging',
               energyAmount: this.cumulativeEnergy,
               duration,
               priceAtTime: price,
             };
-            this.log('Logging statistics entry for', this.previousChargingState, 'with price:', price, '€/kWh');
+            const power = this.previousChargingState === 'charging' ? status.charge : status.discharge;
+            const calculationDetails = {
+              method: 'power_based',
+              inputs: {
+                power,
+                timeDiffHours,
+                cumulativeEnergy: this.cumulativeEnergy,
+              },
+              intermediateSteps: [
+                `Power: ${power} W, Time: ${timeDiffHours} hours`,
+                `Energy: ${calculateEnergyAmount(this.previousChargingState as 'charging' | 'discharging', undefined, undefined, undefined, power, timeDiffHours)} kWh`,
+              ],
+            };
+            logStatisticsEntry(entry, {
+              debug: this.getSetting('statistics_debug'),
+              transparency: this.getSetting('statistics_transparency'),
+            }, this.log.bind(this), calculationDetails);
             await this.logStatisticsEntry(entry);
           }
           // Start new event
@@ -257,7 +282,6 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
           );
         }
       }
-
       // Update profit capabilities if statistics are enabled
       if (this.getSetting('enable_statistics')) {
         await this.updateProfitCapabilities();
@@ -282,11 +306,39 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
       let stats: StatisticsEntry[] = this.getStoreValue('statistics') || [];
       stats.push(entry);
       // Cleanup old entries
-      const settings = getDefaultStatisticsSettings();
-      settings.retentionDays = 30; // Default, could be made configurable
-      stats = cleanupOldEntries(stats, settings.retentionDays);
+      const retentionDays = this.getSetting('statistics_retention_days') || 30;
+      stats = cleanupOldEntries(stats, retentionDays);
       await this.setStoreValue('statistics', stats);
       if (this.debug) this.log('Logged statistics entry:', entry);
+
+      // Trigger flow card for statistics entry logged
+      const calculationDetails = {
+        energyAmount: entry.energyAmount,
+        duration: entry.duration,
+        priceAtTime: entry.priceAtTime,
+        calculationMethod: 'power_based',
+      };
+
+      await this.homey.flow.getTriggerCard('statistics_entry_logged').trigger(this, {
+        entryType: entry.type === 'charging' ? 'charge' : 'discharge',
+        timestamp: entry.timestamp,
+        value: Math.abs(entry.energyAmount),
+        calculation_details: JSON.stringify(calculationDetails),
+        energy_price: entry.priceAtTime,
+        calculation_method: 'power_based',
+      });
+
+      // Trigger flow card for calculation completed
+      await this.homey.flow.getTriggerCard('calculation_completed').trigger(this, {
+        calculationType: entry.type === 'charging' ? 'charge' : 'discharge',
+        timestamp: entry.timestamp,
+        result: Math.abs(entry.energyAmount),
+        input_data: JSON.stringify({
+          duration: entry.duration,
+        }),
+        energy_price: entry.priceAtTime,
+        calculation_method: 'power_based',
+      });
     }
 
     /**
@@ -297,6 +349,11 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
       if (stats.length === 0) {
         await this.setCapabilityValue('measure_battery_profit_daily', 0);
         await this.setCapabilityValue('measure_battery_profit_hourly', 0);
+        await this.setCapabilityValue('measure_battery_charge_energy_daily', 0);
+        await this.setCapabilityValue('measure_battery_discharge_energy_daily', 0);
+        await this.setCapabilityValue('measure_battery_savings_daily', 0);
+        await this.setCapabilityValue('measure_battery_cost_daily', 0);
+        await this.setCapabilityValue('measure_battery_net_profit_daily', 0);
         return;
       }
 
@@ -315,6 +372,30 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
       const hourlyProfit = (hoursElapsed > 0) ? dailyProfit / hoursElapsed : 0;
       this.log('Calculated hourly profit:', hourlyProfit);
       await this.setCapabilityValue('measure_battery_profit_hourly', hourlyProfit);
+
+      // Update detailed breakdown capabilities
+      const breakdown = calculateDetailedBreakdown(stats);
+
+      if (this.getSetting('statistics_debug') || this.getSetting('statistics_transparency') || this.getSetting('show_calculation_details')) {
+        this.log('Detailed breakdown calculation:');
+        this.log('  Charge Energy:', breakdown.chargeEnergy, 'kWh');
+        this.log('  Discharge Energy:', breakdown.dischargeEnergy, 'kWh');
+        this.log('  Savings:', breakdown.savings, '€');
+        this.log('  Cost:', breakdown.cost, '€');
+        this.log('  Net Profit:', breakdown.netProfit, '€');
+      }
+
+      await this.setCapabilityValue('measure_battery_charge_energy_daily', breakdown.chargeEnergy);
+      await this.setCapabilityValue('measure_battery_discharge_energy_daily', breakdown.dischargeEnergy);
+      await this.setCapabilityValue('measure_battery_savings_daily', breakdown.savings);
+      await this.setCapabilityValue('measure_battery_cost_daily', breakdown.cost);
+      await this.setCapabilityValue('measure_battery_net_profit_daily', breakdown.netProfit);
+
+      // Update real-time calculation display capabilities
+      const currentPrice = this.getCurrentEnergyPrice();
+      await this.setCapabilityValue('measure_current_energy_price', currentPrice);
+      await this.setCapabilityValue('measure_calculation_method', 'power_based');
+      await this.setCapabilityValue('measure_calculation_timestamp', Math.floor(Date.now() / 1000));
     }
 
     /** Retrieve our current debug setting, based on actual setting and version */
@@ -322,6 +403,155 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
       return (this.getSetting('debug') === true) || config.isTestVersion;
     }
 
+    /**
+     * Export statistics data in JSON or CSV format
+     * @param {string} format Export format (json or csv)
+     * @param {string} timeRange Time range (daily, monthly, yearly)
+     * @returns {Promise<string>} Exported data as string
+     */
+    async exportStatistics(format: string, timeRange: string): Promise<string> {
+      const stats: StatisticsEntry[] = this.getStoreValue('statistics') || [];
+      if (stats.length === 0) {
+        return format === 'json' ? '{"error": "No statistics data available"}' : 'Error: No statistics data available';
+      }
+
+      let exportData: any[] = [];
+
+      if (timeRange === 'daily') {
+        const dailyStats = aggregateDailyStats(stats);
+        exportData = dailyStats.map((ds) => ({
+          date: ds.date,
+          chargeEnergy: ds.totalChargeEnergy,
+          dischargeEnergy: ds.totalDischargeEnergy,
+          totalProfit: ds.totalProfit,
+        }));
+      } else if (timeRange === 'monthly') {
+        // Group by month
+        const monthlyStats = new Map<string, { chargeEnergy: number; dischargeEnergy: number; totalProfit: number }>();
+        stats.forEach((entry) => {
+          const date = new Date(entry.timestamp);
+          const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+          if (!monthlyStats.has(monthKey)) {
+            monthlyStats.set(monthKey, { chargeEnergy: 0, dischargeEnergy: 0, totalProfit: 0 });
+          }
+          const current = monthlyStats.get(monthKey)!;
+          if (entry.type === 'charging') {
+            current.chargeEnergy += entry.energyAmount;
+            current.totalProfit -= entry.energyAmount * (entry.priceAtTime || 0);
+          } else {
+            current.dischargeEnergy += Math.abs(entry.energyAmount);
+            current.totalProfit += Math.abs(entry.energyAmount) * (entry.priceAtTime || 0);
+          }
+        });
+        exportData = Array.from(monthlyStats.entries()).map(([month, data]) => ({
+          month,
+          chargeEnergy: data.chargeEnergy,
+          dischargeEnergy: data.dischargeEnergy,
+          totalProfit: data.totalProfit,
+        }));
+      } else if (timeRange === 'yearly') {
+        // Group by year
+        const yearlyStats = new Map<string, { chargeEnergy: number; dischargeEnergy: number; totalProfit: number }>();
+        stats.forEach((entry) => {
+          const date = new Date(entry.timestamp);
+          const yearKey = date.getFullYear().toString();
+          if (!yearlyStats.has(yearKey)) {
+            yearlyStats.set(yearKey, { chargeEnergy: 0, dischargeEnergy: 0, totalProfit: 0 });
+          }
+          const current = yearlyStats.get(yearKey)!;
+          if (entry.type === 'charging') {
+            current.chargeEnergy += entry.energyAmount;
+            current.totalProfit -= entry.energyAmount * (entry.priceAtTime || 0);
+          } else {
+            current.dischargeEnergy += Math.abs(entry.energyAmount);
+            current.totalProfit += Math.abs(entry.energyAmount) * (entry.priceAtTime || 0);
+          }
+        });
+        exportData = Array.from(yearlyStats.entries()).map(([year, data]) => ({
+          year,
+          chargeEnergy: data.chargeEnergy,
+          dischargeEnergy: data.dischargeEnergy,
+          totalProfit: data.totalProfit,
+        }));
+      }
+
+      if (format === 'json') {
+        return JSON.stringify(exportData, null, 2);
+      }
+      // CSV format
+      const headers = Object.keys(exportData[0] || {});
+      const csvRows = [headers.join(',')];
+      exportData.forEach((row) => {
+        const values = headers.map((header) => row[header]);
+        csvRows.push(values.join(','));
+      });
+      return csvRows.join('\n');
+
+    }
+
+    /**
+     * Verify statistics calculations for a given time period
+     * @param {string} timePeriod Time period to verify (last_hour, last_day, last_week, last_month)
+     * @param {boolean} includeDetails Whether to include detailed breakdown
+     * @returns {Promise<string>} Verification report
+     */
+    async verifyCalculation(timePeriod: string, includeDetails: boolean): Promise<string> {
+      const stats: StatisticsEntry[] = this.getStoreValue('statistics') || [];
+      if (stats.length === 0) {
+        return 'No statistics data available for verification';
+      }
+
+      // Calculate time range
+      const currentTime = Date.now();
+      let startTime: number;
+      switch (timePeriod) {
+        case 'last_hour':
+          startTime = currentTime - (60 * 60 * 1000);
+          break;
+        case 'last_day':
+          startTime = currentTime - (24 * 60 * 60 * 1000);
+          break;
+        case 'last_week':
+          startTime = currentTime - (7 * 24 * 60 * 60 * 1000);
+          break;
+        case 'last_month':
+          startTime = currentTime - (30 * 24 * 60 * 60 * 1000);
+          break;
+        default:
+          return 'Invalid time period';
+      }
+
+      const auditTrail = getCalculationAuditTrail(stats, startTime / 1000, currentTime / 1000);
+
+      let report = `Verification Report for ${timePeriod.replace('_', ' ').toUpperCase()}\n`;
+      report += `Total entries: ${auditTrail.length}\n\n`;
+
+      let validEntries = 0;
+      let invalidEntries = 0;
+
+      for (const item of auditTrail) {
+        if (item.verification.energyValid && item.verification.profitValid && item.verification.timestampValid) {
+          validEntries++;
+        } else {
+          invalidEntries++;
+        }
+
+        if (includeDetails) {
+          report += `Entry: ${item.verification.details}\n`;
+        }
+      }
+
+      report += `Valid entries: ${validEntries}\n`;
+      report += `Invalid entries: ${invalidEntries}\n`;
+
+      if (invalidEntries > 0) {
+        report += '\nWarning: Some entries have validation issues. Check logs for details.\n';
+      } else {
+        report += '\nAll entries passed validation.\n';
+      }
+
+      return report;
+    }
 }
 
 // Also use module.exports for Homey

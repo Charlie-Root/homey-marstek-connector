@@ -145,6 +145,7 @@
   },
   {
     "id": "enable_statistics",
+    "highlight": true,
     "type": "checkbox",
     "label": {
       "en": "Enable Statistics Tracking",
@@ -175,6 +176,209 @@
       "ko": "충전/방전 주기 및 이익/절감 계산에 대한 통계 추적을 활성화합니다."
     },
     "value": false
+  },
+  {
+    "id": "statistics_debug",
+    "type": "checkbox",
+    "label": {
+      "en": "Enable Statistics Debug Logging",
+      "nl": "Statistieken Debug Logging Inschakelen",
+      "da": "Aktiver Statistik Debug Logging",
+      "de": "Statistik-Debug-Protokollierung Aktivieren",
+      "es": "Habilitar Registro de Depuración de Estadísticas",
+      "fr": "Activer la Journalisation de Débogage des Statistiques",
+      "it": "Abilita Registrazione Debug Statistiche",
+      "no": "Aktiver Statistikk Debug Logging",
+      "sv": "Aktivera Statistik Debugloggning",
+      "pl": "Włącz Debugowanie Statystyk",
+      "ru": "Включить Отладочное Логирование Статистики",
+      "ko": "통계 디버그 로깅 활성화"
+    },
+    "hint": {
+      "en": "Enable detailed logging of statistics calculations for verification and troubleshooting.",
+      "nl": "Schakel gedetailleerd loggen van statistiekenberekeningen in voor verificatie en probleemoplossing.",
+      "da": "Aktiver detaljeret logning af statistikberegninger til verifikation og fejlfinding.",
+      "de": "Aktivieren Sie die detaillierte Protokollierung von Statistikberechnungen zur Überprüfung und Fehlerbehebung.",
+      "es": "Habilite el registro detallado de cálculos estadísticos para verificación y solución de problemas.",
+      "fr": "Activez la journalisation détaillée des calculs statistiques pour la vérification et le dépannage.",
+      "it": "Abilita la registrazione dettagliata dei calcoli statistici per verifica e risoluzione dei problemi.",
+      "no": "Aktiver detaljert logging av statistikkberegninger for verifikasjon og feilsøking.",
+      "sv": "Aktivera detaljerad loggning av statistikberäkningar för verifiering och felsökning.",
+      "pl": "Włącz szczegółowe logowanie obliczeń statystycznych do weryfikacji i rozwiązywania problemów.",
+      "ru": "Включите детальное логирование статистических расчетов для проверки и устранения неполадок.",
+      "ko": "검증 및 문제 해결을 위해 통계 계산의 상세 로깅을 활성화합니다."
+    },
+    "value": false
+  },
+  {
+    "id": "statistics_transparency",
+    "type": "checkbox",
+    "label": {
+      "en": "Enable Statistics Transparency Mode",
+      "nl": "Statistieken Transparantie Modus Inschakelen",
+      "da": "Aktiver Statistik Transparent Tilstand",
+      "de": "Statistik-Transparenzmodus Aktivieren",
+      "es": "Habilitar Modo de Transparencia de Estadísticas",
+      "fr": "Activer le Mode de Transparence des Statistiques",
+      "it": "Abilita Modalità Trasparenza Statistiche",
+      "no": "Aktiver Statistikk Transparensmodus",
+      "sv": "Aktivera Statistik Transparentläge",
+      "pl": "Włącz Tryb Przejrzystości Statystyk",
+      "ru": "Включить Режим Прозрачности Статистики",
+      "ko": "통계 투명성 모드 활성화"
+    },
+    "hint": {
+      "en": "Enable detailed breakdown of statistics in logs to verify calculations are correct.",
+      "nl": "Schakel gedetailleerde statistiekenonderverdeling in logs in om berekeningen te verifiëren.",
+      "da": "Aktiver detaljeret opdeling af statistik i logs for at verificere beregninger.",
+      "de": "Aktivieren Sie die detaillierte Aufschlüsselung von Statistiken in Protokollen, um Berechnungen zu überprüfen.",
+      "es": "Habilite el desglose detallado de estadísticas en registros para verificar cálculos.",
+      "fr": "Activez le détails détaillé des statistiques dans les journaux pour vérifier les calculs.",
+      "it": "Abilita la suddivisione dettagliata delle statistiche nei log per verificare i calcoli.",
+      "no": "Aktiver detaljert oppdeling av statistikk i logger for å verifisere beregninger.",
+      "sv": "Aktivera detaljerad uppdelning av statistik i loggar för att verifiera beräkningar.",
+      "pl": "Włącz szczegółowy podział statystyk w logach, aby zweryfikować obliczenia.",
+      "ru": "Включите детальную разбивку статистики в журналах для проверки расчетов.",
+      "ko": "계산을 검증하기 위해 로그에서 통계의 상세 분석을 활성화합니다."
+    },
+    "value": false
+  },
+  {
+    "id": "show_calculation_details",
+    "type": "checkbox",
+    "label": {
+      "en": "Show Calculation Details",
+      "nl": "Berekeningsdetails Weergeven",
+      "da": "Vis Beregning Detaljer",
+      "de": "Berechnungsdetails Anzeigen",
+      "es": "Mostrar Detalles de Cálculo",
+      "fr": "Afficher les Détails de Calcul",
+      "it": "Mostra Dettagli Calcolo",
+      "no": "Vis Beregning Detaljer",
+      "sv": "Visa Beräkningsdetaljer",
+      "pl": "Pokaż Szczegóły Obliczeń",
+      "ru": "Показать Детали Расчета",
+      "ko": "계산 세부정보 표시"
+    },
+    "hint": {
+      "en": "Display detailed breakdown of statistics calculations in the app interface.",
+      "nl": "Gedetailleerde uitsplitsing van statistiekenberekeningen weergeven in de app-interface.",
+      "da": "Vis detaljeret opdeling af statistikberegninger i app-interfacet.",
+      "de": "Detaillierte Aufschlüsselung der Statistikberechnungen in der App-Oberfläche anzeigen.",
+      "es": "Mostrar desglose detallado de cálculos estadísticos en la interfaz de la aplicación.",
+      "fr": "Afficher le détail détaillé des calculs statistiques dans l'interface de l'application.",
+      "it": "Mostra la suddivisione dettagliata dei calcoli statistici nell'interfaccia dell'app.",
+      "no": "Vis detaljert oppdeling av statistikkberegninger i app-grensesnittet.",
+      "sv": "Visa detaljerad uppdelning av statistikberäkningar i appgränssnittet.",
+      "pl": "Wyświetl szczegółowy podział obliczeń statystycznych w interfejsie aplikacji.",
+      "ru": "Показать детальную разбивку статистических расчетов в интерфейсе приложения.",
+      "ko": "앱 인터페이스에서 통계 계산의 상세 분석을 표시합니다."
+    },
+    "value": false
+  },
+  {
+    "id": "statistics_retention_days",
+    "type": "number",
+    "label": {
+      "en": "Statistics Retention Days",
+      "nl": "Statistieken Bewaartermijn Dagen",
+      "da": "Statistik Opbevaringsdage",
+      "de": "Statistik-Aufbewahrungstage",
+      "es": "Días de Retención de Estadísticas",
+      "fr": "Jours de Rétention des Statistiques",
+      "it": "Giorni di Conservazione Statistiche",
+      "no": "Statistikk Oppbevaringsdager",
+      "sv": "Statistik Lagring Dagar",
+      "pl": "Dni Przechowywania Statystyk",
+      "ru": "Дни Хранения Статистики",
+      "ko": "통계 보존 일수"
+    },
+    "hint": {
+      "en": "Number of days to retain statistics data before automatic cleanup (default: 30).",
+      "nl": "Aantal dagen om statistiekgegevens te bewaren voordat ze automatisch worden opgeschoond (standaard: 30).",
+      "da": "Antal dage at opbevare statistikdata før automatisk oprydning (standard: 30).",
+      "de": "Anzahl der Tage, die Statistikdaten vor automatischer Bereinigung aufbewahrt werden sollen (Standard: 30).",
+      "es": "Número de días para retener datos estadísticos antes de la limpieza automática (predeterminado: 30).",
+      "fr": "Nombre de jours pour conserver les données statistiques avant nettoyage automatique (par défaut : 30).",
+      "it": "Numero di giorni per conservare i dati statistici prima della pulizia automatica (predefinito: 30).",
+      "no": "Antall dager å beholde statistikkdata før automatisk opprydding (standard: 30).",
+      "sv": "Antal dagar att behålla statistikdata innan automatisk rensning (standard: 30).",
+      "pl": "Liczba dni przechowywania danych statystycznych przed automatycznym czyszczeniem (domyślnie: 30).",
+      "ru": "Количество дней для хранения статистических данных перед автоматической очисткой (по умолчанию: 30).",
+      "ko": "자동 정리 전에 통계 데이터를 보존할 일수 (기본값: 30)."
+    },
+    "value": 30,
+    "min": 1,
+    "max": 365
+  },
+  {
+    "id": "export_format",
+    "type": "dropdown",
+    "label": {
+      "en": "Default Export Format",
+      "nl": "Standaard Exportformaat",
+      "da": "Standard Eksportformat",
+      "de": "Standard-Exportformat",
+      "es": "Formato de Exportación Predeterminado",
+      "fr": "Format d'Exportation par Défaut",
+      "it": "Formato di Esportazione Predefinito",
+      "no": "Standard Eksportformat",
+      "sv": "Standard Exportformat",
+      "pl": "Domyślny Format Eksportu",
+      "ru": "Формат Экспорта по Умолчанию",
+      "ko": "기본 내보내기 형식"
+    },
+    "hint": {
+      "en": "Default format for exporting statistics data.",
+      "nl": "Standaardformaat voor het exporteren van statistiekgegevens.",
+      "da": "Standardformat for eksport af statistikdata.",
+      "de": "Standardformat für den Export von Statistikdaten.",
+      "es": "Formato predeterminado para exportar datos estadísticos.",
+      "fr": "Format par défaut pour l'exportation des données statistiques.",
+      "it": "Formato predefinito per l'esportazione dei dati statistici.",
+      "no": "Standardformat for eksport av statistikkdata.",
+      "sv": "Standardformat för export av statistikdata.",
+      "pl": "Domyślny format eksportu danych statystycznych.",
+      "ru": "Формат по умолчанию для экспорта статистических данных.",
+      "ko": "통계 데이터 내보내기의 기본 형식입니다."
+    },
+    "value": "json",
+    "values": [
+      {
+        "id": "json",
+        "label": {
+          "en": "JSON",
+          "nl": "JSON",
+          "da": "JSON",
+          "de": "JSON",
+          "es": "JSON",
+          "fr": "JSON",
+          "it": "JSON",
+          "no": "JSON",
+          "sv": "JSON",
+          "pl": "JSON",
+          "ru": "JSON",
+          "ko": "JSON"
+        }
+      },
+      {
+        "id": "csv",
+        "label": {
+          "en": "CSV",
+          "nl": "CSV",
+          "da": "CSV",
+          "de": "CSV",
+          "es": "CSV",
+          "fr": "CSV",
+          "it": "CSV",
+          "no": "CSV",
+          "sv": "CSV",
+          "pl": "CSV",
+          "ru": "CSV",
+          "ko": "CSV"
+        }
+      }
+    ]
   },
   {
     "id": "price_per_kwh",
