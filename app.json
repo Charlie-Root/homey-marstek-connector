@@ -236,6 +236,63 @@
     ],
     "actions": [
       {
+        "id": "cloud_set_energy_price",
+        "title": {
+          "en": "Set energy price per kWh",
+          "nl": "Stel energieprijs per kWh in",
+          "da": "Indstil energipris pr. kWh",
+          "de": "Energiepreis pro kWh einstellen",
+          "es": "Establecer precio de energía por kWh",
+          "fr": "Définir le prix de l'énergie par kWh",
+          "it": "Imposta prezzo energia per kWh",
+          "no": "Sett energipris per kWh",
+          "sv": "Ställ in energipris per kWh",
+          "pl": "Ustaw cenę energii na kWh",
+          "ru": "Установить цену энергии за кВт·ч",
+          "ko": "kWh당 에너지 가격 설정"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus-cloud"
+          },
+          {
+            "name": "price",
+            "type": "number",
+            "title": {
+              "en": "Price per kWh (€)",
+              "nl": "Prijs per kWh (€)",
+              "da": "Pris pr. kWh (€)",
+              "de": "Preis pro kWh (€)",
+              "es": "Precio por kWh (€)",
+              "fr": "Prix par kWh (€)",
+              "it": "Prezzo per kWh (€)",
+              "no": "Pris per kWh (€)",
+              "sv": "Pris per kWh (€)",
+              "pl": "Cena za kWh (€)",
+              "ru": "Цена за кВт·ч (€)",
+              "ko": "kWh당 가격 (€)"
+            },
+            "min": 0,
+            "units": {
+              "en": "€/kWh",
+              "nl": "€/kWh",
+              "da": "€/kWh",
+              "de": "€/kWh",
+              "es": "€/kWh",
+              "fr": "€/kWh",
+              "it": "€/kWh",
+              "no": "€/kWh",
+              "sv": "€/kWh",
+              "pl": "€/kWh",
+              "ru": "€/кВт·ч",
+              "ko": "€/kWh"
+            }
+          }
+        ]
+      },
+      {
         "id": "marstek_ai_mode",
         "title": {
           "en": "Set battery mode to 'AI'",
@@ -701,6 +758,63 @@
             },
             "min": 0,
             "step": 60
+          }
+        ]
+      },
+      {
+        "id": "venus_set_energy_price",
+        "title": {
+          "en": "Set energy price per kWh",
+          "nl": "Stel energieprijs per kWh in",
+          "da": "Indstil energipris pr. kWh",
+          "de": "Energiepreis pro kWh einstellen",
+          "es": "Establecer precio de energía por kWh",
+          "fr": "Définir le prix de l'énergie par kWh",
+          "it": "Imposta prezzo energia per kWh",
+          "no": "Sett energipris per kWh",
+          "sv": "Ställ in energipris per kWh",
+          "pl": "Ustaw cenę energii na kWh",
+          "ru": "Установить цену энергии за кВт·ч",
+          "ko": "kWh당 에너지 가격 설정"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus"
+          },
+          {
+            "name": "price",
+            "type": "number",
+            "title": {
+              "en": "Price per kWh (€)",
+              "nl": "Prijs per kWh (€)",
+              "da": "Pris pr. kWh (€)",
+              "de": "Preis pro kWh (€)",
+              "es": "Precio por kWh (€)",
+              "fr": "Prix par kWh (€)",
+              "it": "Prezzo per kWh (€)",
+              "no": "Pris per kWh (€)",
+              "sv": "Pris per kWh (€)",
+              "pl": "Cena za kWh (€)",
+              "ru": "Цена за кВт·ч (€)",
+              "ko": "kWh당 가격 (€)"
+            },
+            "min": 0,
+            "units": {
+              "en": "€/kWh",
+              "nl": "€/kWh",
+              "da": "€/kWh",
+              "de": "€/kWh",
+              "es": "€/kWh",
+              "fr": "€/kWh",
+              "it": "€/kWh",
+              "no": "€/kWh",
+              "sv": "€/kWh",
+              "pl": "€/kWh",
+              "ru": "€/кВт·ч",
+              "ko": "€/kWh"
+            }
           }
         ]
       }
@@ -1915,6 +2029,80 @@
       "getable": true,
       "setable": true,
       "uiComponent": "picker"
+    },
+    "daily_charge_cost": {
+      "type": "number",
+      "title": {
+        "en": "Daily Charge Cost",
+        "nl": "Dagelijkse Laadkosten",
+        "da": "Daglig Opladningsomkostning",
+        "de": "Tägliche Ladekosten",
+        "es": "Costo Diario de Carga",
+        "fr": "Coût Journalier de Charge",
+        "it": "Costo Giornaliero di Carica",
+        "no": "Daglig Ladningskostnad",
+        "sv": "Daglig Laddningskostnad",
+        "pl": "Dzienny Koszt Ładowania",
+        "ru": "Ежедневная Стоимость Зарядки",
+        "ko": "일일 충전 비용"
+      },
+      "units": {
+        "en": "EUR",
+        "nl": "EUR",
+        "da": "EUR",
+        "de": "EUR",
+        "es": "EUR",
+        "fr": "EUR",
+        "it": "EUR",
+        "no": "EUR",
+        "sv": "EUR",
+        "pl": "EUR",
+        "ru": "EUR",
+        "ko": "EUR"
+      },
+      "decimals": 2,
+      "min": 0,
+      "chartType": "line",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
+    "daily_discharge_savings": {
+      "type": "number",
+      "title": {
+        "en": "Daily Discharge Savings",
+        "nl": "Dagelijkse Ontlaadbesparingen",
+        "da": "Daglig Afladningsbesparelse",
+        "de": "Tägliche Entladeersparnis",
+        "es": "Ahorro Diario de Descarga",
+        "fr": "Économies Journalières de Décharge",
+        "it": "Risparmio Giornaliero di Scarica",
+        "no": "Daglig Utladningsbesparelse",
+        "sv": "Daglig Utladdningsbesparing",
+        "pl": "Dzienna Oszczędność Rozładowania",
+        "ru": "Ежедневная Экономия от Разрядки",
+        "ko": "일일 방전 절약"
+      },
+      "units": {
+        "en": "EUR",
+        "nl": "EUR",
+        "da": "EUR",
+        "de": "EUR",
+        "es": "EUR",
+        "fr": "EUR",
+        "it": "EUR",
+        "no": "EUR",
+        "sv": "EUR",
+        "pl": "EUR",
+        "ru": "EUR",
+        "ko": "EUR"
+      },
+      "decimals": 2,
+      "min": 0,
+      "chartType": "line",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
     },
     "last_message_received": {
       "type": "number",

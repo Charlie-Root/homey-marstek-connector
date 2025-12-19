@@ -1,0 +1,57 @@
+{
+  "id": "venus_set_energy_price",
+  "title": {
+    "en": "Set energy price per kWh",
+    "nl": "Stel energieprijs per kWh in",
+    "da": "Indstil energipris pr. kWh",
+    "de": "Energiepreis pro kWh einstellen",
+    "es": "Establecer precio de energía por kWh",
+    "fr": "Définir le prix de l'énergie par kWh",
+    "it": "Imposta prezzo energia per kWh",
+    "no": "Sett energipris per kWh",
+    "sv": "Ställ in energipris per kWh",
+    "pl": "Ustaw cenę energii na kWh",
+    "ru": "Установить цену энергии за кВт·ч",
+    "ko": "kWh당 에너지 가격 설정"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus"
+    },
+    {
+      "name": "price",
+      "type": "number",
+      "title": {
+        "en": "Price per kWh (€)",
+        "nl": "Prijs per kWh (€)",
+        "da": "Pris pr. kWh (€)",
+        "de": "Preis pro kWh (€)",
+        "es": "Precio por kWh (€)",
+        "fr": "Prix par kWh (€)",
+        "it": "Prezzo per kWh (€)",
+        "no": "Pris per kWh (€)",
+        "sv": "Pris per kWh (€)",
+        "pl": "Cena za kWh (€)",
+        "ru": "Цена за кВт·ч (€)",
+        "ko": "kWh당 가격 (€)"
+      },
+      "min": 0,
+      "units": {
+        "en": "€/kWh",
+        "nl": "€/kWh",
+        "da": "€/kWh",
+        "de": "€/kWh",
+        "es": "€/kWh",
+        "fr": "€/kWh",
+        "it": "€/kWh",
+        "no": "€/kWh",
+        "sv": "€/kWh",
+        "pl": "€/kWh",
+        "ru": "€/кВт·ч",
+        "ko": "€/kWh"
+      }
+    }
+  ]
+}

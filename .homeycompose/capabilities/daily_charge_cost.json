@@ -1,0 +1,37 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Daily Charge Cost",
+    "nl": "Dagelijkse Laadkosten",
+    "da": "Daglig Opladningsomkostning",
+    "de": "Tägliche Ladekosten",
+    "es": "Costo Diario de Carga",
+    "fr": "Coût Journalier de Charge",
+    "it": "Costo Giornaliero di Carica",
+    "no": "Daglig Ladningskostnad",
+    "sv": "Daglig Laddningskostnad",
+    "pl": "Dzienny Koszt Ładowania",
+    "ru": "Ежедневная Стоимость Зарядки",
+    "ko": "일일 충전 비용"
+  },
+  "units": {
+    "en": "EUR",
+    "nl": "EUR",
+    "da": "EUR",
+    "de": "EUR",
+    "es": "EUR",
+    "fr": "EUR",
+    "it": "EUR",
+    "no": "EUR",
+    "sv": "EUR",
+    "pl": "EUR",
+    "ru": "EUR",
+    "ko": "EUR"
+  },
+  "decimals": 2,
+  "min": 0,
+  "chartType": "line",
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}

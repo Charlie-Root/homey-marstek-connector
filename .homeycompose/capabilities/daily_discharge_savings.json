@@ -1,0 +1,37 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Daily Discharge Savings",
+    "nl": "Dagelijkse Ontlaadbesparingen",
+    "da": "Daglig Afladningsbesparelse",
+    "de": "Tägliche Entladeersparnis",
+    "es": "Ahorro Diario de Descarga",
+    "fr": "Économies Journalières de Décharge",
+    "it": "Risparmio Giornaliero di Scarica",
+    "no": "Daglig Utladningsbesparelse",
+    "sv": "Daglig Utladdningsbesparing",
+    "pl": "Dzienna Oszczędność Rozładowania",
+    "ru": "Ежедневная Экономия от Разрядки",
+    "ko": "일일 방전 절약"
+  },
+  "units": {
+    "en": "EUR",
+    "nl": "EUR",
+    "da": "EUR",
+    "de": "EUR",
+    "es": "EUR",
+    "fr": "EUR",
+    "it": "EUR",
+    "no": "EUR",
+    "sv": "EUR",
+    "pl": "EUR",
+    "ru": "EUR",
+    "ko": "EUR"
+  },
+  "decimals": 2,
+  "min": 0,
+  "chartType": "line",
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}
