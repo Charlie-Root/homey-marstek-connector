@@ -6,5 +6,10 @@
     "pollEnabled": "Enable polling by default",
     "deviceAddress": "Device IP address (optional, for direct discovery if broadcast fails)",
     "devicePort": "Device port (optional, defaults to 30000)"
+  },
+  "energy_price_per_kwh": {
+    "label": "Energy Price per kWh",
+    "hint": "Set the energy price used for profit/savings calculations (default: 0.30 €/kWh)",
+    "units": "€/kWh"
   }
 }

@@ -5,5 +5,10 @@
     "pollInterval": "Standard avlesningsintervall (sekunder)",
     "pollEnabled": "Aktiver avlesning som standard",
     "deviceAddress": "Enhets IP-adresse (valgfritt, for direkte oppdagelse hvis kringkasting feiler)"
+  },
+  "energy_price_per_kwh": {
+    "label": "Energipris per kWh",
+    "hint": "Sett energiprisen som brukes til fortjeneste/besparelsesberegninger (standard: 0,30 €/kWh)",
+    "units": "€/kWh"
   }
 }

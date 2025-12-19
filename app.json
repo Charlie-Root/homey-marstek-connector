@@ -51,6 +51,130 @@
   },
   "source": "https://github.com/eniewold/homey-marstek-connector",
   "homeyCommunityTopicId": 143139,
+  "flowCards": [
+    {
+      "type": "action",
+      "id": "venus_set_energy_price",
+      "title": {
+        "en": "Set energy price per kWh",
+        "nl": "Stel energieprijs per kWh in",
+        "da": "Indstil energipris pr. kWh",
+        "de": "Energiepreis pro kWh einstellen",
+        "es": "Establecer precio de energía por kWh",
+        "fr": "Définir le prix de l'énergie par kWh",
+        "it": "Imposta prezzo energia per kWh",
+        "no": "Sett energipris per kWh",
+        "sv": "Ställ in energipris per kWh",
+        "pl": "Ustaw cenę energii na kWh",
+        "ru": "Установить цену энергии за кВт·ч",
+        "ko": "kWh당 에너지 가격 설정"
+      },
+      "titleFormatted": {
+        "en": "Set energy price per kWh to [[price]] €/kWh",
+        "nl": "Stel energieprijs per kWh in op [[price]] €/kWh",
+        "da": "Indstil energipris pr. kWh til [[price]] €/kWh",
+        "de": "Energiepreis pro kWh einstellen auf [[price]] €/kWh",
+        "es": "Establecer precio de energía por kWh a [[price]] €/kWh",
+        "fr": "Définir le prix de l'énergie par kWh à [[price]] €/kWh",
+        "it": "Imposta prezzo energia per kWh a [[price]] €/kWh",
+        "no": "Sett energipris per kWh til [[price]] €/kWh",
+        "sv": "Ställ in energipris per kWh till [[price]] €/kWh",
+        "pl": "Ustaw cenę energii na kWh na [[price]] €/kWh",
+        "ru": "Установить цену энергии за кВт·ч на [[price]] €/кВт·ч",
+        "ko": "[[price]] €/kWh로 kWh당 에너지 가격 설정"
+      },
+      "args": [
+        {
+          "name": "device",
+          "type": "device",
+          "filter": "driver_id=marstek-venus"
+        },
+        {
+          "name": "price",
+          "type": "number",
+          "title": {
+            "en": "Price (€/kWh)",
+            "nl": "Prijs (€/kWh)",
+            "da": "Pris (€/kWh)",
+            "de": "Preis (€/kWh)",
+            "es": "Precio (€/kWh)",
+            "fr": "Prix (€/kWh)",
+            "it": "Prezzo (€/kWh)",
+            "no": "Pris (€/kWh)",
+            "sv": "Pris (€/kWh)",
+            "pl": "Cena (€/kWh)",
+            "ru": "Цена (€/кВт·ч)",
+            "ko": "가격 (€/kWh)"
+          },
+          "min": 0,
+          "step": 0.01,
+          "units": "€/kWh"
+        }
+      ],
+      "driver": "marstek-venus"
+    },
+    {
+      "type": "action",
+      "id": "cloud_set_energy_price",
+      "title": {
+        "en": "Set energy price per kWh",
+        "nl": "Stel energieprijs per kWh in",
+        "da": "Indstil energipris pr. kWh",
+        "de": "Energiepreis pro kWh einstellen",
+        "es": "Establecer precio de energía por kWh",
+        "fr": "Définir le prix de l'énergie par kWh",
+        "it": "Imposta prezzo energia per kWh",
+        "no": "Sett energipris per kWh",
+        "sv": "Ställ in energipris per kWh",
+        "pl": "Ustaw cenę energii na kWh",
+        "ru": "Установить цену энергии за кВт·ч",
+        "ko": "kWh당 에너지 가격 설정"
+      },
+      "titleFormatted": {
+        "en": "Set energy price per kWh to [[price]] €/kWh",
+        "nl": "Stel energieprijs per kWh in op [[price]] €/kWh",
+        "da": "Indstil energipris pr. kWh til [[price]] €/kWh",
+        "de": "Energiepreis pro kWh einstellen auf [[price]] €/kWh",
+        "es": "Establecer precio de energía por kWh a [[price]] €/kWh",
+        "fr": "Définir le prix de l'énergie par kWh à [[price]] €/kWh",
+        "it": "Imposta prezzo energia per kWh a [[price]] €/kWh",
+        "no": "Sett energipris per kWh til [[price]] €/kWh",
+        "sv": "Ställ in energipris per kWh till [[price]] €/kWh",
+        "pl": "Ustaw cenę energii na kWh na [[price]] €/kWh",
+        "ru": "Установить цену энергии за кВт·ч на [[price]] €/кВт·ч",
+        "ko": "[[price]] €/kWh로 kWh당 에너지 가격 설정"
+      },
+      "args": [
+        {
+          "name": "device",
+          "type": "device",
+          "filter": "driver_id=marstek-venus-cloud"
+        },
+        {
+          "name": "price",
+          "type": "number",
+          "title": {
+            "en": "Price (€/kWh)",
+            "nl": "Prijs (€/kWh)",
+            "da": "Pris (€/kWh)",
+            "de": "Preis (€/kWh)",
+            "es": "Precio (€/kWh)",
+            "fr": "Prix (€/kWh)",
+            "it": "Prezzo (€/kWh)",
+            "no": "Pris (€/kWh)",
+            "sv": "Pris (€/kWh)",
+            "pl": "Cena (€/kWh)",
+            "ru": "Цена (€/кВт·ч)",
+            "ko": "가격 (€/kWh)"
+          },
+          "min": 0,
+          "step": 0.01,
+          "units": "€/kWh"
+        }
+      ],
+      "driver": "marstek-venus-cloud"
+    }
+  ],
   "flow": {
     "triggers": [
       {
@@ -617,7 +741,9 @@
         "measure_power.b",
         "measure_power.c",
         "measure_power.total",
-        "measure_ct_state"
+        "measure_ct_state",
+        "measure_battery_profit_daily",
+        "measure_battery_profit_hourly"
       ],
       "energy": {
         "homeBattery": true,
@@ -679,6 +805,42 @@
           "min": -20,
           "max": 60,
           "chartType": "line"
+        },
+        "measure_battery_profit_daily": {
+          "title": {
+            "en": "Daily Profit",
+            "nl": "Dagelijkse Winst",
+            "da": "Daglig Fortjeneste",
+            "de": "Täglicher Gewinn",
+            "es": "Ganancia Diaria",
+            "fr": "Profit Quotidien",
+            "it": "Profitto Giornaliero",
+            "no": "Daglig Fortjeneste",
+            "sv": "Daglig Vinst",
+            "pl": "Dzienne Zyski",
+            "ru": "Ежедневная Прибыль",
+            "ko": "일일 이익"
+          },
+          "decimals": 2,
+          "units": "€"
+        },
+        "measure_battery_profit_hourly": {
+          "title": {
+            "en": "Hourly Profit",
+            "nl": "Uurlijkse Winst",
+            "da": "Time Fortjeneste",
+            "de": "Stündlicher Gewinn",
+            "es": "Ganancia por Hora",
+            "fr": "Profit Horaire",
+            "it": "Profitto Orario",
+            "no": "Time Fortjeneste",
+            "sv": "Timvis Vinst",
+            "pl": "Godzinne Zyski",
+            "ru": "Почасовая Прибыль",
+            "ko": "시간당 이익"
+          },
+          "decimals": 2,
+          "units": "€/h"
         }
       },
       "capabilityGroups": {
@@ -928,6 +1090,87 @@
             "ko": "이 장치의 수신된 값 문제 해결을 위해 추가 세부 정보를 로깅하려면 이 옵션을 켜세요."
           },
           "value": false
+        },
+        {
+          "id": "enable_statistics",
+          "type": "checkbox",
+          "label": {
+            "en": "Enable Statistics Tracking",
+            "nl": "Statistieken Tracking Inschakelen",
+            "da": "Aktiver Statistik Tracking",
+            "de": "Statistik-Tracking Aktivieren",
+            "es": "Habilitar Seguimiento de Estadísticas",
+            "fr": "Activer le Suivi des Statistiques",
+            "it": "Abilita Tracciamento Statistiche",
+            "no": "Aktiver Statistikk Tracking",
+            "sv": "Aktivera Statistiksspårning",
+            "pl": "Włącz Śledzenie Statystyk",
+            "ru": "Включить Отслеживание Статистики",
+            "ko": "통계 추적 활성화"
+          },
+          "hint": {
+            "en": "Enable tracking of statistics for charge/discharge cycles and profit/savings calculations.",
+            "nl": "Schakel tracking in van statistieken voor laad/ontlaadcycli en winst/besparingsberekeningen.",
+            "da": "Aktiver sporing af statistikker for opladnings/afladningscyklusser og fortjeneste/besparelsesberegninger.",
+            "de": "Aktivieren Sie die Verfolgung von Statistiken für Lade-/Entladezyklen und Gewinn-/Einsparungsberechnungen.",
+            "es": "Habilite el seguimiento de estadísticas para ciclos de carga/descarga y cálculos de ganancias/ahorros.",
+            "fr": "Activez le suivi des statistiques pour les cycles de charge/décharge et les calculs de profits/économies.",
+            "it": "Abilita il tracciamento delle statistiche per i cicli di carica/scarica e i calcoli di profitti/risparmi.",
+            "no": "Aktiver sporing av statistikker for lade/utlade sykluser og fortjeneste/besparelsesberegninger.",
+            "sv": "Aktivera spårning av statistik för laddnings/urladdningscykler och vinst/besparingsberäkningar.",
+            "pl": "Włącz śledzenie statystyk dla cykli ładowania/rozładowania i obliczeń zysków/oszczędności.",
+            "ru": "Включите отслеживание статистики для циклов зарядки/разрядки и расчетов прибыли/экономии.",
+            "ko": "충전/방전 주기 및 이익/절감 계산에 대한 통계 추적을 활성화합니다."
+          },
+          "value": false
+        },
+        {
+          "id": "price_per_kwh",
+          "type": "number",
+          "label": {
+            "en": "Energy Price per kWh",
+            "nl": "Energieprijs per kWh",
+            "da": "Energipris pr. kWh",
+            "de": "Energiepreis pro kWh",
+            "es": "Precio de energía por kWh",
+            "fr": "Prix de l'énergie par kWh",
+            "it": "Prezzo dell'energia per kWh",
+            "no": "Energipris per kWh",
+            "sv": "Energipris per kWh",
+            "pl": "Cena energii na kWh",
+            "ru": "Цена энергии за кВт·ч",
+            "ko": "kWh당 에너지 가격"
+          },
+          "hint": {
+            "en": "Set the energy price used for profit/savings calculations (default: 0.30 €/kWh)",
+            "nl": "Stel de energieprijs in die wordt gebruikt voor winst/besparingsberekeningen (standaard: 0,30 €/kWh)",
+            "da": "Indstil energiprisen, der bruges til fortjeneste/besparelsesberegninger (standard: 0,30 €/kWh)",
+            "de": "Legen Sie den Energiepreis fest, der für Gewinn-/Einsparungsberechnungen verwendet wird (Standard: 0,30 €/kWh)",
+            "es": "Establezca el precio de la energía utilizado para cálculos de ganancias/ahorros (predeterminado: 0,30 €/kWh)",
+            "fr": "Définissez le prix de l'énergie utilisé pour les calculs de profit/économie (par défaut : 0,30 €/kWh)",
+            "it": "Imposta il prezzo dell'energia utilizzato per i calcoli di profitto/risparmio (predefinito: 0,30 €/kWh)",
+            "no": "Sett energiprisen som brukes til fortjeneste/besparelsesberegninger (standard: 0,30 €/kWh)",
+            "sv": "Ange energipriset som används för vinst/besparingsberäkningar (standard: 0,30 €/kWh)",
+            "pl": "Ustaw cenę energii używaną do obliczeń zysków/oszczędności (domyślnie: 0,30 €/kWh)",
+            "ru": "Установите цену энергии, используемую для расчетов прибыли/экономии (по умолчанию: 0,30 €/кВт·ч)",
+            "ko": "이익/절감 계산에 사용할 에너지 가격을 설정합니다 (기본값: 0.30 €/kWh)"
+          },
+          "value": 0.3,
+          "min": 0,
+          "units": {
+            "en": "€/kWh",
+            "nl": "€/kWh",
+            "da": "€/kWh",
+            "de": "€/kWh",
+            "es": "€/kWh",
+            "fr": "€/kWh",
+            "it": "€/kWh",
+            "no": "€/kWh",
+            "sv": "€/kWh",
+            "pl": "€/kWh",
+            "ru": "€/кВт·ч",
+            "ko": "€/kWh"
+          }
         },
         {
           "type": "group",
@@ -1262,7 +1505,9 @@
         "measure_power",
         "measure_power.charge",
         "measure_power.discharge",
-        "last_message_received"
+        "last_message_received",
+        "measure_battery_profit_daily",
+        "measure_battery_profit_hourly"
       ],
       "energy": {
         "homeBattery": true
@@ -1315,6 +1560,42 @@
             "ru": "Сеть Разрядки (Вт)",
             "ko": "방전망 (W)"
           }
+        },
+        "measure_battery_profit_daily": {
+          "title": {
+            "en": "Daily Profit",
+            "nl": "Dagelijkse Winst",
+            "da": "Daglig Fortjeneste",
+            "de": "Täglicher Gewinn",
+            "es": "Ganancia Diaria",
+            "fr": "Profit Quotidien",
+            "it": "Profitto Giornaliero",
+            "no": "Daglig Fortjeneste",
+            "sv": "Daglig Vinst",
+            "pl": "Dzienne Zyski",
+            "ru": "Ежедневная Прибыль",
+            "ko": "일일 이익"
+          },
+          "decimals": 2,
+          "units": "€"
+        },
+        "measure_battery_profit_hourly": {
+          "title": {
+            "en": "Hourly Profit",
+            "nl": "Uurlijkse Winst",
+            "da": "Time Fortjeneste",
+            "de": "Stündlicher Gewinn",
+            "es": "Ganancia por Hora",
+            "fr": "Profit Horaire",
+            "it": "Profitto Orario",
+            "no": "Time Fortjeneste",
+            "sv": "Timvis Vinst",
+            "pl": "Godzinne Zyski",
+            "ru": "Почасовая Прибыль",
+            "ko": "시간당 이익"
+          },
+          "decimals": 2,
+          "units": "€/h"
         }
       },
       "platforms": [
@@ -1440,6 +1721,87 @@
             "ko": "이 장치에 대한 수신 값 문제 해결을 위해 추가 세부 정보를 기록하려면 이 기능을 켜십시오."
           },
           "value": false
+        },
+        {
+          "id": "enable_statistics",
+          "type": "checkbox",
+          "label": {
+            "en": "Enable Statistics Tracking",
+            "nl": "Statistieken Tracking Inschakelen",
+            "da": "Aktiver Statistik Tracking",
+            "de": "Statistik-Tracking Aktivieren",
+            "es": "Habilitar Seguimiento de Estadísticas",
+            "fr": "Activer le Suivi des Statistiques",
+            "it": "Abilita Tracciamento Statistiche",
+            "no": "Aktiver Statistikk Tracking",
+            "sv": "Aktivera Statistiksspårning",
+            "pl": "Włącz Śledzenie Statystyk",
+            "ru": "Включить Отслеживание Статистики",
+            "ko": "통계 추적 활성화"
+          },
+          "hint": {
+            "en": "Enable tracking of statistics for charge/discharge cycles and profit/savings calculations.",
+            "nl": "Schakel tracking in van statistieken voor laad/ontlaadcycli en winst/besparingsberekeningen.",
+            "da": "Aktiver sporing af statistikker for opladnings/afladningscyklusser og fortjeneste/besparelsesberegninger.",
+            "de": "Aktivieren Sie die Verfolgung von Statistiken für Lade-/Entladezyklen und Gewinn-/Einsparungsberechnungen.",
+            "es": "Habilite el seguimiento de estadísticas para ciclos de carga/descarga y cálculos de ganancias/ahorros.",
+            "fr": "Activez le suivi des statistiques pour les cycles de charge/décharge et les calculs de profits/économies.",
+            "it": "Abilita il tracciamento delle statistiche per i cicli di carica/scarica e i calcoli di profitti/risparmi.",
+            "no": "Aktiver sporing av statistikker for lade/utlade sykluser og fortjeneste/besparelsesberegninger.",
+            "sv": "Aktivera spårning av statistik för laddnings/urladdningscykler och vinst/besparingsberäkningar.",
+            "pl": "Włącz śledzenie statystyk dla cykli ładowania/rozładowania i obliczeń zysków/oszczędności.",
+            "ru": "Включите отслеживание статистики для циклов зарядки/разрядки и расчетов прибыли/экономии.",
+            "ko": "충전/방전 주기 및 이익/절감 계산에 대한 통계 추적을 활성화합니다."
+          },
+          "value": false
+        },
+        {
+          "id": "price_per_kwh",
+          "type": "number",
+          "label": {
+            "en": "Energy Price per kWh",
+            "nl": "Energieprijs per kWh",
+            "da": "Energipris pr. kWh",
+            "de": "Energiepreis pro kWh",
+            "es": "Precio de energía por kWh",
+            "fr": "Prix de l'énergie par kWh",
+            "it": "Prezzo dell'energia per kWh",
+            "no": "Energipris per kWh",
+            "sv": "Energipris per kWh",
+            "pl": "Cena energii na kWh",
+            "ru": "Цена энергии за кВт·ч",
+            "ko": "kWh당 에너지 가격"
+          },
+          "hint": {
+            "en": "Set the energy price used for profit/savings calculations (default: 0.30 €/kWh)",
+            "nl": "Stel de energieprijs in die wordt gebruikt voor winst/besparingsberekeningen (standaard: 0,30 €/kWh)",
+            "da": "Indstil energiprisen, der bruges til fortjeneste/besparelsesberegninger (standard: 0,30 €/kWh)",
+            "de": "Legen Sie den Energiepreis fest, der für Gewinn-/Einsparungsberechnungen verwendet wird (Standard: 0,30 €/kWh)",
+            "es": "Establezca el precio de la energía utilizado para cálculos de ganancias/ahorros (predeterminado: 0,30 €/kWh)",
+            "fr": "Définissez le prix de l'énergie utilisé pour les calculs de profit/économie (par défaut : 0,30 €/kWh)",
+            "it": "Imposta il prezzo dell'energia utilizzato per i calcoli di profitto/risparmio (predefinito: 0,30 €/kWh)",
+            "no": "Sett energiprisen som brukes til fortjeneste/besparelsesberegninger (standard: 0,30 €/kWh)",
+            "sv": "Ange energipriset som används för vinst/besparingsberäkningar (standard: 0,30 €/kWh)",
+            "pl": "Ustaw cenę energii używaną do obliczeń zysków/oszczędności (domyślnie: 0,30 €/kWh)",
+            "ru": "Установите цену энергии, используемую для расчетов прибыли/экономии (по умолчанию: 0,30 €/кВт·ч)",
+            "ko": "이익/절감 계산에 사용할 에너지 가격을 설정합니다 (기본값: 0.30 €/kWh)"
+          },
+          "value": 0.3,
+          "min": 0,
+          "units": {
+            "en": "€/kWh",
+            "nl": "€/kWh",
+            "da": "€/kWh",
+            "de": "€/kWh",
+            "es": "€/kWh",
+            "fr": "€/kWh",
+            "it": "€/kWh",
+            "no": "€/kWh",
+            "sv": "€/kWh",
+            "pl": "€/kWh",
+            "ru": "€/кВт·ч",
+            "ko": "€/kWh"
+          }
         },
         {
           "id": "username",
@@ -1575,6 +1937,50 @@
       "uiComponent": "sensor",
       "insights": false,
       "icon": "/assets/clock-outline-badged.svg"
+    },
+    "measure_battery_profit_daily": {
+      "type": "number",
+      "title": {
+        "en": "Daily Profit",
+        "nl": "Dagelijkse Winst",
+        "da": "Daglig Fortjeneste",
+        "de": "Täglicher Gewinn",
+        "es": "Ganancia Diaria",
+        "fr": "Profit Quotidien",
+        "it": "Profitto Giornaliero",
+        "no": "Daglig Fortjeneste",
+        "sv": "Daglig Vinst",
+        "pl": "Dzienne Zyski",
+        "ru": "Ежедневная Прибыль",
+        "ko": "일일 이익"
+      },
+      "units": "€",
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
+    "measure_battery_profit_hourly": {
+      "type": "number",
+      "title": {
+        "en": "Hourly Profit",
+        "nl": "Uurlijkse Winst",
+        "da": "Time Fortjeneste",
+        "de": "Stündlicher Gewinn",
+        "es": "Ganancia por Hora",
+        "fr": "Profit Horaire",
+        "it": "Profitto Orario",
+        "no": "Time Fortjeneste",
+        "sv": "Timvis Vinst",
+        "pl": "Godzinne Zyski",
+        "ru": "Почасовая Прибыль",
+        "ko": "시간당 이익"
+      },
+      "units": "€/h",
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
     },
     "measure_ct_state": {
       "type": "enum",

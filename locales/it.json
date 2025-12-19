@@ -5,5 +5,10 @@
     "pollInterval": "Intervallo di polling predefinito (secondi)",
     "pollEnabled": "Abilita polling di default",
     "deviceAddress": "Indirizzo IP del dispositivo (opzionale, per scoperta diretta se il broadcast fallisce)"
+  },
+  "energy_price_per_kwh": {
+    "label": "Prezzo dell'energia per kWh",
+    "hint": "Imposta il prezzo dell'energia utilizzato per i calcoli di profitto/risparmio (predefinito: 0,30 €/kWh)",
+    "units": "€/kWh"
   }
 }

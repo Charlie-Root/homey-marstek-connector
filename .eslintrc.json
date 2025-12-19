@@ -1,3 +1,24 @@
 ﻿{
-  "extends": "athom/homey-app"
+  "extends": "athom/homey-app",
+  "rules": {
+    "import/extensions": "off",
+    "import/no-unresolved": "off",
+    "node/no-missing-import": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/ban-types": "off",
+    "@typescript-eslint/no-floating-promises": "off",
+    "@typescript-eslint/no-misused-promises": "off",
+    "no-restricted-globals": "off",
+    "no-nested-ternary": "off",
+    "no-case-declarations": "off",
+    "camelcase": "off",
+    "radix": "off",
+    "no-use-before-define": "off",
+    "node/no-unsupported-features/es-syntax": "off",
+    "import/prefer-default-export": "off",
+    "no-console": "off",
+    "no-return-await": "off",
+    "consistent-return": "off",
+    "homey-app/global-timers": "off"
+  }
 }

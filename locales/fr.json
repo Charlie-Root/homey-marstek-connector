@@ -5,5 +5,10 @@
     "pollInterval": "Intervalle de sondage par défaut (secondes)",
     "pollEnabled": "Activer le sondage par défaut",
     "deviceAddress": "Adresse IP de l'appareil (optionnel, pour découverte directe si la diffusion échoue)"
+  },
+  "energy_price_per_kwh": {
+    "label": "Prix de l'énergie par kWh",
+    "hint": "Définissez le prix de l'énergie utilisé pour les calculs de profit/économie (par défaut : 0,30 €/kWh)",
+    "units": "€/kWh"
   }
 }

@@ -1,0 +1,22 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Daily Profit",
+    "nl": "Dagelijkse Winst",
+    "da": "Daglig Fortjeneste",
+    "de": "Täglicher Gewinn",
+    "es": "Ganancia Diaria",
+    "fr": "Profit Quotidien",
+    "it": "Profitto Giornaliero",
+    "no": "Daglig Fortjeneste",
+    "sv": "Daglig Vinst",
+    "pl": "Dzienne Zyski",
+    "ru": "Ежедневная Прибыль",
+    "ko": "일일 이익"
+  },
+  "units": "€",
+  "decimals": 2,
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}

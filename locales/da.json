@@ -6,5 +6,10 @@
     "pollEnabled": "Aktivér polling som standard",
     "deviceAddress": "Enheds IP-adresse (valgfri, for direkte opdagelse hvis broadcast fejler)",
     "devicePort": "Enheds port (valgfri, standard 30000)"
+  },
+  "energy_price_per_kwh": {
+    "label": "Energipris pr. kWh",
+    "hint": "Indstil energiprisen, der bruges til fortjeneste/besparelsesberegninger (standard: 0,30 €/kWh)",
+    "units": "€/kWh"
   }
 }

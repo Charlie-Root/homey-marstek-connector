@@ -5,5 +5,10 @@
     "pollInterval": "Intervalo de sondeo predeterminado (segundos)",
     "pollEnabled": "Habilitar el sondeo por defecto",
     "deviceAddress": "Dirección IP del dispositivo (opcional, para descubrimiento directo si falla la transmisión)"
+  },
+  "energy_price_per_kwh": {
+    "label": "Precio de energía por kWh",
+    "hint": "Establezca el precio de la energía utilizado para cálculos de ganancias/ahorros (predeterminado: 0,30 €/kWh)",
+    "units": "€/kWh"
   }
 }

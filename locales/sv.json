@@ -5,5 +5,10 @@
     "pollInterval": "Standard avläsningsintervall (sekunder)",
     "pollEnabled": "Aktivera avläsning som standard",
     "deviceAddress": "Enhetens IP-adress (valfritt, för direkt upptäckt om broadcast misslyckas)"
+  },
+  "energy_price_per_kwh": {
+    "label": "Energipris per kWh",
+    "hint": "Ange energipriset som används för vinst/besparingsberäkningar (standard: 0,30 €/kWh)",
+    "units": "€/kWh"
   }
 }

@@ -6,5 +6,10 @@
     "pollEnabled": "Abfrage standardmäßig aktivieren",
     "deviceAddress": "Geräte-IP-Adresse (optional, für direkte Erkennung, falls Broadcast fehlschlägt)",
     "devicePort": "Geräte-Port (optional, Standard 30000)"
+  },
+  "energy_price_per_kwh": {
+    "label": "Energiepreis pro kWh",
+    "hint": "Legen Sie den Energiepreis fest, der für Gewinn-/Einsparungsberechnungen verwendet wird (Standard: 0,30 €/kWh)",
+    "units": "€/kWh"
   }
 }

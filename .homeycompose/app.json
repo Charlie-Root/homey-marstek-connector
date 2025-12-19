@@ -38,7 +38,9 @@
   "category": [
     "energy"
   ],
-  "permissions": [],
+  "permissions": [
+
+  ],
   "capabilities": {
     "measure_rssi": {
       "type": "number",
@@ -86,5 +88,129 @@
     "email": "edward@niewold.com"
   },
   "source": "https://github.com/eniewold/homey-marstek-connector",
-  "homeyCommunityTopicId": 143139
+  "homeyCommunityTopicId": 143139,
+  "flowCards": [
+    {
+      "type": "action",
+      "id": "venus_set_energy_price",
+      "title": {
+        "en": "Set energy price per kWh",
+        "nl": "Stel energieprijs per kWh in",
+        "da": "Indstil energipris pr. kWh",
+        "de": "Energiepreis pro kWh einstellen",
+        "es": "Establecer precio de energía por kWh",
+        "fr": "Définir le prix de l'énergie par kWh",
+        "it": "Imposta prezzo energia per kWh",
+        "no": "Sett energipris per kWh",
+        "sv": "Ställ in energipris per kWh",
+        "pl": "Ustaw cenę energii na kWh",
+        "ru": "Установить цену энергии за кВт·ч",
+        "ko": "kWh당 에너지 가격 설정"
+      },
+      "titleFormatted": {
+        "en": "Set energy price per kWh to [[price]] €/kWh",
+        "nl": "Stel energieprijs per kWh in op [[price]] €/kWh",
+        "da": "Indstil energipris pr. kWh til [[price]] €/kWh",
+        "de": "Energiepreis pro kWh einstellen auf [[price]] €/kWh",
+        "es": "Establecer precio de energía por kWh a [[price]] €/kWh",
+        "fr": "Définir le prix de l'énergie par kWh à [[price]] €/kWh",
+        "it": "Imposta prezzo energia per kWh a [[price]] €/kWh",
+        "no": "Sett energipris per kWh til [[price]] €/kWh",
+        "sv": "Ställ in energipris per kWh till [[price]] €/kWh",
+        "pl": "Ustaw cenę energii na kWh na [[price]] €/kWh",
+        "ru": "Установить цену энергии за кВт·ч на [[price]] €/кВт·ч",
+        "ko": "[[price]] €/kWh로 kWh당 에너지 가격 설정"
+      },
+      "args": [
+        {
+          "name": "device",
+          "type": "device",
+          "filter": "driver_id=marstek-venus"
+        },
+        {
+          "name": "price",
+          "type": "number",
+          "title": {
+            "en": "Price (€/kWh)",
+            "nl": "Prijs (€/kWh)",
+            "da": "Pris (€/kWh)",
+            "de": "Preis (€/kWh)",
+            "es": "Precio (€/kWh)",
+            "fr": "Prix (€/kWh)",
+            "it": "Prezzo (€/kWh)",
+            "no": "Pris (€/kWh)",
+            "sv": "Pris (€/kWh)",
+            "pl": "Cena (€/kWh)",
+            "ru": "Цена (€/кВт·ч)",
+            "ko": "가격 (€/kWh)"
+          },
+          "min": 0,
+          "step": 0.01,
+          "units": "€/kWh"
+        }
+      ],
+      "driver": "marstek-venus"
+    },
+    {
+      "type": "action",
+      "id": "cloud_set_energy_price",
+      "title": {
+        "en": "Set energy price per kWh",
+        "nl": "Stel energieprijs per kWh in",
+        "da": "Indstil energipris pr. kWh",
+        "de": "Energiepreis pro kWh einstellen",
+        "es": "Establecer precio de energía por kWh",
+        "fr": "Définir le prix de l'énergie par kWh",
+        "it": "Imposta prezzo energia per kWh",
+        "no": "Sett energipris per kWh",
+        "sv": "Ställ in energipris per kWh",
+        "pl": "Ustaw cenę energii na kWh",
+        "ru": "Установить цену энергии за кВт·ч",
+        "ko": "kWh당 에너지 가격 설정"
+      },
+      "titleFormatted": {
+        "en": "Set energy price per kWh to [[price]] €/kWh",
+        "nl": "Stel energieprijs per kWh in op [[price]] €/kWh",
+        "da": "Indstil energipris pr. kWh til [[price]] €/kWh",
+        "de": "Energiepreis pro kWh einstellen auf [[price]] €/kWh",
+        "es": "Establecer precio de energía por kWh a [[price]] €/kWh",
+        "fr": "Définir le prix de l'énergie par kWh à [[price]] €/kWh",
+        "it": "Imposta prezzo energia per kWh a [[price]] €/kWh",
+        "no": "Sett energipris per kWh til [[price]] €/kWh",
+        "sv": "Ställ in energipris per kWh till [[price]] €/kWh",
+        "pl": "Ustaw cenę energii na kWh na [[price]] €/kWh",
+        "ru": "Установить цену энергии за кВт·ч на [[price]] €/кВт·ч",
+        "ko": "[[price]] €/kWh로 kWh당 에너지 가격 설정"
+      },
+      "args": [
+        {
+          "name": "device",
+          "type": "device",
+          "filter": "driver_id=marstek-venus-cloud"
+        },
+        {
+          "name": "price",
+          "type": "number",
+          "title": {
+            "en": "Price (€/kWh)",
+            "nl": "Prijs (€/kWh)",
+            "da": "Pris (€/kWh)",
+            "de": "Preis (€/kWh)",
+            "es": "Precio (€/kWh)",
+            "fr": "Prix (€/kWh)",
+            "it": "Prezzo (€/kWh)",
+            "no": "Pris (€/kWh)",
+            "sv": "Pris (€/kWh)",
+            "pl": "Cena (€/kWh)",
+            "ru": "Цена (€/кВт·ч)",
+            "ko": "가격 (€/kWh)"
+          },
+          "min": 0,
+          "step": 0.01,
+          "units": "€/kWh"
+        }
+      ],
+      "driver": "marstek-venus-cloud"
+    }
+  ]
 }

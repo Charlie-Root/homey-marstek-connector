@@ -33,6 +33,87 @@
     "value": false
   },
   {
+    "id": "enable_statistics",
+    "type": "checkbox",
+    "label": {
+      "en": "Enable Statistics Tracking",
+      "nl": "Statistieken Tracking Inschakelen",
+      "da": "Aktiver Statistik Tracking",
+      "de": "Statistik-Tracking Aktivieren",
+      "es": "Habilitar Seguimiento de Estadísticas",
+      "fr": "Activer le Suivi des Statistiques",
+      "it": "Abilita Tracciamento Statistiche",
+      "no": "Aktiver Statistikk Tracking",
+      "sv": "Aktivera Statistiksspårning",
+      "pl": "Włącz Śledzenie Statystyk",
+      "ru": "Включить Отслеживание Статистики",
+      "ko": "통계 추적 활성화"
+    },
+    "hint": {
+      "en": "Enable tracking of statistics for charge/discharge cycles and profit/savings calculations.",
+      "nl": "Schakel tracking in van statistieken voor laad/ontlaadcycli en winst/besparingsberekeningen.",
+      "da": "Aktiver sporing af statistikker for opladnings/afladningscyklusser og fortjeneste/besparelsesberegninger.",
+      "de": "Aktivieren Sie die Verfolgung von Statistiken für Lade-/Entladezyklen und Gewinn-/Einsparungsberechnungen.",
+      "es": "Habilite el seguimiento de estadísticas para ciclos de carga/descarga y cálculos de ganancias/ahorros.",
+      "fr": "Activez le suivi des statistiques pour les cycles de charge/décharge et les calculs de profits/économies.",
+      "it": "Abilita il tracciamento delle statistiche per i cicli di carica/scarica e i calcoli di profitti/risparmi.",
+      "no": "Aktiver sporing av statistikker for lade/utlade sykluser og fortjeneste/besparelsesberegninger.",
+      "sv": "Aktivera spårning av statistik för laddnings/urladdningscykler och vinst/besparingsberäkningar.",
+      "pl": "Włącz śledzenie statystyk dla cykli ładowania/rozładowania i obliczeń zysków/oszczędności.",
+      "ru": "Включите отслеживание статистики для циклов зарядки/разрядки и расчетов прибыли/экономии.",
+      "ko": "충전/방전 주기 및 이익/절감 계산에 대한 통계 추적을 활성화합니다."
+    },
+    "value": false
+  },
+  {
+    "id": "price_per_kwh",
+    "type": "number",
+    "label": {
+      "en": "Energy Price per kWh",
+      "nl": "Energieprijs per kWh",
+      "da": "Energipris pr. kWh",
+      "de": "Energiepreis pro kWh",
+      "es": "Precio de energía por kWh",
+      "fr": "Prix de l'énergie par kWh",
+      "it": "Prezzo dell'energia per kWh",
+      "no": "Energipris per kWh",
+      "sv": "Energipris per kWh",
+      "pl": "Cena energii na kWh",
+      "ru": "Цена энергии за кВт·ч",
+      "ko": "kWh당 에너지 가격"
+    },
+    "hint": {
+      "en": "Set the energy price used for profit/savings calculations (default: 0.30 €/kWh)",
+      "nl": "Stel de energieprijs in die wordt gebruikt voor winst/besparingsberekeningen (standaard: 0,30 €/kWh)",
+      "da": "Indstil energiprisen, der bruges til fortjeneste/besparelsesberegninger (standard: 0,30 €/kWh)",
+      "de": "Legen Sie den Energiepreis fest, der für Gewinn-/Einsparungsberechnungen verwendet wird (Standard: 0,30 €/kWh)",
+      "es": "Establezca el precio de la energía utilizado para cálculos de ganancias/ahorros (predeterminado: 0,30 €/kWh)",
+      "fr": "Définissez le prix de l'énergie utilisé pour les calculs de profit/économie (par défaut : 0,30 €/kWh)",
+      "it": "Imposta il prezzo dell'energia utilizzato per i calcoli di profitto/risparmio (predefinito: 0,30 €/kWh)",
+      "no": "Sett energiprisen som brukes til fortjeneste/besparelsesberegninger (standard: 0,30 €/kWh)",
+      "sv": "Ange energipriset som används för vinst/besparingsberäkningar (standard: 0,30 €/kWh)",
+      "pl": "Ustaw cenę energii używaną do obliczeń zysków/oszczędności (domyślnie: 0,30 €/kWh)",
+      "ru": "Установите цену энергии, используемую для расчетов прибыли/экономии (по умолчанию: 0,30 €/кВт·ч)",
+      "ko": "이익/절감 계산에 사용할 에너지 가격을 설정합니다 (기본값: 0.30 €/kWh)"
+    },
+    "value": 0.30,
+    "min": 0,
+    "units": {
+      "en": "€/kWh",
+      "nl": "€/kWh",
+      "da": "€/kWh",
+      "de": "€/kWh",
+      "es": "€/kWh",
+      "fr": "€/kWh",
+      "it": "€/kWh",
+      "no": "€/kWh",
+      "sv": "€/kWh",
+      "pl": "€/kWh",
+      "ru": "€/кВт·ч",
+      "ko": "€/kWh"
+    }
+  },
+  {
     "id": "username",
     "type": "label",
     "label": {

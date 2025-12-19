@@ -1,0 +1,22 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Hourly Profit",
+    "nl": "Uurlijkse Winst",
+    "da": "Time Fortjeneste",
+    "de": "Stündlicher Gewinn",
+    "es": "Ganancia por Hora",
+    "fr": "Profit Horaire",
+    "it": "Profitto Orario",
+    "no": "Time Fortjeneste",
+    "sv": "Timvis Vinst",
+    "pl": "Godzinne Zyski",
+    "ru": "Почасовая Прибыль",
+    "ko": "시간당 이익"
+  },
+  "units": "€/h",
+  "decimals": 2,
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}

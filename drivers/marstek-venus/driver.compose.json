@@ -32,7 +32,9 @@
     "measure_power.b",
     "measure_power.c",
     "measure_power.total",
-    "measure_ct_state"
+    "measure_ct_state",
+    "measure_battery_profit_daily",
+    "measure_battery_profit_hourly"
   ],
   "energy": {
     "homeBattery": true,
@@ -94,6 +96,42 @@
       "min": -20,
       "max": 60,
       "chartType": "line"
+    },
+    "measure_battery_profit_daily": {
+      "title": {
+        "en": "Daily Profit",
+        "nl": "Dagelijkse Winst",
+        "da": "Daglig Fortjeneste",
+        "de": "Täglicher Gewinn",
+        "es": "Ganancia Diaria",
+        "fr": "Profit Quotidien",
+        "it": "Profitto Giornaliero",
+        "no": "Daglig Fortjeneste",
+        "sv": "Daglig Vinst",
+        "pl": "Dzienne Zyski",
+        "ru": "Ежедневная Прибыль",
+        "ko": "일일 이익"
+      },
+      "decimals": 2,
+      "units": "€"
+    },
+    "measure_battery_profit_hourly": {
+      "title": {
+        "en": "Hourly Profit",
+        "nl": "Uurlijkse Winst",
+        "da": "Time Fortjeneste",
+        "de": "Stündlicher Gewinn",
+        "es": "Ganancia por Hora",
+        "fr": "Profit Horaire",
+        "it": "Profitto Orario",
+        "no": "Time Fortjeneste",
+        "sv": "Timvis Vinst",
+        "pl": "Godzinne Zyski",
+        "ru": "Почасовая Прибыль",
+        "ko": "시간당 이익"
+      },
+      "decimals": 2,
+      "units": "€/h"
     }
   },
   "capabilityGroups": {

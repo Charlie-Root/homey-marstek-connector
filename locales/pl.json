@@ -5,5 +5,10 @@
     "pollInterval": "Domyślny interwał sprawdzania (sekundy)",
     "pollEnabled": "Włącz sprawdzanie domyślnie",
     "deviceAddress": "Adres IP urządzenia (opcjonalny, do bezpośredniego wykrywania, jeśli broadcast zawiedzie)"
+  },
+  "energy_price_per_kwh": {
+    "label": "Cena energii na kWh",
+    "hint": "Ustaw cenę energii używaną do obliczeń zysków/oszczędności (domyślnie: 0,30 €/kWh)",
+    "units": "€/kWh"
   }
 }
