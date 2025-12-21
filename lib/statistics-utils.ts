@@ -235,7 +235,7 @@ export function calculateProfitSavings(entry: StatisticsEntry): { profitSavings:
   const recoveryActions: string[] = [];
 
   try {
-    if (!entry.priceAtTime) {
+    if (entry.priceAtTime == null) {
       warnings.push('No price data available for calculation');
       return {
         profitSavings: 0,
@@ -333,12 +333,12 @@ export function aggregateDailyStats(entries: StatisticsEntry[]): DailyStats[] {
  * @returns Optimized array of historical energy values
  */
 export function getHistoricalValuesOptimized(
-  historicalStats: StatisticsEntry[], 
-  maxEntries: number = 10
+  historicalStats: StatisticsEntry[],
+  maxEntries: number = 10,
 ): number[] {
   const values: number[] = [];
   const startIndex = Math.max(0, historicalStats.length - maxEntries);
-  
+
   // Single-pass processing to avoid multiple array allocations
   for (let i = startIndex; i < historicalStats.length; i++) {
     const entry = historicalStats[i];
@@ -347,7 +347,7 @@ export function getHistoricalValuesOptimized(
       values.push(absValue);
     }
   }
-  
+
   return values;
 }
 
@@ -360,17 +360,16 @@ export function getHistoricalValuesOptimized(
  */
 export function aggregateDailyStatsOptimized(
   entries: StatisticsEntry[],
-  memoryConfig?: Partial<StatisticsMemoryConfig>
+  memoryConfig?: Partial<StatisticsMemoryConfig>,
 ): DailyStats[] {
   // Pre-allocate with estimated size to reduce array resizing
   const dailyMap = new Map<string, DailyStats>();
-  const config = { ...DEFAULT_STATISTICS_MEMORY_CONFIG, ...memoryConfig };
-  
+
   // Single-pass processing for better memory efficiency
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i];
     const date = new Date(entry.timestamp * 1000).toISOString().split('T')[0];
-    
+
     let day = dailyMap.get(date);
     if (!day) {
       day = {
@@ -389,7 +388,7 @@ export function aggregateDailyStatsOptimized(
       };
       dailyMap.set(date, day);
     }
-    
+
     // Direct accumulation without intermediate calculations
     if (entry.type === 'charging') {
       day.totalChargeEnergy += Math.abs(entry.energyAmount);
@@ -435,7 +434,7 @@ export function aggregateDailyStatsOptimized(
  */
 export function getStatisticsSummaryOptimized(
   entries: StatisticsEntry[],
-  memoryConfig?: Partial<StatisticsMemoryConfig>
+  memoryConfig?: Partial<StatisticsMemoryConfig>,
 ): {
   summary: {
     totalEvents: number;
@@ -477,7 +476,7 @@ export function getStatisticsSummaryOptimized(
     totalDischargeEnergy += day.totalDischargeEnergy;
     totalProfit += day.totalProfit;
     totalSavings += day.totalSavings;
-    
+
     // Aggregate audit information
     if (day.auditInfo) {
       validationFailures += day.auditInfo.validationFailures;
@@ -498,7 +497,7 @@ export function getStatisticsSummaryOptimized(
 
   const averagePrice = priceCount > 0 ? totalPrice / priceCount : 0;
   const financialCalculatorStats = financialCalculator.getAuditStatistics();
-  
+
   // Generate memory report
   const memoryReport = generateStatisticsMemoryReport(entries);
 
@@ -530,11 +529,11 @@ export function getStatisticsSummaryOptimized(
 export function generateStatisticsMemoryReport(entries: StatisticsEntry[]): StatisticsMemoryReport {
   const currentMemoryBytes = entries.length * 1200; // ~1.2KB per entry estimate
   const currentMemoryMB = currentMemoryBytes / (1024 * 1024);
-  
-  const timestamps = entries.map(e => e.timestamp).sort((a, b) => a - b);
+
+  const timestamps = entries.map((e) => e.timestamp).sort((a, b) => a - b);
   const oldestEntry = timestamps.length > 0 ? timestamps[0] : undefined;
   const newestEntry = timestamps.length > 0 ? timestamps[timestamps.length - 1] : undefined;
-  
+
   return {
     totalEntries: entries.length,
     estimatedMemoryBytes: currentMemoryBytes,
@@ -606,13 +605,13 @@ export function calculateDetailedBreakdown(entries: StatisticsEntry[]) {
 
 // Overload 1: Legacy signature for backward compatibility
 export function cleanupOldEntries(
-  entries: StatisticsEntry[], 
+  entries: StatisticsEntry[],
   retentionDays: number
 ): StatisticsEntry[];
 
 // Overload 2: Enhanced signature with memory management
 export function cleanupOldEntries(
-  entries: StatisticsEntry[], 
+  entries: StatisticsEntry[],
   retentionDays: number,
   maxEntries: number,
   memoryConfig?: Partial<StatisticsMemoryConfig>
@@ -620,30 +619,30 @@ export function cleanupOldEntries(
 
 // Implementation
 export function cleanupOldEntries(
-  entries: StatisticsEntry[], 
-  retentionDays: number, 
+  entries: StatisticsEntry[],
+  retentionDays: number,
   maxEntries?: number,
-  memoryConfig?: Partial<StatisticsMemoryConfig>
+  memoryConfig?: Partial<StatisticsMemoryConfig>,
 ): StatisticsEntry[] | { cleanedEntries: StatisticsEntry[]; cleanupReport: StatisticsMemoryReport } {
   // Backward compatibility: if only 2 arguments, return legacy format
   if (arguments.length === 2) {
     const cutoff = Date.now() / 1000 - (retentionDays * 24 * 60 * 60);
     return entries.filter((entry) => entry.timestamp >= cutoff);
   }
-  
+
   // New enhanced version with 3+ arguments
-  const config = { ...DEFAULT_STATISTICS_MEMORY_CONFIG, ...memoryConfig };
+  const _config = { ...DEFAULT_STATISTICS_MEMORY_CONFIG, ...memoryConfig };
   const now = Date.now() / 1000;
   const cutoff = now - (retentionDays * 24 * 60 * 60);
-  
+
   // Calculate current memory usage
   const currentMemoryBytes = entries.length * 1200; // ~1.2KB per entry estimate
   const currentMemoryMB = currentMemoryBytes / (1024 * 1024);
-  
+
   // Step 1: Time-based cleanup
-  let timeFiltered = entries.filter((entry) => entry.timestamp >= cutoff);
+  const timeFiltered = entries.filter((entry) => entry.timestamp >= cutoff);
   let entriesRemovedByTime = entries.length - timeFiltered.length;
-  
+
   // Step 2: Entry count-based cleanup (if still over limit)
   let countFiltered = timeFiltered;
   if (timeFiltered.length > maxEntries!) {
@@ -652,33 +651,33 @@ export function cleanupOldEntries(
     countFiltered = timeFiltered.slice(startIndex);
     entriesRemovedByTime += (timeFiltered.length - countFiltered.length);
   }
-  
+
   // Step 3: Memory-based cleanup (if still over memory limit)
   let memoryFiltered = countFiltered;
-  if (config.enableProactiveCleanup && currentMemoryMB > config.maxMemoryUsageMB) {
-    const targetEntries = Math.floor(maxEntries! * (config.maxMemoryUsageMB / currentMemoryMB));
+  if (_config.enableProactiveCleanup && currentMemoryMB > _config.maxMemoryUsageMB) {
+    const targetEntries = Math.floor(maxEntries! * (_config.maxMemoryUsageMB / currentMemoryMB));
     if (targetEntries < countFiltered.length) {
       const startIndex = Math.max(0, countFiltered.length - targetEntries);
       memoryFiltered = countFiltered.slice(startIndex);
     }
   }
-  
+
   // Calculate timestamps for report
-  const timestamps = memoryFiltered.map(e => e.timestamp).sort((a, b) => a - b);
+  const timestamps = memoryFiltered.map((e) => e.timestamp).sort((a, b) => a - b);
   const oldestEntry = timestamps.length > 0 ? timestamps[0] : undefined;
   const newestEntry = timestamps.length > 0 ? timestamps[timestamps.length - 1] : undefined;
-  
+
   // Check if cleanup was performed
   const cleanupPerformed = entriesRemovedByTime > 0 || memoryFiltered.length !== countFiltered.length;
   const finalMemoryBytes = memoryFiltered.length * 1200;
   const finalMemoryMB = finalMemoryBytes / (1024 * 1024);
-  
+
   // Log cleanup action if significant
   if (cleanupPerformed && typeof console !== 'undefined' && console.log) {
-    console.log(`Statistics: Cleaned up ${entriesRemovedByTime} entries, retained ${memoryFiltered.length}`);
+    // console.log(`Statistics: Cleaned up ${entriesRemovedByTime} entries, retained ${memoryFiltered.length}`);
     console.log(`Memory usage: ${currentMemoryMB.toFixed(2)}MB -> ${finalMemoryMB.toFixed(2)}MB`);
   }
-  
+
   return {
     cleanedEntries: memoryFiltered,
     cleanupReport: {
@@ -690,8 +689,8 @@ export function cleanupOldEntries(
       cleanupPerformed,
       entriesRemoved: entriesRemovedByTime,
       retentionDays,
-      isNearLimit: memoryFiltered.length > (maxEntries! * config.cleanupThreshold),
-    }
+      isNearLimit: memoryFiltered.length > (maxEntries! * _config.cleanupThreshold),
+    },
   };
 }
 
@@ -718,7 +717,7 @@ export function logStatisticsEntryOptimized(
   const timestamp = new Date(entry.timestamp * 1000).toISOString();
   const energyStr = Math.abs(entry.energyAmount).toFixed(3);
   const durationStr = entry.duration.toString();
-  
+
   // Build base log entry efficiently
   const logParts = [`[${timestamp}] ${entry.type.toUpperCase()}`];
   logParts.push(`- Energy: ${energyStr} kWh, Duration: ${durationStr} min`);
@@ -726,19 +725,20 @@ export function logStatisticsEntryOptimized(
   if (entry.priceAtTime) {
     const profitSavingsResult = calculateProfitSavings(entry);
     const { profitSavings } = profitSavingsResult;
+
     const priceStr = entry.priceAtTime.toFixed(4);
     const profitStr = profitSavings.toFixed(2);
-    
+
     logParts.push(`, Price: €${priceStr}/kWh, Profit/Savings: €${profitStr}`);
-    
+
     // Log warnings and recovery actions if any (batch processing)
-    if (profitSavingsResult.warnings.length > 0 || 
-        (profitSavingsResult.audit.recoveryActions && profitSavingsResult.audit.recoveryActions.length > 0)) {
+    if (profitSavingsResult.warnings.length > 0
+        || (profitSavingsResult.audit.recoveryActions && profitSavingsResult.audit.recoveryActions.length > 0)) {
       logger(logParts.join(''));
-      
+
       // Clear parts for additional messages
       logParts.length = 0;
-      
+
       for (const warning of profitSavingsResult.warnings) {
         logger(`  Warning: ${warning}`);
       }
@@ -753,16 +753,16 @@ export function logStatisticsEntryOptimized(
   } else {
     logParts.push(', Price: N/A');
   }
-  
+
   logger(logParts.join(''));
 
   if (settings.transparency && calculationDetails) {
     logger(`  Calculation Method: ${calculationDetails.method}`);
-    
+
     // Optimize JSON.stringify by limiting depth and using minimal spacing
     const inputsStr = JSON.stringify(calculationDetails.inputs, null, 0); // No indentation
     logger(`  Inputs: ${inputsStr}`);
-    
+
     if (calculationDetails.intermediateSteps) {
       const stepsStr = JSON.stringify(calculationDetails.intermediateSteps, null, 0);
       logger(`  Intermediate Steps: ${stepsStr}`);
@@ -1108,28 +1108,28 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     // Constants
     DEFAULT_STATISTICS_MEMORY_CONFIG,
-    
+
     // Core calculation functions
     calculateEnergyAmount,
     calculateProfitSavings,
-    
+
     // Aggregation and summary functions
     aggregateDailyStats,
     aggregateDailyStatsOptimized,
     getStatisticsSummary,
     getStatisticsSummaryOptimized,
     calculateDetailedBreakdown,
-    
+
     // Memory management functions
     cleanupOldEntries,
     getHistoricalValuesOptimized,
     generateStatisticsMemoryReport,
     validateAndCleanEntries,
-    
+
     // Logging functions
     logStatisticsEntry,
     logStatisticsEntryOptimized,
-    
+
     // Utility functions
     getCalculationAuditTrail,
     getDefaultStatisticsSettings,

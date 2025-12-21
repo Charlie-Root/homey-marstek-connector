@@ -235,15 +235,79 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
         const now = new Date(status.report_time * 1000);
         const timeDiffHours = this.timestamp ? (now.getTime() - this.timestamp.getTime()) / (1000 * 60 * 60) : 0;
 
+        // Debug logging for statistics
+        if (this.debug) {
+          this.log('[stats] Current state:', currentChargingState, 'Power charge:', status.charge, 'discharge:', status.discharge);
+          this.log('[stats] Time diff hours:', timeDiffHours, 'Cumulative energy:', this.cumulativeEnergy);
+          const statsCount = (this.getStoreValue('statistics') || []).length;
+          this.log('[stats] Stored statistics entries:', statsCount);
+        }
+
         // Get historical energy values for outlier detection (optimized)
         const historicalStats: StatisticsEntry[] = this.getStoreValue('statistics') || [];
         const historicalEnergyValues = getHistoricalValuesOptimized(historicalStats, 10);
 
+        // Check if date has changed (end of day logging)
+        const previousDate = this.timestamp ? new Date(this.timestamp).toISOString().split('T')[0] : null;
+        const currentDate = now.toISOString().split('T')[0];
+        const dateChanged = previousDate && previousDate !== currentDate;
+
+        if (dateChanged && this.previousChargingState && this.eventStartTime && this.cumulativeEnergy > 0) {
+          // Log the previous day's accumulated energy
+          const duration = (this.timestamp!.getTime() - this.eventStartTime.getTime()) / 60000;
+          const price = this.getCurrentEnergyPrice();
+
+          if (this.debug) this.log('[price_debug] Storing price in end-of-day entry:', price, '€/kWh');
+
+          const entry: StatisticsEntry = {
+            timestamp: Math.floor(this.timestamp!.getTime() / 1000),
+            type: this.previousChargingState as 'charging' | 'discharging',
+            energyAmount: this.cumulativeEnergy,
+            duration,
+            priceAtTime: price,
+            calculationAudit: {
+              precisionLoss: 0,
+              validationWarnings: [],
+              calculationMethod: 'end_of_day_logging',
+              isOutlier: false,
+              recoveryActions: [],
+            },
+          };
+
+          const calculationDetails = {
+            method: 'end_of_day_logging',
+            inputs: {
+              cumulativeEnergy: this.cumulativeEnergy,
+              duration,
+              dateChanged: true,
+            },
+            intermediateSteps: [
+              `Date changed from ${previousDate} to ${currentDate}`,
+              `Logged accumulated energy: ${this.cumulativeEnergy.toFixed(3)} kWh`,
+            ],
+          };
+
+          logStatisticsEntry(entry, {
+            debug: this.getSetting('statistics_debug'),
+            transparency: this.getSetting('statistics_transparency'),
+          }, this.log.bind(this), calculationDetails);
+
+          if (this.debug) this.log('[stats] Logged end-of-day entry:', entry.energyAmount, 'kWh');
+          await this.logStatisticsEntry(entry);
+
+          // Reset for new day
+          this.eventStartTime = now;
+          this.cumulativeEnergy = 0;
+        }
+
         if (this.previousChargingState !== currentChargingState) {
+          if (this.debug) this.log('[stats] State changed from', this.previousChargingState, 'to', currentChargingState);
           // Log previous event
           if (this.previousChargingState && this.previousChargingState !== 'idle' && this.eventStartTime) {
             const duration = (now.getTime() - this.eventStartTime.getTime()) / 60000;
             const price = this.getCurrentEnergyPrice();
+
+            if (this.debug) this.log('[price_debug] Storing price in state-change entry:', price, '€/kWh');
 
             // Validate price before using it
             const priceValidation = validateEnergyPriceUtil(price);
@@ -286,6 +350,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
               debug: this.getSetting('statistics_debug'),
               transparency: this.getSetting('statistics_transparency'),
             }, this.log.bind(this), calculationDetails);
+            if (this.debug) this.log('[stats] Logging statistics entry:', entry.energyAmount, 'kWh');
             await this.logStatisticsEntry(entry);
           }
           // Start new event
@@ -314,6 +379,8 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
 
           this.cumulativeEnergy += energyResult.energyAmount;
 
+          if (this.debug) this.log('[stats] Accumulated energy:', energyResult.energyAmount, 'Total cumulative:', this.cumulativeEnergy);
+
           // Log warnings if any
           for (const warning of energyResult.warnings) {
             this.log(`Energy accumulation warning: ${warning}`);
@@ -331,7 +398,10 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
      * @returns {number} Current energy price in €/kWh
      */
     getCurrentEnergyPrice(): number {
-      const price = this.getSetting('price_per_kwh') ?? 0.30;
+      const rawPrice = this.getSetting('price_per_kwh');
+      const price = rawPrice ?? 0.30;
+
+      if (this.debug) this.log('[price_debug] Raw price from settings:', rawPrice, 'Defaulted to:', price);
 
       // Validate the price using our enhanced validation
       const validation = validateEnergyPriceUtil(price);
@@ -436,6 +506,9 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
         this.log('  Net Profit:', breakdown.netProfit, '€');
       }
 
+      if (this.debug) {
+        this.log('[stats] Setting capabilities - Charge energy:', breakdown.chargeEnergy, 'Discharge energy:', breakdown.dischargeEnergy);
+      }
       await this.setCapabilityValue('measure_battery_charge_energy_daily', breakdown.chargeEnergy);
       await this.setCapabilityValue('measure_battery_discharge_energy_daily', breakdown.dischargeEnergy);
       await this.setCapabilityValue('measure_battery_savings_daily', breakdown.savings);

@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": ".homeybuild-test",
+    "rootDir": "."
+  },
+  "include": [
+    "lib/grid-counter-accumulator.ts",
+    "test/grid-counter-accumulator.test.ts"
+  ]
+}
+

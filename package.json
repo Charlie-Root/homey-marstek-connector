@@ -5,7 +5,8 @@
     "dev": "homey app run --remote",
     "build": "tsc",
     "clean": "rmdir /s /q .homeybuild",
-    "lint": "eslint --ext .js,.ts --ignore-path .gitignore ."
+    "lint": "eslint --ext .js,.ts --ignore-path .gitignore .",
+    "test:grid-counters": "tsc -p tsconfig.test.json && node .homeybuild-test/test/grid-counter-accumulator.test.js"
   },
   "devDependencies": {
     "@tsconfig/node16": "^16.1.5",

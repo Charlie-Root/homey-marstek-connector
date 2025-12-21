@@ -1,3 +1,5 @@
+/* eslint-disable max-classes-per-file */
+
 /**
  * Financial calculation utilities with proper precision, rounding, and safety checks.
  * Provides banker's rounding, zero division protection, and precision loss detection.
@@ -26,7 +28,7 @@ export const FINANCIAL_CONSTANTS = {
   ENERGY_AMOUNT_DECIMALS: 3,
   MAX_ENERGY_PRICE: 5.00, // €5.00/kWh maximum reasonable price
   MAX_ENERGY_AMOUNT: 1000, // 1000 kWh maximum per event
-  MIN_ENERGY_AMOUNT: 0.001, // 0.001 kWh minimum meaningful amount
+  MIN_ENERGY_AMOUNT: 0.00001, // 0.00001 kWh minimum meaningful amount
   PRECISION_THRESHOLD: 1e-10, // Threshold for detecting precision loss
 } as const;
 
@@ -548,17 +550,15 @@ export class FinancialCalculator {
     // CRITICAL FIX: Use ring buffer approach to prevent unbounded growth
     // Always enforce the maximum audit trail size
     if (this.auditTrail.length >= this.MAX_AUDIT_TRAIL_SIZE) {
-      const removedCount = this.auditTrail.length - this.MAX_AUDIT_TRAIL_SIZE + 50; // Keep some buffer
-
       // Keep only the most recent entries (ring buffer behavior)
       this.auditTrail = this.auditTrail.slice(-this.MAX_AUDIT_TRAIL_SIZE + 50);
 
       cleanupPerformed = true;
 
       // Log cleanup action (throttled to avoid spam)
-      if (typeof console !== 'undefined' && console.log && removedCount > 10) {
-        console.log(`FinancialCalculator: Cleaned up ${removedCount} audit trail entries (max: ${this.MAX_AUDIT_TRAIL_SIZE})`);
-      }
+      // if (typeof console !== 'undefined' && console.log && removedCount > 10) {
+      //  console.log(`FinancialCalculator: Cleaned up ${removedCount} audit trail entries (max: ${this.MAX_AUDIT_TRAIL_SIZE})`);
+      // }
     }
 
     // Additional interval-based cleanup for memory pressure (disabled in Homey environment)
@@ -673,6 +673,7 @@ export class FinancialCalculator {
 
       } else if (power !== undefined && timeIntervalHours !== undefined) {
         // Cloud driver calculation
+
         // Validate inputs
         const powerValidation = validateEnergyAmount(Math.abs(power));
         const timeValidation = validateEnergyAmount(Math.abs(timeIntervalHours));
@@ -751,6 +752,7 @@ export class FinancialCalculator {
     let profitSavings = 0;
 
     try {
+
       // Validate inputs
       const energyValidation = validateEnergyAmount(Math.abs(energyAmount));
       const priceValidation = validateEnergyPrice(priceAtTime);
@@ -791,6 +793,7 @@ export class FinancialCalculator {
         isValid: false,
         error: `Profit/savings calculation error: ${error instanceof Error ? error.message : 'Unknown error'}`,
       };
+
     }
 
     this.auditTrail.push(audit);
