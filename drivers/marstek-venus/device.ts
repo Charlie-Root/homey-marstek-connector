@@ -256,12 +256,80 @@ export default class MarstekVenusDevice extends Homey.Device {
           if (!isNaN(result.bat_power)) {
             // Charge state (Possible values: "idle", "charging", "discharging")
             if (this.debug) this.log('[stats] Battery power:', result.bat_power);
-            await this.setCapabilityValue('battery_charging_state', (result.bat_power > 0) ? 'charging' : (result.bat_power < 0) ? 'discharging' : 'idle');
+            try {
+              const state = (result.bat_power > 0) ? 'charging' : (result.bat_power < 0) ? 'discharging' : 'idle';
+              if (this.debug) this.log('[stats] Setting battery_charging_state from bat_power:', result.bat_power, '=>', state);
+              await this.setCapabilityValue('battery_charging_state', state);
+              if (this.debug) {
+                const cur = await this.getCapabilityValue('battery_charging_state');
+                this.log('[stats] battery_charging_state after set (bat_power):', cur);
+              }
+            } catch (err) {
+              this.error('[stats] Failed to set battery_charging_state from bat_power:', err);
+            }
             await this.setCapabilityValue('measure_power', result.bat_power / ((firmware >= 154) ? 1.0 : 10.0));
+
+            // Auto-detect ongrid_power sign convention when both values are present.
+            try {
+              if (!isNaN(result.ongrid_power)) {
+                if (result.bat_power < 0 && result.ongrid_power > 0) {
+                  await this.setStoreValue('ongrid_positive_exports', true);
+                  if (this.debug && this.getSetting('statistics_debug')) this.log('[stats] Detected ongrid_positive_exports = true');
+                } else if (result.bat_power > 0 && result.ongrid_power < 0) {
+                  await this.setStoreValue('ongrid_positive_exports', false);
+                  if (this.debug && this.getSetting('statistics_debug')) this.log('[stats] Detected ongrid_positive_exports = false');
+                }
+              }
+            } catch (err) {
+              if (this.debug) this.error('[stats] Failed to persist ongrid sign detection:', err);
+            }
+
           } else {
             this.log('[stats] Battery power not available');
             if (!isNaN(result.ongrid_power)) {
-              await this.setCapabilityValue('battery_charging_state', (result.ongrid_power > 0) ? 'charging' : (result.bat_power < 0) ? 'discharging' : 'idle');
+              try {
+                // Read persisted detection flag (true = positive means export/discharging)
+                const ongridPositiveExports: boolean | null = this.getStoreValue('ongrid_positive_exports') ?? null;
+                let state: 'charging' | 'discharging' | 'idle';
+                if (ongridPositiveExports === null) {
+                  // Unknown convention, fall back to heuristics: assume positive => export/discharging
+                  state = (result.ongrid_power > 0) ? 'discharging' : (result.ongrid_power < 0) ? 'charging' : 'idle';
+                } else if (ongridPositiveExports === true) {
+                  // Positive ongrid_power means export (battery discharging)
+                  state = (result.ongrid_power > 0) ? 'discharging' : (result.ongrid_power < 0) ? 'charging' : 'idle';
+                } else {
+                  // Positive ongrid_power means import (battery charging)
+                  state = (result.ongrid_power > 0) ? 'charging' : (result.ongrid_power < 0) ? 'discharging' : 'idle';
+                }
+
+                if (this.debug) this.log('[stats] Setting battery_charging_state from ongrid_power:', result.ongrid_power, '=>', state, '(ongridPositiveExports=', ongridPositiveExports, ')');
+                await this.setCapabilityValue('battery_charging_state', state);
+                if (this.debug) {
+                  const cur = await this.getCapabilityValue('battery_charging_state');
+                  this.log('[stats] battery_charging_state after set (ongrid_power):', cur);
+                }
+
+                // Also set measure_power so Homey Energy shows correct sign (positive=charging)
+                try {
+                  let measurePowerVal = 0;
+                  if (ongridPositiveExports === null) {
+                    // heuristic: positive ongrid => export => battery discharging => measure_power negative
+                    measurePowerVal = (result.ongrid_power > 0) ? -Math.abs(result.ongrid_power) : (result.ongrid_power < 0) ? Math.abs(result.ongrid_power) : 0;
+                  } else if (ongridPositiveExports === true) {
+                    // positive => export => battery discharging
+                    measurePowerVal = (result.ongrid_power > 0) ? -Math.abs(result.ongrid_power) : (result.ongrid_power < 0) ? Math.abs(result.ongrid_power) : 0;
+                  } else {
+                    // positive => import => battery charging
+                    measurePowerVal = (result.ongrid_power > 0) ? Math.abs(result.ongrid_power) : (result.ongrid_power < 0) ? -Math.abs(result.ongrid_power) : 0;
+                  }
+                  await this.setCapabilityValue('measure_power', measurePowerVal / ((firmware >= 154) ? 1.0 : 10.0));
+                  if (this.debug && this.getSetting('statistics_debug')) this.log('[stats] measure_power set from ongrid_power to', measurePowerVal);
+                } catch (err) {
+                  if (this.debug) this.error('[stats] Failed to set measure_power from ongrid_power:', err);
+                }
+              } catch (err) {
+                this.error('[stats] Failed to set battery_charging_state from ongrid_power:', err);
+              }
             }
           }
 
