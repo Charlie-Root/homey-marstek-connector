@@ -1,0 +1,116 @@
+{
+  "id": "marstek_grid_power_threshold_condition",
+  "title": {
+    "en": "Grid power is...",
+    "nl": "Netvermogen is...",
+    "da": "Neteffekt er...",
+    "de": "Netzleistung ist...",
+    "es": "Potencia de red es...",
+    "fr": "Puissance réseau est...",
+    "it": "Potenza rete è...",
+    "no": "Netteffekt er...",
+    "sv": "Näteffekt är...",
+    "pl": "Moc sieci jest...",
+    "ru": "Мощность сети...",
+    "ko": "그리드 전력이..."
+  },
+  "titleFormatted": {
+    "en": "Grid power is [[comparison]] [[threshold]]W",
+    "nl": "Netvermogen is [[comparison]] [[threshold]]W",
+    "da": "Neteffekt er [[comparison]] [[threshold]]W",
+    "de": "Netzleistung ist [[comparison]] [[threshold]]W",
+    "es": "Potencia de red es [[comparison]] [[threshold]]W",
+    "fr": "Puissance réseau est [[comparison]] [[threshold]]W",
+    "it": "Potenza rete è [[comparison]] [[threshold]]W",
+    "no": "Netteffekt er [[comparison]] [[threshold]]W",
+    "sv": "Näteffekt är [[comparison]] [[threshold]]W",
+    "pl": "Moc sieci jest [[comparison]] [[threshold]]W",
+    "ru": "Мощность сети  [[comparison]] [[threshold]]W",
+    "ko": "의 그리드 전력이 [[threshold]]W [[comparison]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    },
+    {
+      "name": "comparison",
+      "type": "dropdown",
+      "title": {
+        "en": "Comparison",
+        "nl": "Vergelijking",
+        "da": "Sammenligning",
+        "de": "Vergleich",
+        "es": "Comparación",
+        "fr": "Comparaison",
+        "it": "Confronto",
+        "no": "Sammenligning",
+        "sv": "Jämförelse",
+        "pl": "Porównanie",
+        "ru": "Сравнение",
+        "ko": "비교"
+      },
+      "values": [
+        {
+          "id": "above",
+          "title": {
+            "en": "above",
+            "nl": "boven",
+            "da": "over",
+            "de": "über",
+            "es": "por encima de",
+            "fr": "au-dessus de",
+            "it": "sopra",
+            "no": "over",
+            "sv": "över",
+            "pl": "powyżej",
+            "ru": "выше",
+            "ko": "초과"
+          }
+        },
+        {
+          "id": "below",
+          "title": {
+            "en": "below",
+            "nl": "onder",
+            "da": "under",
+            "de": "unter",
+            "es": "por debajo de",
+            "fr": "en dessous de",
+            "it": "sotto",
+            "no": "under",
+            "sv": "under",
+            "pl": "poniżej",
+            "ru": "ниже",
+            "ko": "미만"
+          }
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Power Threshold (W)",
+        "nl": "Vermogensdrempel (W)",
+        "da": "Effekt Tærskel (W)",
+        "de": "Leistungsschwellenwert (W)",
+        "es": "Umbral de Potencia (W)",
+        "fr": "Seuil de Puissance (W)",
+        "it": "Soglia di Potenza (W)",
+        "no": "Effekt Terskel (W)",
+        "sv": "Effekt Tröskel (W)",
+        "pl": "Próg Moc (W)",
+        "ru": "Порог Мощности (W)",
+        "ko": "전력 임계값 (W)"
+      },
+      "min": -100000,
+      "max": 100000,
+      "step": 10,
+      "required": true
+    }
+  ]
+}

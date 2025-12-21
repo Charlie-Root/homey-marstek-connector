@@ -1,0 +1,125 @@
+{
+  "id": "marstek_set_passive_mode_timed",
+  "title": {
+    "en": "Set timed passive mode",
+    "nl": "Stel getimede passieve modus in",
+    "da": "Indstil tidsbestemt passiv tilstand",
+    "de": "Zeitgesteuerten passiven Modus setzen",
+    "es": "Establecer modo pasivo temporizado",
+    "fr": "Définir le mode passif temporisé",
+    "it": "Imposta modalità passiva temporizzata",
+    "no": "Sett tidsbestemt passiv modus",
+    "sv": "Ställ in tidsbestämt passivt läge",
+    "pl": "Ustaw czasowy tryb pasywny",
+    "ru": "Установить временный пассивный режим",
+    "ko": "시간 제한 패시브 모드 설정"
+  },
+  "titleFormatted": {
+    "en": "Set timed passive mode to [[power]]W for [[seconds]]s",
+    "nl": "Stel getimede passieve modus in op [[power]]W voor [[seconds]]s",
+    "da": "Indstil tidsbestemt passiv tilstand til [[power]]W i [[seconds]]s",
+    "de": "Zeitgesteuerten passiven Modus auf [[power]]W für [[seconds]]s setzen",
+    "es": "Establecer modo pasivo temporizado a [[power]]W durante [[seconds]]s",
+    "fr": "Définir le mode passif temporisé à [[power]]W pendant [[seconds]]s",
+    "it": "Imposta modalità passiva temporizzata a [[power]]W per [[seconds]]s",
+    "no": "Sett tidsbestemt passiv modus til [[power]]W i [[seconds]]s",
+    "sv": "Ställ in tidsbestämt passivt läge till [[power]]W under [[seconds]]s",
+    "pl": "Ustaw czasowy tryb pasywny na [[power]]W przez [[seconds]]s",
+    "ru": "Установить временный пассивный режим на [[power]]W на [[seconds]]s",
+    "ko": "[[seconds]]s 동안 [[power]]W로 시간 제한 패시브 모드 설정"
+  },
+  "description": {
+    "en": "Set passive mode with specified power output and duration in seconds. The battery will maintain this power level for the specified time.",
+    "nl": "Stel passieve modus in met opgegeven vermogensuitgang en duur in seconden. De batterij zal dit vermogensniveau handhaven voor de opgegeven tijd.",
+    "da": "Indstil passiv tilstand med specificeret effektoutput og varighed i sekunder. Batteriet vil opretholde dette effektniveau i den angivne tid.",
+    "de": "Passiven Modus mit angegebener Leistungsabgabe und Dauer in Sekunden setzen. Die Batterie wird dieses Leistungsniveau für die angegebene Zeit beibehalten.",
+    "es": "Establecer modo pasivo con salida de potencia especificada y duración en segundos. La batería mantendrá este nivel de potencia durante el tiempo especificado.",
+    "fr": "Définir le mode passif avec la puissance de sortie spécifiée et la durée en secondes. La batterie maintiendra ce niveau de puissance pendant la durée spécifiée.",
+    "it": "Imposta la modalità passiva con l'output di potenza specificato e la durata in secondi. La batteria manterrà questo livello di potenza per il tempo specificato.",
+    "no": "Sett passiv modus med spesifisert effektoutput og varighet i sekunder. Batteriet vil opprettholde dette effektnivået i den angitte tiden.",
+    "sv": "Ställ in passivt läge med specificerad effektoutput och varaktighet i sekunder. Batteriet kommer att upprätthålla denna effektnivå under den angivna tiden.",
+    "pl": "Ustaw tryb pasywny z określoną mocą wyjściową i czasem trwania w sekundach. Bateria będzie utrzymywać ten poziom mocy przez określony czas.",
+    "ru": "Установить пассивный режим с указанной мощностью выхода и продолжительностью в секундах. Батарея будет поддерживать этот уровень мощности в течение указанного времени.",
+    "ko": "지정된 출력 전력과 초 단위 지속 시간으로 패시브 모드를 설정합니다. 배터리는 지정된 시간 동안 이 전력 수준을 유지합니다."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    },
+    {
+      "name": "power",
+      "type": "number",
+      "title": {
+        "en": "Power (W)",
+        "nl": "Vermogen (W)",
+        "da": "Effekt (W)",
+        "de": "Leistung (W)",
+        "es": "Potencia (W)",
+        "fr": "Puissance (W)",
+        "it": "Potenza (W)",
+        "no": "Effekt (W)",
+        "sv": "Effekt (W)",
+        "pl": "Moc (W)",
+        "ru": "Мощность (Вт)",
+        "ko": "전력 (W)"
+      },
+      "placeholder": {
+        "en": "100",
+        "nl": "100",
+        "da": "100",
+        "de": "100",
+        "es": "100",
+        "fr": "100",
+        "it": "100",
+        "no": "100",
+        "sv": "100",
+        "pl": "100",
+        "ru": "100",
+        "ko": "100"
+      },
+      "min": -10000,
+      "max": 10000,
+      "step": 1,
+      "required": true
+    },
+    {
+      "name": "seconds",
+      "type": "number",
+      "title": {
+        "en": "Duration (seconds)",
+        "nl": "Duur (seconden)",
+        "da": "Varighed (sekunder)",
+        "de": "Dauer (Sekunden)",
+        "es": "Duración (segundos)",
+        "fr": "Durée (secondes)",
+        "it": "Durata (secondi)",
+        "no": "Varighet (sekunder)",
+        "sv": "Varaktighet (sekunder)",
+        "pl": "Czas trwania (sekundy)",
+        "ru": "Продолжительность (секунды)",
+        "ko": "지속 시간 (초)"
+      },
+      "placeholder": {
+        "en": "300",
+        "nl": "300",
+        "da": "300",
+        "de": "300",
+        "es": "300",
+        "fr": "300",
+        "it": "300",
+        "no": "300",
+        "sv": "300",
+        "pl": "300",
+        "ru": "300",
+        "ko": "300"
+      },
+      "min": 1,
+      "max": 86400,
+      "step": 1,
+      "required": true
+    }
+  ]
+}

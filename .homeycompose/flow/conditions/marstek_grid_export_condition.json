@@ -1,0 +1,39 @@
+{
+  "id": "marstek_grid_export_condition",
+  "title": {
+    "en": "Grid is exporting",
+    "nl": "Net is exporterend",
+    "da": "Net eksporterer",
+    "de": "Netz exportiert",
+    "es": "Red está exportando",
+    "fr": "Réseau exporte",
+    "it": "Rete sta esportando",
+    "no": "Nett eksporterer",
+    "sv": "Nät exporterar",
+    "pl": "Sieć eksportuje",
+    "ru": "Сеть экспортирует",
+    "ko": "그리드가 내보내는 중"
+  },
+  "titleFormatted": {
+    "en": "Grid is exporting",
+    "nl": "Net is exporterend",
+    "da": "Net eksporterer",
+    "de": "Netz exportiert",
+    "es": "Red está exportando",
+    "fr": "Réseau exporte",
+    "it": "Rete sta esportando",
+    "no": "Nett eksporterer",
+    "sv": "Nät exporterar",
+    "pl": "Sieć eksportuje",
+    "ru": "Сеть экспортирует",
+    "ko": "그리드가 내보내는 중"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    }
+  ]
+}

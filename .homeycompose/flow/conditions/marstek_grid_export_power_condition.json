@@ -1,0 +1,116 @@
+{
+  "id": "marstek_grid_export_power_condition",
+  "title": {
+    "en": "Grid export power is...",
+    "nl": "Netexport vermogen is...",
+    "da": "Neteksport effekt er...",
+    "de": "Netzexport Leistung ist...",
+    "es": "Potencia de exportación de red es...",
+    "fr": "Puissance d'exportation réseau est...",
+    "it": "Potenza di esportazione rete è...",
+    "no": "Nettexport effekt er...",
+    "sv": "Nätexport effekt är...",
+    "pl": "Moc eksportu sieci jest...",
+    "ru": "Мощность экспорта сети...",
+    "ko": "그리드 수출 전력이..."
+  },
+  "titleFormatted": {
+    "en": "Grid export power is [[comparison]] [[threshold]]W",
+    "nl": "Netexport vermogen is [[comparison]] [[threshold]]W",
+    "da": "Neteksport effekt er [[comparison]] [[threshold]]W",
+    "de": "Netzexport Leistung ist [[comparison]] [[threshold]]W",
+    "es": "Potencia de exportación de red es [[comparison]] [[threshold]]W",
+    "fr": "Puissance d'exportation réseau est [[comparison]] [[threshold]]W",
+    "it": "Potenza di esportazione rete è [[comparison]] [[threshold]]W",
+    "no": "Nettexport effekt er [[comparison]] [[threshold]]W",
+    "sv": "Nätexport effekt är [[comparison]] [[threshold]]W",
+    "pl": "Moc eksportu sieci jest [[comparison]] [[threshold]]W",
+    "ru": "Мощность экспорта сети  [[comparison]] [[threshold]]W",
+    "ko": "의 그리드 수출 전력이 [[threshold]]W [[comparison]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    },
+    {
+      "name": "comparison",
+      "type": "dropdown",
+      "title": {
+        "en": "Comparison",
+        "nl": "Vergelijking",
+        "da": "Sammenligning",
+        "de": "Vergleich",
+        "es": "Comparación",
+        "fr": "Comparaison",
+        "it": "Confronto",
+        "no": "Sammenligning",
+        "sv": "Jämförelse",
+        "pl": "Porównanie",
+        "ru": "Сравнение",
+        "ko": "비교"
+      },
+      "values": [
+        {
+          "id": "above",
+          "title": {
+            "en": "above",
+            "nl": "boven",
+            "da": "over",
+            "de": "über",
+            "es": "por encima de",
+            "fr": "au-dessus de",
+            "it": "sopra",
+            "no": "over",
+            "sv": "över",
+            "pl": "powyżej",
+            "ru": "выше",
+            "ko": "초과"
+          }
+        },
+        {
+          "id": "below",
+          "title": {
+            "en": "below",
+            "nl": "onder",
+            "da": "under",
+            "de": "unter",
+            "es": "por debajo de",
+            "fr": "en dessous de",
+            "it": "sotto",
+            "no": "under",
+            "sv": "under",
+            "pl": "poniżej",
+            "ru": "ниже",
+            "ko": "미만"
+          }
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Export Power Threshold (W)",
+        "nl": "Export Vermogensdrempel (W)",
+        "da": "Eksport Effekt Tærskel (W)",
+        "de": "Export Leistungsschwellenwert (W)",
+        "es": "Umbral de Potencia de Exportación (W)",
+        "fr": "Seuil de Puissance d'Exportation (W)",
+        "it": "Soglia di Potenza di Esportazione (W)",
+        "no": "Eksport Effekt Terskel (W)",
+        "sv": "Export Effekt Tröskel (W)",
+        "pl": "Próg Moc Eksportu (W)",
+        "ru": "Порог Мощности Экспорта (W)",
+        "ko": "수출 전력 임계값 (W)"
+      },
+      "min": 0,
+      "max": 100000,
+      "step": 10,
+      "required": true
+    }
+  ]
+}

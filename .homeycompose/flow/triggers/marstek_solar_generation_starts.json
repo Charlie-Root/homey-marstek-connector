@@ -1,0 +1,127 @@
+{
+  "id": "marstek_solar_generation_starts",
+  "title": {
+    "en": "Solar generation starts",
+    "nl": "Zonne-energieopwekking begint",
+    "da": "Solenergi generation starter",
+    "de": "Solarstromerzeugung beginnt",
+    "es": "Generación solar comienza",
+    "fr": "Génération solaire commence",
+    "it": "Generazione solare inizia",
+    "no": "Solenergi generering starter",
+    "sv": "Solenergi generation börjar",
+    "pl": "Generacja energii słonecznej rozpoczyna się",
+    "ru": "Солнечная генерация начинается",
+    "ko": "태양광 발전이 시작됩니다"
+  },
+  "titleFormatted": {
+    "en": "Solar generation starts when above [[threshold]]W",
+    "nl": "Zonne-energieopwekking begint wanneer boven [[threshold]]W",
+    "da": "Solenergi generation starter når over [[threshold]]W",
+    "de": "Solarstromerzeugung beginnt wenn über [[threshold]]W",
+    "es": "Generación solar comienza cuando por encima de [[threshold]]W",
+    "fr": "Génération solaire commence quand au-dessus de [[threshold]]W",
+    "it": "Generazione solare inizia quando sopra [[threshold]]W",
+    "no": "Solenergi generering starter når over [[threshold]]W",
+    "sv": "Solenergi generation börjar när över [[threshold]]W",
+    "pl": "Generacja energii słonecznej rozpoczyna się gdy powyżej [[threshold]]W",
+    "ru": "Солнечная генерация начинается  когда выше [[threshold]]W",
+    "ko": "에서 태양광 발전이 [[threshold]]W 이상일 때 시작됩니다"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Power Threshold (W)",
+        "nl": "Vermogensdrempel (W)",
+        "da": "Effekt Tærskel (W)",
+        "de": "Leistungsschwellenwert (W)",
+        "es": "Umbral de Potencia (W)",
+        "fr": "Seuil de Puissance (W)",
+        "it": "Soglia di Potenza (W)",
+        "no": "Effekt Terskel (W)",
+        "sv": "Effekt Tröskel (W)",
+        "pl": "Próg Moc (W)",
+        "ru": "Порог Мощности (W)",
+        "ko": "전력 임계값 (W)"
+      },
+      "min": 0,
+      "max": 10000,
+      "step": 10,
+      "required": true
+    }
+  ],
+  "tokens": [
+    {
+      "name": "power",
+      "type": "number",
+      "title": {
+        "en": "Current PV Power",
+        "nl": "Huidig PV Vermogen",
+        "da": "Nuværende PV Effekt",
+        "de": "Aktuelle PV-Leistung",
+        "es": "Potencia PV Actual",
+        "fr": "Puissance PV Actuelle",
+        "it": "Potenza PV Attuale",
+        "no": "Nåværende PV Effekt",
+        "sv": "Nuvarande PV Effekt",
+        "pl": "Aktualna Moc PV",
+        "ru": "Текущая Мощность PV",
+        "ko": "현재 PV 전력"
+      },
+      "desc": {
+        "en": "Current solar panel power generation in watts",
+        "nl": "Huidige zonnepaneel energieopwekking in watt",
+        "da": "Nuværende solpanel effekt i watt",
+        "de": "Aktuelle Solarpanel-Leistung in Watt",
+        "es": "Potencia actual de paneles solares en vatios",
+        "fr": "Puissance actuelle des panneaux solaires en watts",
+        "it": "Potenza attuale dei pannelli solari in watt",
+        "no": "Nåværende solpanel effekt i watt",
+        "sv": "Nuvarande solpanel effekt i watt",
+        "pl": "Aktualna moc paneli słonecznych w watach",
+        "ru": "Текущая мощность солнечных панелей в ваттах",
+        "ko": "현재 태양광 패널 발전량(와트)"
+      }
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Threshold",
+        "nl": "Drempel",
+        "da": "Tærskel",
+        "de": "Schwellenwert",
+        "es": "Umbral",
+        "fr": "Seuil",
+        "it": "Soglia",
+        "no": "Terskel",
+        "sv": "Tröskel",
+        "pl": "Próg",
+        "ru": "Порог",
+        "ko": "임계값"
+      },
+      "desc": {
+        "en": "The power threshold that was exceeded",
+        "nl": "De vermogensdrempel die werd overschreden",
+        "da": "Effekt-tærsklen der blev overskredet",
+        "de": "Der Leistungsschwellenwert, der überschritten wurde",
+        "es": "El umbral de potencia que se superó",
+        "fr": "Le seuil de puissance qui a été dépassé",
+        "it": "La soglia di potenza che è stata superata",
+        "no": "Effekt-terskelen som ble overskredet",
+        "sv": "Effekt-tröskeln som överskreds",
+        "pl": "Próg mocy, który został przekroczony",
+        "ru": "Порог мощности, который был превышен",
+        "ko": "초과된 전력 임계값"
+      }
+    }
+  ]
+}

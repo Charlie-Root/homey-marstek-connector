@@ -1,0 +1,214 @@
+{
+  "id": "marstek_temperature_warning",
+  "title": {
+    "en": "Battery temperature warning",
+    "nl": "Batterij temperatuur waarschuwing",
+    "da": "Batteri temperatur advarsel",
+    "de": "Batterie Temperaturwarnung",
+    "es": "Advertencia de temperatura de batería",
+    "fr": "Avertissement de température de batterie",
+    "it": "Avviso temperatura batteria",
+    "no": "Batteri temperatur advarsel",
+    "sv": "Batteri temperatur varning",
+    "pl": "Ostrzeżenie temperatury baterii",
+    "ru": "Предупреждение о температуре батареи",
+    "ko": "배터리 온도 경고"
+  },
+  "titleFormatted": {
+    "en": "Battery temperature [[direction]] [[threshold]]°C",
+    "nl": "Batterij temperatuur [[direction]] [[threshold]]°C",
+    "da": "Batteri temperatur [[direction]] [[threshold]]°C",
+    "de": "Batterie Temperatur [[direction]] [[threshold]]°C",
+    "es": "Temperatura de batería [[direction]] [[threshold]]°C",
+    "fr": "Température de batterie [[direction]] [[threshold]]°C",
+    "it": "Temperatura batteria [[direction]] [[threshold]]°C",
+    "no": "Batteri temperatur [[direction]] [[threshold]]°C",
+    "sv": "Batteri temperatur [[direction]] [[threshold]]°C",
+    "pl": "Temperatura baterii [[direction]] [[threshold]]°C",
+    "ru": "Температура батареи [[direction]] [[threshold]]°C ",
+    "ko": "에서 배터리 온도가 [[threshold]]°C [[direction]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Temperature Threshold (°C)",
+        "nl": "Temperatuur Drempel (°C)",
+        "da": "Temperatur Tærskel (°C)",
+        "de": "Temperatur Schwellenwert (°C)",
+        "es": "Umbral de Temperatura (°C)",
+        "fr": "Seuil de Température (°C)",
+        "it": "Soglia Temperatura (°C)",
+        "no": "Temperatur Terskel (°C)",
+        "sv": "Temperatur Tröskel (°C)",
+        "pl": "Próg Temperatury (°C)",
+        "ru": "Порог Температуры (°C)",
+        "ko": "온도 임계값 (°C)"
+      },
+      "min": -20,
+      "max": 80,
+      "step": 1,
+      "required": true
+    },
+    {
+      "name": "direction",
+      "type": "dropdown",
+      "title": {
+        "en": "Direction",
+        "nl": "Richting",
+        "da": "Retning",
+        "de": "Richtung",
+        "es": "Dirección",
+        "fr": "Direction",
+        "it": "Direzione",
+        "no": "Retning",
+        "sv": "Riktning",
+        "pl": "Kierunek",
+        "ru": "Направление",
+        "ko": "방향"
+      },
+      "values": [
+        {
+          "id": "above",
+          "title": {
+            "en": "goes above",
+            "nl": "gaat boven",
+            "da": "går over",
+            "de": "geht über",
+            "es": "va por encima",
+            "fr": "dépasse",
+            "it": "va sopra",
+            "no": "går over",
+            "sv": "går över",
+            "pl": "przekracza",
+            "ru": "превышает",
+            "ko": "초과"
+          }
+        },
+        {
+          "id": "below",
+          "title": {
+            "en": "goes below",
+            "nl": "gaat onder",
+            "da": "går under",
+            "de": "geht unter",
+            "es": "va por debajo",
+            "fr": "passe en dessous",
+            "it": "va sotto",
+            "no": "går under",
+            "sv": "går under",
+            "pl": "spada poniżej",
+            "ru": "опускается ниже",
+            "ko": "미만"
+          }
+        }
+      ],
+      "required": true
+    }
+  ],
+  "tokens": [
+    {
+      "name": "temperature",
+      "type": "number",
+      "title": {
+        "en": "Current Temperature",
+        "nl": "Huidige Temperatuur",
+        "da": "Nuværende Temperatur",
+        "de": "Aktuelle Temperatur",
+        "es": "Temperatura Actual",
+        "fr": "Température Actuelle",
+        "it": "Temperatura Attuale",
+        "no": "Nåværende Temperatur",
+        "sv": "Nuvarande Temperatur",
+        "pl": "Aktualna Temperatura",
+        "ru": "Текущая Температура",
+        "ko": "현재 온도"
+      },
+      "desc": {
+        "en": "Current battery temperature in degrees Celsius",
+        "nl": "Huidige batterij temperatuur in graden Celsius",
+        "da": "Nuværende batteri temperatur i grader Celsius",
+        "de": "Aktuelle Batterie-Temperatur in Grad Celsius",
+        "es": "Temperatura actual de la batería en grados Celsius",
+        "fr": "Température actuelle de la batterie en degrés Celsius",
+        "it": "Temperatura attuale della batteria in gradi Celsius",
+        "no": "Nåværende batteri temperatur i grader Celsius",
+        "sv": "Nuvarande batteri temperatur i grader Celsius",
+        "pl": "Aktualna temperatura baterii w stopniach Celsiusza",
+        "ru": "Текущая температура батареи в градусах Цельсия",
+        "ko": "섭씨 단위의 현재 배터리 온도"
+      }
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Threshold",
+        "nl": "Drempel",
+        "da": "Tærskel",
+        "de": "Schwellenwert",
+        "es": "Umbral",
+        "fr": "Seuil",
+        "it": "Soglia",
+        "no": "Terskel",
+        "sv": "Tröskel",
+        "pl": "Próg",
+        "ru": "Порог",
+        "ko": "임계값"
+      },
+      "desc": {
+        "en": "The temperature threshold that was crossed",
+        "nl": "De temperatuur drempel die werd overschreden",
+        "da": "Temperatur-tærsklen der blev krydset",
+        "de": "Der Temperatur-Schwellenwert, der überschritten wurde",
+        "es": "El umbral de temperatura que se cruzó",
+        "fr": "Le seuil de température qui a été franchi",
+        "it": "La soglia di temperatura che è stata superata",
+        "no": "Temperatur-terskelen som ble krysset",
+        "sv": "Temperatur-tröskeln som överskreds",
+        "pl": "Próg temperatury, który został przekroczony",
+        "ru": "Порог температуры, который был пересечен",
+        "ko": "교차된 온도 임계값"
+      }
+    },
+    {
+      "name": "direction",
+      "type": "string",
+      "title": {
+        "en": "Direction",
+        "nl": "Richting",
+        "da": "Retning",
+        "de": "Richtung",
+        "es": "Dirección",
+        "fr": "Direction",
+        "it": "Direzione",
+        "no": "Retning",
+        "sv": "Riktning",
+        "pl": "Kierunek",
+        "ru": "Направление",
+        "ko": "방향"
+      },
+      "desc": {
+        "en": "Whether temperature went above or below the threshold",
+        "nl": "Of temperatuur boven of onder de drempel ging",
+        "da": "Om temperaturen gik over eller under tærsklen",
+        "de": "Ob Temperatur über oder unter den Schwellenwert ging",
+        "es": "Si la temperatura fue por encima o por debajo del umbral",
+        "fr": "Si la température est passée au-dessus ou en dessous du seuil",
+        "it": "Se la temperatura è andata sopra o sotto la soglia",
+        "no": "Om temperaturen gikk over eller under terskelen",
+        "sv": "Om temperaturen gick över eller under tröskeln",
+        "pl": "Czy temperatura przekroczyła próg w górę czy w dół",
+        "ru": "Превысила ли температура порог или опустилась ниже",
+        "ko": "온도가 임계값을 초과했는지 또는 미만인지"
+      }
+    }
+  ]
+}

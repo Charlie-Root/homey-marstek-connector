@@ -1,0 +1,53 @@
+{
+  "id": "marstek_emergency_mode",
+  "title": {
+    "en": "Set emergency mode",
+    "nl": "Stel noodmodus in",
+    "da": "Indstil nødtilstand",
+    "de": "Notfallmodus setzen",
+    "es": "Establecer modo de emergencia",
+    "fr": "Définir le mode urgence",
+    "it": "Imposta modalità emergenza",
+    "no": "Sett nødmodus",
+    "sv": "Ställ in nödläge",
+    "pl": "Ustaw tryb awaryjny",
+    "ru": "Установить аварийный режим",
+    "ko": "비상 모드 설정"
+  },
+  "titleFormatted": {
+    "en": "Set emergency mode",
+    "nl": "Stel noodmodus in",
+    "da": "Indstil nødtilstand",
+    "de": "Notfallmodus setzen",
+    "es": "Establecer modo de emergencia",
+    "fr": "Définir le mode urgence",
+    "it": "Imposta modalità emergenza",
+    "no": "Sett nødmodus",
+    "sv": "Ställ in nödläge",
+    "pl": "Ustaw tryb awaryjny",
+    "ru": "Установить аварийный режим ",
+    "ko": "에서 비상 모드 설정"
+  },
+  "description": {
+    "en": "Activate emergency mode on the battery system. This mode prioritizes system stability and safety over normal operations.",
+    "nl": "Activeer noodmodus op het batterijsysteem. Deze modus geeft prioriteit aan systeemstabiliteit en veiligheid boven normale operaties.",
+    "da": "Aktivér nødtilstand på batterisystemet. Denne tilstand prioriterer systemstabilitet og sikkerhed over normale operationer.",
+    "de": "Notfallmodus auf dem Batteriesystem aktivieren. Dieser Modus priorisiert Systemstabilität und Sicherheit gegenüber normalen Betrieb.",
+    "es": "Activar modo de emergencia en el sistema de batería. Este modo prioriza la estabilidad y seguridad del sistema sobre las operaciones normales.",
+    "fr": "Activer le mode urgence sur le système de batterie. Ce mode priorise la stabilité et la sécurité du système par rapport aux opérations normales.",
+    "it": "Attiva la modalità emergenza sul sistema batteria. Questa modalità prioritizza la stabilità e la sicurezza del sistema rispetto alle operazioni normali.",
+    "no": "Aktiver nødmodus på batterisystemet. Denne modusen prioriterer systemstabilitet og sikkerhet over normale operasjoner.",
+    "sv": "Aktivera nödläge på batterisystemet. Detta läge prioriterar systemstabilitet och säkerhet framför normala operationer.",
+    "pl": "Aktywuj tryb awaryjny w systemie baterii. Ten tryb priorytetowo traktuje stabilność i bezpieczeństwo systemu nad normalnymi operacjami.",
+    "ru": "Активировать аварийный режим в системе батареи. Этот режим отдает приоритет стабильности и безопасности системы над нормальными операциями.",
+    "ko": "배터리 시스템에서 비상 모드를 활성화합니다. 이 모드는 정상 작동보다 시스템 안정성과 안전을 우선시합니다."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    }
+  ]
+}

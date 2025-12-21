@@ -61,12 +61,14 @@ export default class MarstekVenusDriver extends Homey.Driver {
     async onInit() {
       if (this.debug) this.log('MarstekVenusDriver has been initialized');
       // Log Homey environment details for debugging
-      this.log('Homey environment details:', {
-        version: this.homey.manifest.version,
-        debug: this.debug,
-        platform: process.platform,
-        nodeVersion: process.version,
-      });
+      if (this.debug) {
+        this.log('Homey environment details:', {
+          version: this.homey.manifest.version,
+          debug: this.debug,
+          platform: process.platform,
+          nodeVersion: process.version,
+        });
+      }
       await this.registerFlowListeners();
     }
 
@@ -384,6 +386,308 @@ export default class MarstekVenusDriver extends Homey.Driver {
                 includeDetails: boolean,
             }) => (device as any).verifyCalculation(timePeriod, includeDetails),
       );
+      register(
+        'marstek_send_notification',
+        async ({
+          device,
+          message,
+        }: {
+                device: Homey.Device,
+                message?: string,
+            }) => this.sendBatteryNotification(device, message),
+      );
+      register(
+        'marstek_set_manual_mode_preset',
+        async ({
+          device,
+          start_time,
+          end_time,
+          days,
+          power,
+          enable,
+        }: {
+                device: Homey.Device,
+                start_time: string,
+                end_time: string,
+                days: string[],
+                power: number,
+                enable: string,
+            }) => this.setModeManual(device, start_time, end_time, days, power, enable === 'true'),
+      );
+      register(
+        'marstek_set_passive_mode_timed',
+        async ({
+          device,
+          power,
+          seconds,
+        }: {
+                device: Homey.Device,
+                power: number,
+                seconds: number,
+            }) => this.setModePassive(device, power, seconds),
+      );
+      register(
+        'marstek_emergency_mode',
+        async ({
+          device,
+        }: {
+                device: Homey.Device,
+            }) => this.setModeEmergency(device),
+      );
+      register(
+        'marstek_reset_statistics_by_type',
+        async ({
+          device,
+          type,
+        }: {
+                device: Homey.Device,
+                type: string,
+            }) => this.resetStatisticsByType(device, type),
+      );
+      register(
+        'marstek_adjust_energy_price',
+        async ({
+          device,
+          price,
+        }: {
+                device: Homey.Device,
+                price: number,
+            }) => this.setEnergyPrice(device, price),
+      );
+
+      // Register trigger cards
+      const registerTrigger = (id: string) => {
+        try {
+          this.homey.flow.getTriggerCard(id);
+          if (this.debug) this.log(`Successfully registered trigger card: ${id}`);
+        } catch (err) {
+          this.error(`Failed to register trigger card ${id}:`, err);
+        }
+      };
+
+      // Register condition cards
+      const registerCondition = (id: string, handler: Function) => {
+        try {
+          const card = this.homey.flow.getConditionCard(id);
+          card.registerRunListener(async (args: any) => {
+            return await handler(args);
+          });
+          if (this.debug) this.log(`Successfully registered condition card: ${id}`);
+        } catch (err) {
+          this.error(`Failed to register condition card ${id}:`, err);
+        }
+      };
+
+      registerCondition('marstek_battery_soc_condition', async ({
+        device,
+        comparison,
+        threshold,
+        threshold2,
+      }: {
+        device: Homey.Device;
+        comparison: string;
+        threshold: number;
+        threshold2?: number;
+      }) => {
+        const currentSoc = await device.getCapabilityValue('measure_battery');
+        if (currentSoc === null || currentSoc === undefined) return false;
+
+        switch (comparison) {
+          case 'above':
+            return currentSoc > threshold;
+          case 'below':
+            return currentSoc < threshold;
+          case 'between':
+            return currentSoc >= threshold && currentSoc <= (threshold2 || threshold);
+          default:
+            return false;
+        }
+      });
+
+      registerCondition('marstek_battery_charging_condition', async ({
+        device,
+        state,
+      }: {
+        device: Homey.Device;
+        state: string;
+      }) => {
+        const chargingState = await device.getCapabilityValue('battery_charging_state');
+        if (chargingState === null || chargingState === undefined) return false;
+
+        return chargingState === state;
+      });
+
+      registerCondition('marstek_grid_connected_condition', async ({
+        device,
+      }: {
+        device: Homey.Device;
+      }) => {
+        const ctState = await device.getCapabilityValue('measure_ct_state');
+        if (ctState === null || ctState === undefined) return false;
+
+        // CT state: 0 = not connected, 1 = connected
+        return ctState === '1';
+      });
+
+      registerCondition('marstek_grid_power_condition', async ({
+        device,
+        comparison,
+        threshold,
+        threshold2,
+      }: {
+        device: Homey.Device;
+        comparison: string;
+        threshold: number;
+        threshold2?: number;
+      }) => {
+        const gridPower = await device.getCapabilityValue('measure_power_ongrid');
+        if (gridPower === null || gridPower === undefined) return false;
+
+        switch (comparison) {
+          case 'above':
+            return gridPower > threshold;
+          case 'below':
+            return gridPower < threshold;
+          case 'between':
+            return gridPower >= threshold && gridPower <= (threshold2 || threshold);
+          default:
+            return false;
+        }
+      });
+
+      registerCondition('marstek_solar_generating_condition', async ({
+        device,
+        comparison,
+        threshold,
+      }: {
+        device: Homey.Device;
+        comparison: string;
+        threshold: number;
+      }) => {
+        const pvPower = await device.getCapabilityValue('measure_power_pv');
+        if (pvPower === null || pvPower === undefined) return false;
+
+        switch (comparison) {
+          case 'above':
+            return pvPower > threshold;
+          case 'below':
+            return pvPower < threshold;
+          default:
+            return false;
+        }
+      });
+
+      registerCondition('marstek_time_of_day_condition', async ({
+        comparison,
+        time,
+        time2,
+      }: {
+        comparison: string;
+        time: string;
+        time2?: string;
+      }) => {
+        const now = new Date();
+        const currentTime = now.getHours() * 60 + now.getMinutes(); // minutes since midnight
+
+        // Parse time string (HH:MM) to minutes
+        const parseTime = (timeStr: string): number => {
+          const [hours, minutes] = timeStr.split(':').map(Number);
+          return hours * 60 + minutes;
+        };
+
+        const targetTime = parseTime(time);
+
+        switch (comparison) {
+          case 'before':
+            return currentTime < targetTime;
+          case 'after':
+            return currentTime > targetTime;
+          case 'between':
+            if (!time2) return false;
+            const targetTime2 = parseTime(time2);
+            return currentTime >= targetTime && currentTime <= targetTime2;
+          default:
+            return false;
+        }
+      });
+
+      // Register trigger cards
+      registerTrigger('marstek_mode_changed');
+
+      // Register condition cards
+      registerCondition('marstek_mode_condition', async ({
+        device,
+        mode,
+      }: {
+        device: Homey.Device;
+        mode: string;
+      }) => {
+        const currentMode = await device.getCapabilityValue('battery_mode');
+        if (currentMode === null || currentMode === undefined) return false;
+        return currentMode === mode;
+      });
+
+      registerCondition('marstek_temperature_condition', async ({
+        device,
+        threshold,
+        direction,
+      }: {
+        device: Homey.Device;
+        threshold: number;
+        direction: string;
+      }) => {
+        const temperature = await device.getCapabilityValue('measure_temperature');
+        if (temperature === null || temperature === undefined) return false;
+
+        if (direction === 'above') {
+          return temperature > threshold;
+        } else if (direction === 'below') {
+          return temperature < threshold;
+        }
+        return false;
+      });
+
+      registerCondition('marstek_grid_import_condition', async ({
+        device,
+      }: {
+        device: Homey.Device;
+      }) => {
+        const gridPower = await device.getCapabilityValue('measure_power_ongrid');
+        if (gridPower === null || gridPower === undefined) return false;
+
+        return gridPower > 0;
+      });
+
+      registerCondition('marstek_grid_export_condition', async ({
+        device,
+      }: {
+        device: Homey.Device;
+      }) => {
+        const gridPower = await device.getCapabilityValue('measure_power_ongrid');
+        if (gridPower === null || gridPower === undefined) return false;
+
+        return gridPower < 0;
+      });
+
+      registerCondition('marstek_rssi_condition', async ({
+        device,
+        threshold,
+        direction,
+      }: {
+        device: Homey.Device;
+        threshold: number;
+        direction: string;
+      }) => {
+        const rssi = await device.getCapabilityValue('measure_rssi');
+        if (rssi === null || rssi === undefined) return false;
+
+        if (direction === 'above') {
+          return rssi > threshold;
+        } else if (direction === 'below') {
+          return rssi < threshold;
+        }
+        return false;
+      });
     }
 
     /**
@@ -555,6 +859,21 @@ export default class MarstekVenusDriver extends Homey.Driver {
     }
 
     /**
+     * Configures the device for emergency mode.
+     * @param {Homey.device} device - Target device instance.
+     * @returns {Promise<void>} Resolves once the command succeeds.
+     */
+    async setModeEmergency(device: Homey.Device) {
+      const config = {
+        mode: 'Emergency',
+        emergency_cfg: {
+          enable: 1,
+        },
+      };
+      await this.setModeConfiguration(device, config);
+    }
+
+    /**
      * Sets the energy price per kWh for a device.
      * @param {Homey.device} device - Target device instance.
      * @param {number} price - Energy price in €/kWh.
@@ -661,6 +980,126 @@ export default class MarstekVenusDriver extends Homey.Driver {
           reject(err);
         });
       });
+    }
+
+    /**
+     * Resets statistics by type for a device.
+     * @param {Homey.Device} device - Target device instance.
+     * @param {string} type - Type of statistics to reset ('charging', 'discharging', or 'all').
+     * @returns {Promise<void>} Resolves once the statistics are reset.
+     */
+    async resetStatisticsByType(device: Homey.Device, type: string): Promise<void> {
+      try {
+        // Get the device instance to access its methods
+        const deviceInstance = device as any; // Cast to access internal methods
+
+        // Wait for lock to be released if another operation is in progress
+        while (deviceInstance.statisticsLock) {
+          await new Promise((resolve) => setTimeout(resolve, 10));
+        }
+
+        // Acquire lock
+        deviceInstance.statisticsLock = true;
+
+        try {
+          let stats: any[] = deviceInstance.getStoreValue('statistics') || [];
+
+          if (type === 'all') {
+            // Reset all statistics
+            stats = [];
+            // Clear the grid counter accumulator store
+            await deviceInstance.setStoreValue('statistics', []);
+            await deviceInstance.setStoreValue(deviceInstance.constructor.GRID_COUNTER_ACCUMULATOR_STORE_KEY, null);
+          } else {
+            // Filter out entries of the specified type
+            stats = stats.filter((entry: any) => entry.type !== type);
+            // Update the store with filtered statistics
+            await deviceInstance.setStoreValue('statistics', stats);
+          }
+
+          // Update profit capabilities after reset
+          await deviceInstance.updateProfitCapabilities();
+
+          if (this.debug) {
+            this.log(`Statistics reset by type '${type}' completed successfully for device:`, device.getName());
+          }
+
+        } finally {
+          // Release lock
+          deviceInstance.statisticsLock = false;
+        }
+
+      } catch (error) {
+        this.error('Failed to reset statistics by type:', error);
+        throw error;
+      }
+    }
+
+    /**
+     * Sends a notification with current battery status information.
+     * @param {Homey.Device} device - Target device instance.
+     * @param {string} [message] - Optional custom message to include.
+     * @returns {Promise<void>} Resolves once the notification is sent.
+     */
+    async sendBatteryNotification(device: Homey.Device, message?: string): Promise<void> {
+      try {
+        // Gather current battery data
+        const soc = await device.getCapabilityValue('measure_battery');
+        const temperature = await device.getCapabilityValue('measure_temperature');
+        const power = await device.getCapabilityValue('measure_power');
+        const chargingState = await device.getCapabilityValue('battery_charging_state');
+        const ctState = await device.getCapabilityValue('measure_ct_state');
+        const gridPower = await device.getCapabilityValue('measure_power_ongrid');
+        const pvPower = await device.getCapabilityValue('measure_power_pv');
+
+        // Build notification message
+        let notificationText = 'Battery Status Update:\n';
+
+        if (soc !== null && soc !== undefined) {
+          notificationText += `• SOC: ${soc}%\n`;
+        }
+
+        if (temperature !== null && temperature !== undefined) {
+          notificationText += `• Temperature: ${temperature}°C\n`;
+        }
+
+        if (power !== null && power !== undefined) {
+          notificationText += `• Power: ${power}W\n`;
+        }
+
+        if (chargingState !== null && chargingState !== undefined) {
+          notificationText += `• Charging State: ${chargingState}\n`;
+        }
+
+        if (ctState !== null && ctState !== undefined) {
+          notificationText += `• CT State: ${ctState === '1' ? 'Connected' : 'Disconnected'}\n`;
+        }
+
+        if (gridPower !== null && gridPower !== undefined) {
+          notificationText += `• Grid Power: ${gridPower}W\n`;
+        }
+
+        if (pvPower !== null && pvPower !== undefined) {
+          notificationText += `• PV Power: ${pvPower}W\n`;
+        }
+
+        // Add custom message if provided
+        if (message && message.trim()) {
+          notificationText += `\n${message.trim()}`;
+        }
+
+        // Send the notification
+        await this.homey.notifications.createNotification({
+          excerpt: notificationText.length > 100 ? `${notificationText.substring(0, 97)}...` : notificationText,
+        });
+
+        if (this.debug) {
+          this.log('Battery notification sent for device:', device.getName());
+        }
+      } catch (error) {
+        this.error('Failed to send battery notification:', error);
+        throw error;
+      }
     }
 
     /**

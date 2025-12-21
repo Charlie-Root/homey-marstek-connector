@@ -1,0 +1,116 @@
+{
+  "id": "marstek_grid_import_power_condition",
+  "title": {
+    "en": "Grid import power is...",
+    "nl": "Netimport vermogen is...",
+    "da": "Netimport effekt er...",
+    "de": "Netzimport Leistung ist...",
+    "es": "Potencia de importación de red es...",
+    "fr": "Puissance d'importation réseau est...",
+    "it": "Potenza di importazione rete è...",
+    "no": "Nettimport effekt er...",
+    "sv": "Nätimport effekt är...",
+    "pl": "Moc importu sieci jest...",
+    "ru": "Мощность импорта сети...",
+    "ko": "그리드 수입 전력이..."
+  },
+  "titleFormatted": {
+    "en": "Grid import power is [[comparison]] [[threshold]]W",
+    "nl": "Netimport vermogen is [[comparison]] [[threshold]]W",
+    "da": "Netimport effekt er [[comparison]] [[threshold]]W",
+    "de": "Netzimport Leistung ist [[comparison]] [[threshold]]W",
+    "es": "Potencia de importación de red es [[comparison]] [[threshold]]W",
+    "fr": "Puissance d'importation réseau est [[comparison]] [[threshold]]W",
+    "it": "Potenza di importazione rete è [[comparison]] [[threshold]]W",
+    "no": "Nettimport effekt er [[comparison]] [[threshold]]W",
+    "sv": "Nätimport effekt är [[comparison]] [[threshold]]W",
+    "pl": "Moc importu sieci jest [[comparison]] [[threshold]]W",
+    "ru": "Мощность импорта сети  [[comparison]] [[threshold]]W",
+    "ko": "의 그리드 수입 전력이 [[threshold]]W [[comparison]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    },
+    {
+      "name": "comparison",
+      "type": "dropdown",
+      "title": {
+        "en": "Comparison",
+        "nl": "Vergelijking",
+        "da": "Sammenligning",
+        "de": "Vergleich",
+        "es": "Comparación",
+        "fr": "Comparaison",
+        "it": "Confronto",
+        "no": "Sammenligning",
+        "sv": "Jämförelse",
+        "pl": "Porównanie",
+        "ru": "Сравнение",
+        "ko": "비교"
+      },
+      "values": [
+        {
+          "id": "above",
+          "title": {
+            "en": "above",
+            "nl": "boven",
+            "da": "over",
+            "de": "über",
+            "es": "por encima de",
+            "fr": "au-dessus de",
+            "it": "sopra",
+            "no": "over",
+            "sv": "över",
+            "pl": "powyżej",
+            "ru": "выше",
+            "ko": "초과"
+          }
+        },
+        {
+          "id": "below",
+          "title": {
+            "en": "below",
+            "nl": "onder",
+            "da": "under",
+            "de": "unter",
+            "es": "por debajo de",
+            "fr": "en dessous de",
+            "it": "sotto",
+            "no": "under",
+            "sv": "under",
+            "pl": "poniżej",
+            "ru": "ниже",
+            "ko": "미만"
+          }
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Import Power Threshold (W)",
+        "nl": "Import Vermogensdrempel (W)",
+        "da": "Import Effekt Tærskel (W)",
+        "de": "Import Leistungsschwellenwert (W)",
+        "es": "Umbral de Potencia de Importación (W)",
+        "fr": "Seuil de Puissance d'Importation (W)",
+        "it": "Soglia di Potenza di Importazione (W)",
+        "no": "Import Effekt Terskel (W)",
+        "sv": "Import Effekt Tröskel (W)",
+        "pl": "Próg Moc Importu (W)",
+        "ru": "Порог Мощности Импорта (W)",
+        "ko": "수입 전력 임계값 (W)"
+      },
+      "min": 0,
+      "max": 100000,
+      "step": 10,
+      "required": true
+    }
+  ]
+}

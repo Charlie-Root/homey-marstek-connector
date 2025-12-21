@@ -1,0 +1,53 @@
+{
+  "id": "marstek_send_notification",
+  "title": {
+    "en": "Send battery notification",
+    "nl": "Batterij melding verzenden",
+    "da": "Send batteri notifikation",
+    "de": "Batterie-Benachrichtigung senden",
+    "es": "Enviar notificación de batería",
+    "fr": "Envoyer notification batterie",
+    "it": "Invia notifica batteria",
+    "no": "Send batteri-varsel",
+    "sv": "Skicka batteri-avisering",
+    "pl": "Wyślij powiadomienie o baterii",
+    "ru": "Отправить уведомление о батарее",
+    "ko": "배터리 알림 보내기"
+  },
+  "titleFormatted": {
+    "en": "Send notification for ",
+    "nl": "Batterij melding verzenden",
+    "da": "Send notifikation for ",
+    "de": "Benachrichtigung senden für ",
+    "es": "Enviar notificación para ",
+    "fr": "Envoyer notification pour ",
+    "it": "Invia notifica per ",
+    "no": "Send varsel for ",
+    "sv": "Skicka avisering för ",
+    "pl": "Wyślij powiadomienie dla ",
+    "ru": "Отправить уведомление для ",
+    "ko": "에 대한 알림 보내기"
+  },
+  "description": {
+    "en": "Send a notification with current battery status information including SOC, temperature, power, and other relevant data.",
+    "nl": "Verzend een melding met huidige batterij status informatie inclusief SOC, temperatuur, vermogen en andere relevante gegevens.",
+    "da": "Send en notifikation med aktuelle batteri status oplysninger inklusive SOC, temperatur, effekt og andre relevante data.",
+    "de": "Senden Sie eine Benachrichtigung mit aktuellen Batterie-Statusinformationen einschließlich SOC, Temperatur, Leistung und anderen relevanten Daten.",
+    "es": "Enviar una notificación con información actual del estado de la batería incluyendo SOC, temperatura, potencia y otros datos relevantes.",
+    "fr": "Envoyer une notification avec les informations actuelles sur l'état de la batterie incluant SOC, température, puissance et autres données pertinentes.",
+    "it": "Invia una notifica con le informazioni attuali sullo stato della batteria inclusi SOC, temperatura, potenza e altri dati rilevanti.",
+    "no": "Send et varsel med nåværende batteri status informasjon inkludert SOC, temperatur, effekt og andre relevante data.",
+    "sv": "Skicka en avisering med aktuell batteri status information inklusive SOC, temperatur, effekt och andra relevanta data.",
+    "pl": "Wyślij powiadomienie z aktualnymi informacjami o stanie baterii, w tym SOC, temperaturze, mocy i innych istotnych danych.",
+    "ru": "Отправить уведомление с текущей информацией о состоянии батареи, включая SOC, температуру, мощность и другие релевантные данные.",
+    "ko": "SOC, 온도, 전력 및 기타 관련 데이터를 포함한 현재 배터리 상태 정보로 알림을 보냅니다."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    }
+  ]
+}

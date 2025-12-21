@@ -1,0 +1,275 @@
+{
+  "id": "marstek_battery_charging_state_changed",
+  "title": {
+    "en": "Battery charging state changes",
+    "nl": "Batterij laattoestand verandert",
+    "da": "Batteri ladetilstand ændres",
+    "de": "Batterie-Ladezustand ändert sich",
+    "es": "Estado de carga de batería cambia",
+    "fr": "État de charge de batterie change",
+    "it": "Stato di carica batteria cambia",
+    "no": "Batteri ladetilstand endres",
+    "sv": "Batteri laddningstillstånd ändras",
+    "pl": "Stan ładowania baterii się zmienia",
+    "ru": "Состояние зарядки батареи изменяется",
+    "ko": "배터리 충전 상태가 변경됩니다"
+  },
+  "titleFormatted": {
+    "en": "Battery [[state]]",
+    "nl": "Batterij [[state]]",
+    "da": "Batteri [[state]]",
+    "de": "Batterie [[state]]",
+    "es": "Batería [[state]]",
+    "fr": "Batterie [[state]]",
+    "it": "Batteria [[state]]",
+    "no": "Batteri [[state]]",
+    "sv": "Batteri [[state]]",
+    "pl": "Bateria [[state]]",
+    "ru": "Батарея [[state]]",
+    "ko": "배터리 [[state]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    },
+    {
+      "name": "state",
+      "type": "dropdown",
+      "title": {
+        "en": "State Change",
+        "nl": "Status Verandering",
+        "da": "Tilstandsændring",
+        "de": "Statusänderung",
+        "es": "Cambio de Estado",
+        "fr": "Changement d'État",
+        "it": "Cambio di Stato",
+        "no": "Tilstandsendring",
+        "sv": "Tillståndsändring",
+        "pl": "Zmiana Stanu",
+        "ru": "Изменение Состояния",
+        "ko": "상태 변경"
+      },
+      "values": [
+        {
+          "id": "starts_charging",
+          "title": {
+            "en": "starts charging",
+            "nl": "begint met laden",
+            "da": "begynder at lade",
+            "de": "beginnt zu laden",
+            "es": "comienza a cargar",
+            "fr": "commence à charger",
+            "it": "inizia a caricare",
+            "no": "begynner å lade",
+            "sv": "börjar ladda",
+            "pl": "rozpoczyna ładowanie",
+            "ru": "начинает заряжаться",
+            "ko": "충전 시작"
+          }
+        },
+        {
+          "id": "stops_charging",
+          "title": {
+            "en": "stops charging",
+            "nl": "stopt met laden",
+            "da": "stopper med at lade",
+            "de": "stoppt das Laden",
+            "es": "deja de cargar",
+            "fr": "arrête de charger",
+            "it": "smette di caricare",
+            "no": "stopper lading",
+            "sv": "slutar ladda",
+            "pl": "przestaje ładować",
+            "ru": "перестает заряжаться",
+            "ko": "충전 중지"
+          }
+        },
+        {
+          "id": "starts_discharging",
+          "title": {
+            "en": "starts discharging",
+            "nl": "begint met ontladen",
+            "da": "begynder at aflade",
+            "de": "beginnt zu entladen",
+            "es": "comienza a descargar",
+            "fr": "commence à décharger",
+            "it": "inizia a scaricare",
+            "no": "begynner å utlade",
+            "sv": "börjar urladda",
+            "pl": "rozpoczyna rozładowanie",
+            "ru": "начинает разряжаться",
+            "ko": "방전 시작"
+          }
+        },
+        {
+          "id": "stops_discharging",
+          "title": {
+            "en": "stops discharging",
+            "nl": "stopt met ontladen",
+            "da": "stopper med at aflade",
+            "de": "stoppt die Entladung",
+            "es": "deja de descargar",
+            "fr": "arrête de décharger",
+            "it": "smette di scaricare",
+            "no": "stopper utlading",
+            "sv": "slutar urladda",
+            "pl": "przestaje rozładowywać",
+            "ru": "перестает разряжаться",
+            "ko": "방전 중지"
+          }
+        },
+        {
+          "id": "becomes_idle",
+          "title": {
+            "en": "becomes idle",
+            "nl": "wordt inactief",
+            "da": "bliver inaktiv",
+            "de": "wird inaktiv",
+            "es": "se vuelve inactivo",
+            "fr": "devient inactif",
+            "it": "diventa inattivo",
+            "no": "blir inaktiv",
+            "sv": "blir inaktiv",
+            "pl": "staje się bezczynny",
+            "ru": "становится неактивным",
+            "ko": "대기 상태"
+          }
+        }
+      ],
+      "required": true
+    }
+  ],
+  "tokens": [
+    {
+      "name": "state",
+      "type": "string",
+      "title": {
+        "en": "New State",
+        "nl": "Nieuwe Status",
+        "da": "Ny Tilstand",
+        "de": "Neuer Status",
+        "es": "Nuevo Estado",
+        "fr": "Nouvel État",
+        "it": "Nuovo Stato",
+        "no": "Ny Tilstand",
+        "sv": "Nytt Tillstånd",
+        "pl": "Nowy Stan",
+        "ru": "Новое Состояние",
+        "ko": "새 상태"
+      },
+      "desc": {
+        "en": "The new charging state of the battery",
+        "nl": "De nieuwe laattoestand van de batterij",
+        "da": "Den nye ladetilstand for batteriet",
+        "de": "Der neue Ladezustand der Batterie",
+        "es": "El nuevo estado de carga de la batería",
+        "fr": "Le nouvel état de charge de la batterie",
+        "it": "Il nuovo stato di carica della batteria",
+        "no": "Den nye ladetilstanden til batteriet",
+        "sv": "Det nya laddningstillståndet för batteriet",
+        "pl": "Nowy stan ładowania baterii",
+        "ru": "Новое состояние зарядки батареи",
+        "ko": "배터리의 새로운 충전 상태"
+      }
+    },
+    {
+      "name": "previous_state",
+      "type": "string",
+      "title": {
+        "en": "Previous State",
+        "nl": "Vorige Status",
+        "da": "Forrige Tilstand",
+        "de": "Vorheriger Status",
+        "es": "Estado Anterior",
+        "fr": "État Précédent",
+        "it": "Stato Precedente",
+        "no": "Forrige Tilstand",
+        "sv": "Föregående Tillstånd",
+        "pl": "Poprzedni Stan",
+        "ru": "Предыдущее Состояние",
+        "ko": "이전 상태"
+      },
+      "desc": {
+        "en": "The previous charging state before the change",
+        "nl": "De vorige laattoestand voordat de verandering plaatsvond",
+        "da": "Den tidligere ladetilstand før ændringen",
+        "de": "Der vorherige Ladezustand vor der Änderung",
+        "es": "El estado de carga anterior antes del cambio",
+        "fr": "L'état de charge précédent avant le changement",
+        "it": "Lo stato di carica precedente prima del cambiamento",
+        "no": "Den tidligere ladetilstanden før endringen",
+        "sv": "Det tidigare laddningstillståndet före ändringen",
+        "pl": "Poprzedni stan ładowania przed zmianą",
+        "ru": "Предыдущее состояние зарядки перед изменением",
+        "ko": "변경 전 이전 충전 상태"
+      }
+    },
+    {
+      "name": "soc",
+      "type": "number",
+      "title": {
+        "en": "Current SOC",
+        "nl": "Huidige SOC",
+        "da": "Nuværende SOC",
+        "de": "Aktuelle SOC",
+        "es": "SOC Actual",
+        "fr": "SOC Actuel",
+        "it": "SOC Attuale",
+        "no": "Nåværende SOC",
+        "sv": "Nuvarande SOC",
+        "pl": "Aktualny SOC",
+        "ru": "Текущий SOC",
+        "ko": "현재 SOC"
+      },
+      "desc": {
+        "en": "Current battery state of charge percentage",
+        "nl": "Huidig batterij laadpercentage",
+        "da": "Nuværende batteri ladningsprocent",
+        "de": "Aktueller Batterie-Ladezustand in Prozent",
+        "es": "Porcentaje actual de carga de la batería",
+        "fr": "Pourcentage actuel de charge de la batterie",
+        "it": "Percentuale attuale di carica della batteria",
+        "no": "Nåværende batteriladningsprosent",
+        "sv": "Nuvarande batteriladdningsprocent",
+        "pl": "Aktualny procent naładowania baterii",
+        "ru": "Текущий процент заряда батареи",
+        "ko": "현재 배터리 충전 상태 백분율"
+      }
+    },
+    {
+      "name": "power",
+      "type": "number",
+      "title": {
+        "en": "Current Power",
+        "nl": "Huidig Vermogen",
+        "da": "Nuværende Effekt",
+        "de": "Aktuelle Leistung",
+        "es": "Potencia Actual",
+        "fr": "Puissance Actuelle",
+        "it": "Potenza Attuale",
+        "no": "Nåværende Effekt",
+        "sv": "Nuvarande Effekt",
+        "pl": "Aktualna Moc",
+        "ru": "Текущая Мощность",
+        "ko": "현재 전력"
+      },
+      "desc": {
+        "en": "Current battery power in watts (positive = charging, negative = discharging)",
+        "nl": "Huidig batterijvermogen in watt (positief = laden, negatief = ontladen)",
+        "da": "Nuværende batteri effekt i watt (positiv = ladning, negativ = afladning)",
+        "de": "Aktuelle Batterieleistung in Watt (positiv = Laden, negativ = Entladen)",
+        "es": "Potencia actual de batería en vatios (positivo = carga, negativo = descarga)",
+        "fr": "Puissance actuelle de batterie en watts (positif = charge, négatif = décharge)",
+        "it": "Potenza attuale batteria in watt (positivo = carica, negativo = scarica)",
+        "no": "Nåværende batteri effekt i watt (positiv = lading, negativ = utlading)",
+        "sv": "Nuvarande batteri effekt i watt (positiv = laddning, negativ = urladdning)",
+        "pl": "Aktualna moc baterii w watach (dodatni = ładowanie, ujemny = rozładowanie)",
+        "ru": "Текущая мощность батареи в ваттах (положительная = зарядка, отрицательная = разрядка)",
+        "ko": "현재 배터리 전력 (와트) (양수 = 충전, 음수 = 방전)"
+      }
+    }
+  ]
+}

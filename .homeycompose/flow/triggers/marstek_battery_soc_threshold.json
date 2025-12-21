@@ -1,0 +1,214 @@
+{
+  "id": "marstek_battery_soc_threshold",
+  "title": {
+    "en": "Battery SOC reaches threshold",
+    "nl": "Batterij SOC bereikt drempelwaarde",
+    "da": "Batteri SOC når tærskel",
+    "de": "Batterie SOC erreicht Schwellenwert",
+    "es": "SOC de batería alcanza umbral",
+    "fr": "SOC de batterie atteint le seuil",
+    "it": "SOC batteria raggiunge la soglia",
+    "no": "Batteri SOC når terskel",
+    "sv": "Batteri SOC når tröskelvärde",
+    "pl": "SOC baterii osiąga próg",
+    "ru": "SOC батареи достигает порога",
+    "ko": "배터리 SOC가 임계값에 도달합니다"
+  },
+  "titleFormatted": {
+    "en": "Battery SOC [[direction]] [[threshold]]%",
+    "nl": "Batterij SOC [[direction]] [[threshold]]%",
+    "da": "Batteri SOC [[direction]] [[threshold]]%",
+    "de": "Batterie SOC [[direction]] [[threshold]]%",
+    "es": "SOC de batería [[direction]] [[threshold]]%",
+    "fr": "SOC de batterie [[direction]] [[threshold]]%",
+    "it": "SOC batteria [[direction]] [[threshold]]%",
+    "no": "Batteri SOC [[direction]] [[threshold]]%",
+    "sv": "Batteri SOC [[direction]] [[threshold]]%",
+    "pl": "SOC baterii [[direction]] [[threshold]]%",
+    "ru": "SOC батареи [[direction]] [[threshold]]%",
+    "ko": "배터리 SOC가 [[threshold]]% [[direction]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "SOC Threshold (%)",
+        "nl": "SOC Drempel (%)",
+        "da": "SOC Tærskel (%)",
+        "de": "SOC Schwellenwert (%)",
+        "es": "Umbral SOC (%)",
+        "fr": "Seuil SOC (%)",
+        "it": "Soglia SOC (%)",
+        "no": "SOC Terskel (%)",
+        "sv": "SOC Tröskel (%)",
+        "pl": "Próg SOC (%)",
+        "ru": "Порог SOC (%)",
+        "ko": "SOC 임계값 (%)"
+      },
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "required": true
+    },
+    {
+      "name": "direction",
+      "type": "dropdown",
+      "title": {
+        "en": "Direction",
+        "nl": "Richting",
+        "da": "Retning",
+        "de": "Richtung",
+        "es": "Dirección",
+        "fr": "Direction",
+        "it": "Direzione",
+        "no": "Retning",
+        "sv": "Riktning",
+        "pl": "Kierunek",
+        "ru": "Направление",
+        "ko": "방향"
+      },
+      "values": [
+        {
+          "id": "above",
+          "title": {
+            "en": "goes above",
+            "nl": "gaat boven",
+            "da": "går over",
+            "de": "geht über",
+            "es": "va por encima",
+            "fr": "dépasse",
+            "it": "va sopra",
+            "no": "går over",
+            "sv": "går över",
+            "pl": "przekracza",
+            "ru": "превышает",
+            "ko": "초과"
+          }
+        },
+        {
+          "id": "below",
+          "title": {
+            "en": "goes below",
+            "nl": "gaat onder",
+            "da": "går under",
+            "de": "geht unter",
+            "es": "va por debajo",
+            "fr": "passe en dessous",
+            "it": "va sotto",
+            "no": "går under",
+            "sv": "går under",
+            "pl": "spada poniżej",
+            "ru": "опускается ниже",
+            "ko": "미만"
+          }
+        }
+      ],
+      "required": true
+    }
+  ],
+  "tokens": [
+    {
+      "name": "soc",
+      "type": "number",
+      "title": {
+        "en": "Current SOC",
+        "nl": "Huidige SOC",
+        "da": "Nuværende SOC",
+        "de": "Aktuelle SOC",
+        "es": "SOC actual",
+        "fr": "SOC actuel",
+        "it": "SOC attuale",
+        "no": "Nåværende SOC",
+        "sv": "Nuvarande SOC",
+        "pl": "Aktualny SOC",
+        "ru": "Текущий SOC",
+        "ko": "현재 SOC"
+      },
+      "desc": {
+        "en": "Current battery state of charge percentage",
+        "nl": "Huidig batterij laadpercentage",
+        "da": "Nuværende batteri ladningsprocent",
+        "de": "Aktueller Batterie-Ladezustand in Prozent",
+        "es": "Porcentaje actual de carga de la batería",
+        "fr": "Pourcentage actuel de charge de la batterie",
+        "it": "Percentuale attuale di carica della batteria",
+        "no": "Nåværende batteriladningsprosent",
+        "sv": "Nuvarande batteriladdningsprocent",
+        "pl": "Aktualny procent naładowania baterii",
+        "ru": "Текущий процент заряда батареи",
+        "ko": "현재 배터리 충전 상태 백분율"
+      }
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Threshold",
+        "nl": "Drempel",
+        "da": "Tærskel",
+        "de": "Schwellenwert",
+        "es": "Umbral",
+        "fr": "Seuil",
+        "it": "Soglia",
+        "no": "Terskel",
+        "sv": "Tröskel",
+        "pl": "Próg",
+        "ru": "Порог",
+        "ko": "임계값"
+      },
+      "desc": {
+        "en": "The SOC threshold that was crossed",
+        "nl": "De SOC drempel die werd overschreden",
+        "da": "SOC-tærsklen der blev krydset",
+        "de": "Der SOC-Schwellenwert, der überschritten wurde",
+        "es": "El umbral de SOC que se cruzó",
+        "fr": "Le seuil SOC qui a été franchi",
+        "it": "La soglia SOC che è stata superata",
+        "no": "SOC-terskelen som ble krysset",
+        "sv": "SOC-tröskeln som överskreds",
+        "pl": "Próg SOC, który został przekroczony",
+        "ru": "Порог SOC, который был пересечен",
+        "ko": "교차된 SOC 임계값"
+      }
+    },
+    {
+      "name": "direction",
+      "type": "string",
+      "title": {
+        "en": "Direction",
+        "nl": "Richting",
+        "da": "Retning",
+        "de": "Richtung",
+        "es": "Dirección",
+        "fr": "Direction",
+        "it": "Direzione",
+        "no": "Retning",
+        "sv": "Riktning",
+        "pl": "Kierunek",
+        "ru": "Направление",
+        "ko": "방향"
+      },
+      "desc": {
+        "en": "Whether SOC went above or below the threshold",
+        "nl": "Of SOC boven of onder de drempel ging",
+        "da": "Om SOC gik over eller under tærsklen",
+        "de": "Ob SOC über oder unter den Schwellenwert ging",
+        "es": "Si el SOC fue por encima o por debajo del umbral",
+        "fr": "Si le SOC est passé au-dessus ou en dessous du seuil",
+        "it": "Se SOC è andato sopra o sotto la soglia",
+        "no": "Om SOC gikk over eller under terskelen",
+        "sv": "Om SOC gick över eller under tröskeln",
+        "pl": "Czy SOC przekroczył próg w górę czy w dół",
+        "ru": "Превысил ли SOC порог или опустился ниже",
+        "ko": "SOC가 임계값을 초과했는지 또는 미만인지"
+      }
+    }
+  ]
+}

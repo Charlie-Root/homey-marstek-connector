@@ -296,6 +296,600 @@
         ]
       },
       {
+        "id": "marstek_battery_charging_state_changed",
+        "title": {
+          "en": "Battery charging state changes",
+          "nl": "Batterij laattoestand verandert",
+          "da": "Batteri ladetilstand ændres",
+          "de": "Batterie-Ladezustand ändert sich",
+          "es": "Estado de carga de batería cambia",
+          "fr": "État de charge de batterie change",
+          "it": "Stato di carica batteria cambia",
+          "no": "Batteri ladetilstand endres",
+          "sv": "Batteri laddningstillstånd ändras",
+          "pl": "Stan ładowania baterii się zmienia",
+          "ru": "Состояние зарядки батареи изменяется",
+          "ko": "배터리 충전 상태가 변경됩니다"
+        },
+        "titleFormatted": {
+          "en": "Battery [[state]]",
+          "nl": "Batterij [[state]]",
+          "da": "Batteri [[state]]",
+          "de": "Batterie [[state]]",
+          "es": "Batería [[state]]",
+          "fr": "Batterie [[state]]",
+          "it": "Batteria [[state]]",
+          "no": "Batteri [[state]]",
+          "sv": "Batteri [[state]]",
+          "pl": "Bateria [[state]]",
+          "ru": "Батарея [[state]]",
+          "ko": "배터리 [[state]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "state",
+            "type": "dropdown",
+            "title": {
+              "en": "State Change",
+              "nl": "Status Verandering",
+              "da": "Tilstandsændring",
+              "de": "Statusänderung",
+              "es": "Cambio de Estado",
+              "fr": "Changement d'État",
+              "it": "Cambio di Stato",
+              "no": "Tilstandsendring",
+              "sv": "Tillståndsändring",
+              "pl": "Zmiana Stanu",
+              "ru": "Изменение Состояния",
+              "ko": "상태 변경"
+            },
+            "values": [
+              {
+                "id": "starts_charging",
+                "title": {
+                  "en": "starts charging",
+                  "nl": "begint met laden",
+                  "da": "begynder at lade",
+                  "de": "beginnt zu laden",
+                  "es": "comienza a cargar",
+                  "fr": "commence à charger",
+                  "it": "inizia a caricare",
+                  "no": "begynner å lade",
+                  "sv": "börjar ladda",
+                  "pl": "rozpoczyna ładowanie",
+                  "ru": "начинает заряжаться",
+                  "ko": "충전 시작"
+                }
+              },
+              {
+                "id": "stops_charging",
+                "title": {
+                  "en": "stops charging",
+                  "nl": "stopt met laden",
+                  "da": "stopper med at lade",
+                  "de": "stoppt das Laden",
+                  "es": "deja de cargar",
+                  "fr": "arrête de charger",
+                  "it": "smette di caricare",
+                  "no": "stopper lading",
+                  "sv": "slutar ladda",
+                  "pl": "przestaje ładować",
+                  "ru": "перестает заряжаться",
+                  "ko": "충전 중지"
+                }
+              },
+              {
+                "id": "starts_discharging",
+                "title": {
+                  "en": "starts discharging",
+                  "nl": "begint met ontladen",
+                  "da": "begynder at aflade",
+                  "de": "beginnt zu entladen",
+                  "es": "comienza a descargar",
+                  "fr": "commence à décharger",
+                  "it": "inizia a scaricare",
+                  "no": "begynner å utlade",
+                  "sv": "börjar urladda",
+                  "pl": "rozpoczyna rozładowanie",
+                  "ru": "начинает разряжаться",
+                  "ko": "방전 시작"
+                }
+              },
+              {
+                "id": "stops_discharging",
+                "title": {
+                  "en": "stops discharging",
+                  "nl": "stopt met ontladen",
+                  "da": "stopper med at aflade",
+                  "de": "stoppt die Entladung",
+                  "es": "deja de descargar",
+                  "fr": "arrête de décharger",
+                  "it": "smette di scaricare",
+                  "no": "stopper utlading",
+                  "sv": "slutar urladda",
+                  "pl": "przestaje rozładowywać",
+                  "ru": "перестает разряжаться",
+                  "ko": "방전 중지"
+                }
+              },
+              {
+                "id": "becomes_idle",
+                "title": {
+                  "en": "becomes idle",
+                  "nl": "wordt inactief",
+                  "da": "bliver inaktiv",
+                  "de": "wird inaktiv",
+                  "es": "se vuelve inactivo",
+                  "fr": "devient inactif",
+                  "it": "diventa inattivo",
+                  "no": "blir inaktiv",
+                  "sv": "blir inaktiv",
+                  "pl": "staje się bezczynny",
+                  "ru": "становится неактивным",
+                  "ko": "대기 상태"
+                }
+              }
+            ],
+            "required": true
+          }
+        ],
+        "tokens": [
+          {
+            "name": "state",
+            "type": "string",
+            "title": {
+              "en": "New State",
+              "nl": "Nieuwe Status",
+              "da": "Ny Tilstand",
+              "de": "Neuer Status",
+              "es": "Nuevo Estado",
+              "fr": "Nouvel État",
+              "it": "Nuovo Stato",
+              "no": "Ny Tilstand",
+              "sv": "Nytt Tillstånd",
+              "pl": "Nowy Stan",
+              "ru": "Новое Состояние",
+              "ko": "새 상태"
+            },
+            "desc": {
+              "en": "The new charging state of the battery",
+              "nl": "De nieuwe laattoestand van de batterij",
+              "da": "Den nye ladetilstand for batteriet",
+              "de": "Der neue Ladezustand der Batterie",
+              "es": "El nuevo estado de carga de la batería",
+              "fr": "Le nouvel état de charge de la batterie",
+              "it": "Il nuovo stato di carica della batteria",
+              "no": "Den nye ladetilstanden til batteriet",
+              "sv": "Det nya laddningstillståndet för batteriet",
+              "pl": "Nowy stan ładowania baterii",
+              "ru": "Новое состояние зарядки батареи",
+              "ko": "배터리의 새로운 충전 상태"
+            }
+          },
+          {
+            "name": "previous_state",
+            "type": "string",
+            "title": {
+              "en": "Previous State",
+              "nl": "Vorige Status",
+              "da": "Forrige Tilstand",
+              "de": "Vorheriger Status",
+              "es": "Estado Anterior",
+              "fr": "État Précédent",
+              "it": "Stato Precedente",
+              "no": "Forrige Tilstand",
+              "sv": "Föregående Tillstånd",
+              "pl": "Poprzedni Stan",
+              "ru": "Предыдущее Состояние",
+              "ko": "이전 상태"
+            },
+            "desc": {
+              "en": "The previous charging state before the change",
+              "nl": "De vorige laattoestand voordat de verandering plaatsvond",
+              "da": "Den tidligere ladetilstand før ændringen",
+              "de": "Der vorherige Ladezustand vor der Änderung",
+              "es": "El estado de carga anterior antes del cambio",
+              "fr": "L'état de charge précédent avant le changement",
+              "it": "Lo stato di carica precedente prima del cambiamento",
+              "no": "Den tidligere ladetilstanden før endringen",
+              "sv": "Det tidigare laddningstillståndet före ändringen",
+              "pl": "Poprzedni stan ładowania przed zmianą",
+              "ru": "Предыдущее состояние зарядки перед изменением",
+              "ko": "변경 전 이전 충전 상태"
+            }
+          },
+          {
+            "name": "soc",
+            "type": "number",
+            "title": {
+              "en": "Current SOC",
+              "nl": "Huidige SOC",
+              "da": "Nuværende SOC",
+              "de": "Aktuelle SOC",
+              "es": "SOC Actual",
+              "fr": "SOC Actuel",
+              "it": "SOC Attuale",
+              "no": "Nåværende SOC",
+              "sv": "Nuvarande SOC",
+              "pl": "Aktualny SOC",
+              "ru": "Текущий SOC",
+              "ko": "현재 SOC"
+            },
+            "desc": {
+              "en": "Current battery state of charge percentage",
+              "nl": "Huidig batterij laadpercentage",
+              "da": "Nuværende batteri ladningsprocent",
+              "de": "Aktueller Batterie-Ladezustand in Prozent",
+              "es": "Porcentaje actual de carga de la batería",
+              "fr": "Pourcentage actuel de charge de la batterie",
+              "it": "Percentuale attuale di carica della batteria",
+              "no": "Nåværende batteriladningsprosent",
+              "sv": "Nuvarande batteriladdningsprocent",
+              "pl": "Aktualny procent naładowania baterii",
+              "ru": "Текущий процент заряда батареи",
+              "ko": "현재 배터리 충전 상태 백분율"
+            }
+          },
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Current Power",
+              "nl": "Huidig Vermogen",
+              "da": "Nuværende Effekt",
+              "de": "Aktuelle Leistung",
+              "es": "Potencia Actual",
+              "fr": "Puissance Actuelle",
+              "it": "Potenza Attuale",
+              "no": "Nåværende Effekt",
+              "sv": "Nuvarande Effekt",
+              "pl": "Aktualna Moc",
+              "ru": "Текущая Мощность",
+              "ko": "현재 전력"
+            },
+            "desc": {
+              "en": "Current battery power in watts (positive = charging, negative = discharging)",
+              "nl": "Huidig batterijvermogen in watt (positief = laden, negatief = ontladen)",
+              "da": "Nuværende batteri effekt i watt (positiv = ladning, negativ = afladning)",
+              "de": "Aktuelle Batterieleistung in Watt (positiv = Laden, negativ = Entladen)",
+              "es": "Potencia actual de batería en vatios (positivo = carga, negativo = descarga)",
+              "fr": "Puissance actuelle de batterie en watts (positif = charge, négatif = décharge)",
+              "it": "Potenza attuale batteria in watt (positivo = carica, negativo = scarica)",
+              "no": "Nåværende batteri effekt i watt (positiv = lading, negativ = utlading)",
+              "sv": "Nuvarande batteri effekt i watt (positiv = laddning, negativ = urladdning)",
+              "pl": "Aktualna moc baterii w watach (dodatni = ładowanie, ujemny = rozładowanie)",
+              "ru": "Текущая мощность батареи в ваттах (положительная = зарядка, отрицательная = разрядка)",
+              "ko": "현재 배터리 전력 (와트) (양수 = 충전, 음수 = 방전)"
+            }
+          }
+        ]
+      },
+      {
+        "id": "marstek_battery_soc_threshold",
+        "title": {
+          "en": "Battery SOC reaches threshold",
+          "nl": "Batterij SOC bereikt drempelwaarde",
+          "da": "Batteri SOC når tærskel",
+          "de": "Batterie SOC erreicht Schwellenwert",
+          "es": "SOC de batería alcanza umbral",
+          "fr": "SOC de batterie atteint le seuil",
+          "it": "SOC batteria raggiunge la soglia",
+          "no": "Batteri SOC når terskel",
+          "sv": "Batteri SOC når tröskelvärde",
+          "pl": "SOC baterii osiąga próg",
+          "ru": "SOC батареи достигает порога",
+          "ko": "배터리 SOC가 임계값에 도달합니다"
+        },
+        "titleFormatted": {
+          "en": "Battery SOC [[direction]] [[threshold]]%",
+          "nl": "Batterij SOC [[direction]] [[threshold]]%",
+          "da": "Batteri SOC [[direction]] [[threshold]]%",
+          "de": "Batterie SOC [[direction]] [[threshold]]%",
+          "es": "SOC de batería [[direction]] [[threshold]]%",
+          "fr": "SOC de batterie [[direction]] [[threshold]]%",
+          "it": "SOC batteria [[direction]] [[threshold]]%",
+          "no": "Batteri SOC [[direction]] [[threshold]]%",
+          "sv": "Batteri SOC [[direction]] [[threshold]]%",
+          "pl": "SOC baterii [[direction]] [[threshold]]%",
+          "ru": "SOC батареи [[direction]] [[threshold]]%",
+          "ko": "배터리 SOC가 [[threshold]]% [[direction]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "SOC Threshold (%)",
+              "nl": "SOC Drempel (%)",
+              "da": "SOC Tærskel (%)",
+              "de": "SOC Schwellenwert (%)",
+              "es": "Umbral SOC (%)",
+              "fr": "Seuil SOC (%)",
+              "it": "Soglia SOC (%)",
+              "no": "SOC Terskel (%)",
+              "sv": "SOC Tröskel (%)",
+              "pl": "Próg SOC (%)",
+              "ru": "Порог SOC (%)",
+              "ko": "SOC 임계값 (%)"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "required": true
+          },
+          {
+            "name": "direction",
+            "type": "dropdown",
+            "title": {
+              "en": "Direction",
+              "nl": "Richting",
+              "da": "Retning",
+              "de": "Richtung",
+              "es": "Dirección",
+              "fr": "Direction",
+              "it": "Direzione",
+              "no": "Retning",
+              "sv": "Riktning",
+              "pl": "Kierunek",
+              "ru": "Направление",
+              "ko": "방향"
+            },
+            "values": [
+              {
+                "id": "above",
+                "title": {
+                  "en": "goes above",
+                  "nl": "gaat boven",
+                  "da": "går over",
+                  "de": "geht über",
+                  "es": "va por encima",
+                  "fr": "dépasse",
+                  "it": "va sopra",
+                  "no": "går over",
+                  "sv": "går över",
+                  "pl": "przekracza",
+                  "ru": "превышает",
+                  "ko": "초과"
+                }
+              },
+              {
+                "id": "below",
+                "title": {
+                  "en": "goes below",
+                  "nl": "gaat onder",
+                  "da": "går under",
+                  "de": "geht unter",
+                  "es": "va por debajo",
+                  "fr": "passe en dessous",
+                  "it": "va sotto",
+                  "no": "går under",
+                  "sv": "går under",
+                  "pl": "spada poniżej",
+                  "ru": "опускается ниже",
+                  "ko": "미만"
+                }
+              }
+            ],
+            "required": true
+          }
+        ],
+        "tokens": [
+          {
+            "name": "soc",
+            "type": "number",
+            "title": {
+              "en": "Current SOC",
+              "nl": "Huidige SOC",
+              "da": "Nuværende SOC",
+              "de": "Aktuelle SOC",
+              "es": "SOC actual",
+              "fr": "SOC actuel",
+              "it": "SOC attuale",
+              "no": "Nåværende SOC",
+              "sv": "Nuvarande SOC",
+              "pl": "Aktualny SOC",
+              "ru": "Текущий SOC",
+              "ko": "현재 SOC"
+            },
+            "desc": {
+              "en": "Current battery state of charge percentage",
+              "nl": "Huidig batterij laadpercentage",
+              "da": "Nuværende batteri ladningsprocent",
+              "de": "Aktueller Batterie-Ladezustand in Prozent",
+              "es": "Porcentaje actual de carga de la batería",
+              "fr": "Pourcentage actuel de charge de la batterie",
+              "it": "Percentuale attuale di carica della batteria",
+              "no": "Nåværende batteriladningsprosent",
+              "sv": "Nuvarande batteriladdningsprocent",
+              "pl": "Aktualny procent naładowania baterii",
+              "ru": "Текущий процент заряда батареи",
+              "ko": "현재 배터리 충전 상태 백분율"
+            }
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Threshold",
+              "nl": "Drempel",
+              "da": "Tærskel",
+              "de": "Schwellenwert",
+              "es": "Umbral",
+              "fr": "Seuil",
+              "it": "Soglia",
+              "no": "Terskel",
+              "sv": "Tröskel",
+              "pl": "Próg",
+              "ru": "Порог",
+              "ko": "임계값"
+            },
+            "desc": {
+              "en": "The SOC threshold that was crossed",
+              "nl": "De SOC drempel die werd overschreden",
+              "da": "SOC-tærsklen der blev krydset",
+              "de": "Der SOC-Schwellenwert, der überschritten wurde",
+              "es": "El umbral de SOC que se cruzó",
+              "fr": "Le seuil SOC qui a été franchi",
+              "it": "La soglia SOC che è stata superata",
+              "no": "SOC-terskelen som ble krysset",
+              "sv": "SOC-tröskeln som överskreds",
+              "pl": "Próg SOC, który został przekroczony",
+              "ru": "Порог SOC, который был пересечен",
+              "ko": "교차된 SOC 임계값"
+            }
+          },
+          {
+            "name": "direction",
+            "type": "string",
+            "title": {
+              "en": "Direction",
+              "nl": "Richting",
+              "da": "Retning",
+              "de": "Richtung",
+              "es": "Dirección",
+              "fr": "Direction",
+              "it": "Direzione",
+              "no": "Retning",
+              "sv": "Riktning",
+              "pl": "Kierunek",
+              "ru": "Направление",
+              "ko": "방향"
+            },
+            "desc": {
+              "en": "Whether SOC went above or below the threshold",
+              "nl": "Of SOC boven of onder de drempel ging",
+              "da": "Om SOC gik over eller under tærsklen",
+              "de": "Ob SOC über oder unter den Schwellenwert ging",
+              "es": "Si el SOC fue por encima o por debajo del umbral",
+              "fr": "Si le SOC est passé au-dessus ou en dessous du seuil",
+              "it": "Se SOC è andato sopra o sotto la soglia",
+              "no": "Om SOC gikk over eller under terskelen",
+              "sv": "Om SOC gick över eller under tröskeln",
+              "pl": "Czy SOC przekroczył próg w górę czy w dół",
+              "ru": "Превысил ли SOC порог или опустился ниже",
+              "ko": "SOC가 임계값을 초과했는지 또는 미만인지"
+            }
+          }
+        ]
+      },
+      {
+        "id": "marstek_ct_disconnected",
+        "title": {
+          "en": "CT sensor disconnected",
+          "nl": "CT sensor losgekoppeld",
+          "da": "CT sensor afbrudt",
+          "de": "CT Sensor getrennt",
+          "es": "Sensor CT desconectado",
+          "fr": "Capteur CT déconnecté",
+          "it": "Sensore CT disconnesso",
+          "no": "CT sensor frakoblet",
+          "sv": "CT sensor frånkopplad",
+          "pl": "Czujnik CT odłączony",
+          "ru": "Датчик CT отключен",
+          "ko": "CT 센서 연결 해제됨"
+        },
+        "titleFormatted": {
+          "en": "CT sensor disconnected",
+          "nl": "CT sensor losgekoppeld",
+          "da": "CT sensor afbrudt",
+          "de": "CT Sensor getrennt",
+          "es": "Sensor CT desconectado",
+          "fr": "Capteur CT déconnecté",
+          "it": "Sensore CT disconnesso",
+          "no": "CT sensor frakoblet",
+          "sv": "CT sensor frånkopplad",
+          "pl": "Czujnik CT odłączony",
+          "ru": "Датчик CT отключен ",
+          "ko": "에서 CT 센서 연결 해제됨"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          }
+        ],
+        "tokens": [
+          {
+            "name": "ct_state",
+            "type": "number",
+            "title": {
+              "en": "CT State",
+              "nl": "CT Status",
+              "da": "CT Status",
+              "de": "CT Status",
+              "es": "Estado CT",
+              "fr": "État CT",
+              "it": "Stato CT",
+              "no": "CT Status",
+              "sv": "CT Status",
+              "pl": "Stan CT",
+              "ru": "Состояние CT",
+              "ko": "CT 상태"
+            },
+            "desc": {
+              "en": "Current CT sensor state (0 = disconnected, 1 = connected)",
+              "nl": "Huidige CT sensor status (0 = losgekoppeld, 1 = gekoppeld)",
+              "da": "Nuværende CT sensor status (0 = afbrudt, 1 = tilsluttet)",
+              "de": "Aktueller CT Sensor Status (0 = getrennt, 1 = verbunden)",
+              "es": "Estado actual del sensor CT (0 = desconectado, 1 = conectado)",
+              "fr": "État actuel du capteur CT (0 = déconnecté, 1 = connecté)",
+              "it": "Stato attuale del sensore CT (0 = disconnesso, 1 = connesso)",
+              "no": "Nåværende CT sensor status (0 = frakoblet, 1 = tilkoblet)",
+              "sv": "Nuvarande CT sensor status (0 = frånkopplad, 1 = ansluten)",
+              "pl": "Aktualny stan czujnika CT (0 = odłączony, 1 = podłączony)",
+              "ru": "Текущее состояние датчика CT (0 = отключен, 1 = подключен)",
+              "ko": "현재 CT 센서 상태 (0 = 연결 해제됨, 1 = 연결됨)"
+            }
+          },
+          {
+            "name": "previous_state",
+            "type": "number",
+            "title": {
+              "en": "Previous CT State",
+              "nl": "Vorige CT Status",
+              "da": "Tidligere CT Status",
+              "de": "Vorheriger CT Status",
+              "es": "Estado CT Anterior",
+              "fr": "État CT Précédent",
+              "it": "Stato CT Precedente",
+              "no": "Tidligere CT Status",
+              "sv": "Tidigare CT Status",
+              "pl": "Poprzedni Stan CT",
+              "ru": "Предыдущее Состояние CT",
+              "ko": "이전 CT 상태"
+            },
+            "desc": {
+              "en": "Previous CT sensor state before disconnection",
+              "nl": "Vorige CT sensor status voor loskoppeling",
+              "da": "Tidligere CT sensor status før afbrydelse",
+              "de": "Vorheriger CT Sensor Status vor Trennung",
+              "es": "Estado anterior del sensor CT antes de desconexión",
+              "fr": "État précédent du capteur CT avant déconnexion",
+              "it": "Stato precedente del sensore CT prima della disconnessione",
+              "no": "Tidligere CT sensor status før frakobling",
+              "sv": "Tidigare CT sensor status före frånkoppling",
+              "pl": "Poprzedni stan czujnika CT przed odłączeniem",
+              "ru": "Предыдущее состояние датчика CT перед отключением",
+              "ko": "연결 해제 전 이전 CT 센서 상태"
+            }
+          }
+        ]
+      },
+      {
         "title": {
           "en": "CT State changed",
           "nl": "CT Status gewijzigd",
@@ -350,6 +944,878 @@
           }
         ],
         "id": "marstek_ct_state_changed"
+      },
+      {
+        "id": "marstek_grid_export_starts",
+        "title": {
+          "en": "Grid export starts",
+          "nl": "Netexport begint",
+          "da": "Neteksport starter",
+          "de": "Netzexport beginnt",
+          "es": "Exportación de red comienza",
+          "fr": "Exportation réseau commence",
+          "it": "Esportazione rete inizia",
+          "no": "Netteksport starter",
+          "sv": "Nät export börjar",
+          "pl": "Eksport sieciowy rozpoczyna się",
+          "ru": "Экспорт сети начинается",
+          "ko": "그리드 내보내기 시작"
+        },
+        "titleFormatted": {
+          "en": "Grid export starts",
+          "nl": "Netexport begint",
+          "da": "Neteksport starter",
+          "de": "Netzexport beginnt",
+          "es": "Exportación de red comienza",
+          "fr": "Exportation réseau commence",
+          "it": "Esportazione rete inizia",
+          "no": "Netteksport starter",
+          "sv": "Nät export börjar",
+          "pl": "Eksport sieciowy rozpoczyna się",
+          "ru": "Экспорт сети начинается ",
+          "ko": "에서 그리드 내보내기 시작"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          }
+        ],
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Current grid power",
+              "nl": "Huidig netvermogen",
+              "da": "Nuværende neteffekt",
+              "de": "Aktuelle Netzleistung",
+              "es": "Potencia de red actual",
+              "fr": "Puissance réseau actuelle",
+              "it": "Potenza rete attuale",
+              "no": "Nåværende netteffekt",
+              "sv": "Nuvarande näteffekt",
+              "pl": "Aktualna moc sieciowa",
+              "ru": "Текущая мощность сети",
+              "ko": "현재 그리드 전력"
+            },
+            "desc": {
+              "en": "Current grid power in watts (negative = export)",
+              "nl": "Huidig netvermogen in watt (negatief = export)",
+              "da": "Nuværende neteffekt i watt (negativ = eksport)",
+              "de": "Aktuelle Netzleistung in Watt (negativ = Export)",
+              "es": "Potencia de red actual en vatios (negativo = exportación)",
+              "fr": "Puissance réseau actuelle en watts (négatif = exportation)",
+              "it": "Potenza rete attuale in watt (negativo = esportazione)",
+              "no": "Nåværende netteffekt i watt (negativ = eksport)",
+              "sv": "Nuvarande näteffekt i watt (negativ = export)",
+              "pl": "Aktualna moc sieciowa w watach (ujemna = eksport)",
+              "ru": "Текущая мощность сети в ваттах (отрицательная = экспорт)",
+              "ko": "현재 그리드 전력 (와트) (음수 = 내보내기)"
+            }
+          },
+          {
+            "name": "direction",
+            "type": "string",
+            "title": {
+              "en": "Direction",
+              "nl": "Richting",
+              "da": "Retning",
+              "de": "Richtung",
+              "es": "Dirección",
+              "fr": "Direction",
+              "it": "Direzione",
+              "no": "Retning",
+              "sv": "Riktning",
+              "pl": "Kierunek",
+              "ru": "Направление",
+              "ko": "방향"
+            },
+            "desc": {
+              "en": "Power flow direction (import/export)",
+              "nl": "Vermogensstroomrichting (import/export)",
+              "da": "Effektstrømretning (import/eksport)",
+              "de": "Leistungsflussrichtung (Import/Export)",
+              "es": "Dirección del flujo de potencia (importación/exportación)",
+              "fr": "Direction du flux de puissance (importation/exportation)",
+              "it": "Direzione del flusso di potenza (importazione/esportazione)",
+              "no": "Effektstrømretning (import/eksport)",
+              "sv": "Effektflödesriktning (import/export)",
+              "pl": "Kierunek przepływu mocy (import/eksport)",
+              "ru": "Направление потока мощности (импорт/экспорт)",
+              "ko": "전력 흐름 방향 (가져오기/내보내기)"
+            }
+          }
+        ]
+      },
+      {
+        "id": "marstek_grid_import_starts",
+        "title": {
+          "en": "Grid import starts",
+          "nl": "Netimport begint",
+          "da": "Netimport starter",
+          "de": "Netzimport beginnt",
+          "es": "Importación de red comienza",
+          "fr": "Importation réseau commence",
+          "it": "Importazione rete inizia",
+          "no": "Nettimport starter",
+          "sv": "Nätimport börjar",
+          "pl": "Import sieciowy rozpoczyna się",
+          "ru": "Импорт сети начинается",
+          "ko": "그리드 가져오기 시작"
+        },
+        "titleFormatted": {
+          "en": "Grid import starts",
+          "nl": "Netimport begint",
+          "da": "Netimport starter",
+          "de": "Netzimport beginnt",
+          "es": "Importación de red comienza",
+          "fr": "Importation réseau commence",
+          "it": "Importazione rete inizia",
+          "no": "Nettimport starter",
+          "sv": "Nätimport börjar",
+          "pl": "Import sieciowy rozpoczyna się",
+          "ru": "Импорт сети начинается ",
+          "ko": "에서 그리드 가져오기 시작"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          }
+        ],
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Current grid power",
+              "nl": "Huidig netvermogen",
+              "da": "Nuværende neteffekt",
+              "de": "Aktuelle Netzleistung",
+              "es": "Potencia de red actual",
+              "fr": "Puissance réseau actuelle",
+              "it": "Potenza rete attuale",
+              "no": "Nåværende netteffekt",
+              "sv": "Nuvarande näteffekt",
+              "pl": "Aktualna moc sieciowa",
+              "ru": "Текущая мощность сети",
+              "ko": "현재 그리드 전력"
+            },
+            "desc": {
+              "en": "Current grid power in watts (positive = import)",
+              "nl": "Huidig netvermogen in watt (positief = import)",
+              "da": "Nuværende neteffekt i watt (positiv = import)",
+              "de": "Aktuelle Netzleistung in Watt (positiv = Import)",
+              "es": "Potencia de red actual en vatios (positivo = importación)",
+              "fr": "Puissance réseau actuelle en watts (positif = importation)",
+              "it": "Potenza rete attuale in watt (positivo = importazione)",
+              "no": "Nåværende netteffekt i watt (positiv = import)",
+              "sv": "Nuvarande näteffekt i watt (positiv = import)",
+              "pl": "Aktualna moc sieciowa w watach (dodatnia = import)",
+              "ru": "Текущая мощность сети в ваттах (положительная = импорт)",
+              "ko": "현재 그리드 전력 (와트) (양수 = 가져오기)"
+            }
+          },
+          {
+            "name": "direction",
+            "type": "string",
+            "title": {
+              "en": "Direction",
+              "nl": "Richting",
+              "da": "Retning",
+              "de": "Richtung",
+              "es": "Dirección",
+              "fr": "Direction",
+              "it": "Direzione",
+              "no": "Retning",
+              "sv": "Riktning",
+              "pl": "Kierunek",
+              "ru": "Направление",
+              "ko": "방향"
+            },
+            "desc": {
+              "en": "Power flow direction (import/export)",
+              "nl": "Vermogensstroomrichting (import/export)",
+              "da": "Effektstrømretning (import/eksport)",
+              "de": "Leistungsflussrichtung (Import/Export)",
+              "es": "Dirección del flujo de potencia (importación/exportación)",
+              "fr": "Direction du flux de puissance (importation/exportation)",
+              "it": "Direzione del flusso di potenza (importazione/esportazione)",
+              "no": "Effektstrømretning (import/eksport)",
+              "sv": "Effektflödesriktning (import/export)",
+              "pl": "Kierunek przepływu mocy (import/eksport)",
+              "ru": "Направление потока мощности (импорт/экспорт)",
+              "ko": "전력 흐름 방향 (가져오기/내보내기)"
+            }
+          }
+        ]
+      },
+      {
+        "id": "marstek_mode_changed",
+        "title": {
+          "en": "Battery mode changed",
+          "nl": "Batterijmodus gewijzigd",
+          "da": "Batterimodus ændret",
+          "de": "Batteriemodus geändert",
+          "es": "Modo de batería cambiado",
+          "fr": "Mode batterie changé",
+          "it": "Modalità batteria cambiata",
+          "no": "Batterimodus endret",
+          "sv": "Batteriläge ändrat",
+          "pl": "Tryb baterii zmieniony",
+          "ru": "Режим батареи изменен",
+          "ko": "배터리 모드 변경됨"
+        },
+        "titleFormatted": {
+          "en": "Battery mode changed to [[mode]]",
+          "nl": "Batterijmodus gewijzigd naar [[mode]]",
+          "da": "Batterimodus ændret til [[mode]]",
+          "de": "Batteriemodus geändert zu [[mode]]",
+          "es": "Modo de batería cambiado a [[mode]]",
+          "fr": "Mode batterie changé à [[mode]]",
+          "it": "Modalità batteria cambiata a [[mode]]",
+          "no": "Batterimodus endret til [[mode]]",
+          "sv": "Batteriläge ändrat till [[mode]]",
+          "pl": "Tryb baterii zmieniony na [[mode]]",
+          "ru": "Режим батареи изменен на [[mode]]",
+          "ko": "배터리 모드가 [[mode]]로 변경됨"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "mode",
+            "type": "dropdown",
+            "title": {
+              "en": "New Mode",
+              "nl": "Nieuwe Modus",
+              "da": "Ny Tilstand",
+              "de": "Neuer Modus",
+              "es": "Nuevo Modo",
+              "fr": "Nouveau Mode",
+              "it": "Nuova Modalità",
+              "no": "Ny Modus",
+              "sv": "Nytt Läge",
+              "pl": "Nowy Tryb",
+              "ru": "Новый Режим",
+              "ko": "새 모드"
+            },
+            "values": [
+              {
+                "id": "ai",
+                "title": {
+                  "en": "AI",
+                  "nl": "AI",
+                  "da": "AI",
+                  "de": "AI",
+                  "es": "IA",
+                  "fr": "IA",
+                  "it": "IA",
+                  "no": "AI",
+                  "sv": "AI",
+                  "pl": "AI",
+                  "ru": "ИИ",
+                  "ko": "AI"
+                }
+              },
+              {
+                "id": "auto",
+                "title": {
+                  "en": "Auto",
+                  "nl": "Auto",
+                  "da": "Auto",
+                  "de": "Auto",
+                  "es": "Auto",
+                  "fr": "Auto",
+                  "it": "Auto",
+                  "no": "Auto",
+                  "sv": "Auto",
+                  "pl": "Auto",
+                  "ru": "Авто",
+                  "ko": "자동"
+                }
+              },
+              {
+                "id": "force_charge",
+                "title": {
+                  "en": "Force Charge",
+                  "nl": "Geforceerd Laden",
+                  "da": "Tving Opladning",
+                  "de": "Erzwinge Laden",
+                  "es": "Forzar Carga",
+                  "fr": "Forcer Charge",
+                  "it": "Forza Carica",
+                  "no": "Tving Ladning",
+                  "sv": "Tving Laddning",
+                  "pl": "Wymuś Ładowanie",
+                  "ru": "Принудительная Зарядка",
+                  "ko": "강제 충전"
+                }
+              },
+              {
+                "id": "force_discharge",
+                "title": {
+                  "en": "Force Discharge",
+                  "nl": "Geforceerd Ontladen",
+                  "da": "Tving Afladning",
+                  "de": "Erzwinge Entladen",
+                  "es": "Forzar Descarga",
+                  "fr": "Forcer Décharge",
+                  "it": "Forza Scarica",
+                  "no": "Tving Utladning",
+                  "sv": "Tving Urladdning",
+                  "pl": "Wymuś Rozładowanie",
+                  "ru": "Принудительная Разрядка",
+                  "ko": "강제 방전"
+                }
+              }
+            ],
+            "required": true
+          }
+        ],
+        "tokens": [
+          {
+            "name": "mode",
+            "type": "string",
+            "title": {
+              "en": "New Mode",
+              "nl": "Nieuwe Modus",
+              "da": "Ny Tilstand",
+              "de": "Neuer Modus",
+              "es": "Nuevo Modo",
+              "fr": "Nouveau Mode",
+              "it": "Nuova Modalità",
+              "no": "Ny Modus",
+              "sv": "Nytt Läge",
+              "pl": "Nowy Tryb",
+              "ru": "Новый Режим",
+              "ko": "새 모드"
+            },
+            "desc": {
+              "en": "The new battery mode",
+              "nl": "De nieuwe batterijmodus",
+              "da": "Den nye batteritilstand",
+              "de": "Der neue Batteriemodus",
+              "es": "El nuevo modo de batería",
+              "fr": "Le nouveau mode batterie",
+              "it": "La nuova modalità batteria",
+              "no": "Den nye batterimodusen",
+              "sv": "Det nya batteriläget",
+              "pl": "Nowy tryb baterii",
+              "ru": "Новый режим батареи",
+              "ko": "새 배터리 모드"
+            }
+          },
+          {
+            "name": "previous_mode",
+            "type": "string",
+            "title": {
+              "en": "Previous Mode",
+              "nl": "Vorige Modus",
+              "da": "Tidligere Tilstand",
+              "de": "Vorheriger Modus",
+              "es": "Modo Anterior",
+              "fr": "Mode Précédent",
+              "it": "Modalità Precedente",
+              "no": "Tidligere Modus",
+              "sv": "Tidigare Läge",
+              "pl": "Poprzedni Tryb",
+              "ru": "Предыдущий Режим",
+              "ko": "이전 모드"
+            },
+            "desc": {
+              "en": "The previous battery mode",
+              "nl": "De vorige batterijmodus",
+              "da": "Den tidligere batteritilstand",
+              "de": "Der vorherige Batteriemodus",
+              "es": "El modo de batería anterior",
+              "fr": "Le mode batterie précédent",
+              "it": "La modalità batteria precedente",
+              "no": "Den tidligere batterimodusen",
+              "sv": "Det tidigare batteriläget",
+              "pl": "Poprzedni tryb baterii",
+              "ru": "Предыдущий режим батареи",
+              "ko": "이전 배터리 모드"
+            }
+          }
+        ]
+      },
+      {
+        "id": "marstek_solar_generation_starts",
+        "title": {
+          "en": "Solar generation starts",
+          "nl": "Zonne-energieopwekking begint",
+          "da": "Solenergi generation starter",
+          "de": "Solarstromerzeugung beginnt",
+          "es": "Generación solar comienza",
+          "fr": "Génération solaire commence",
+          "it": "Generazione solare inizia",
+          "no": "Solenergi generering starter",
+          "sv": "Solenergi generation börjar",
+          "pl": "Generacja energii słonecznej rozpoczyna się",
+          "ru": "Солнечная генерация начинается",
+          "ko": "태양광 발전이 시작됩니다"
+        },
+        "titleFormatted": {
+          "en": "Solar generation starts when above [[threshold]]W",
+          "nl": "Zonne-energieopwekking begint wanneer boven [[threshold]]W",
+          "da": "Solenergi generation starter når over [[threshold]]W",
+          "de": "Solarstromerzeugung beginnt wenn über [[threshold]]W",
+          "es": "Generación solar comienza cuando por encima de [[threshold]]W",
+          "fr": "Génération solaire commence quand au-dessus de [[threshold]]W",
+          "it": "Generazione solare inizia quando sopra [[threshold]]W",
+          "no": "Solenergi generering starter når over [[threshold]]W",
+          "sv": "Solenergi generation börjar när över [[threshold]]W",
+          "pl": "Generacja energii słonecznej rozpoczyna się gdy powyżej [[threshold]]W",
+          "ru": "Солнечная генерация начинается  когда выше [[threshold]]W",
+          "ko": "에서 태양광 발전이 [[threshold]]W 이상일 때 시작됩니다"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Power Threshold (W)",
+              "nl": "Vermogensdrempel (W)",
+              "da": "Effekt Tærskel (W)",
+              "de": "Leistungsschwellenwert (W)",
+              "es": "Umbral de Potencia (W)",
+              "fr": "Seuil de Puissance (W)",
+              "it": "Soglia di Potenza (W)",
+              "no": "Effekt Terskel (W)",
+              "sv": "Effekt Tröskel (W)",
+              "pl": "Próg Moc (W)",
+              "ru": "Порог Мощности (W)",
+              "ko": "전력 임계값 (W)"
+            },
+            "min": 0,
+            "max": 10000,
+            "step": 10,
+            "required": true
+          }
+        ],
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Current PV Power",
+              "nl": "Huidig PV Vermogen",
+              "da": "Nuværende PV Effekt",
+              "de": "Aktuelle PV-Leistung",
+              "es": "Potencia PV Actual",
+              "fr": "Puissance PV Actuelle",
+              "it": "Potenza PV Attuale",
+              "no": "Nåværende PV Effekt",
+              "sv": "Nuvarande PV Effekt",
+              "pl": "Aktualna Moc PV",
+              "ru": "Текущая Мощность PV",
+              "ko": "현재 PV 전력"
+            },
+            "desc": {
+              "en": "Current solar panel power generation in watts",
+              "nl": "Huidige zonnepaneel energieopwekking in watt",
+              "da": "Nuværende solpanel effekt i watt",
+              "de": "Aktuelle Solarpanel-Leistung in Watt",
+              "es": "Potencia actual de paneles solares en vatios",
+              "fr": "Puissance actuelle des panneaux solaires en watts",
+              "it": "Potenza attuale dei pannelli solari in watt",
+              "no": "Nåværende solpanel effekt i watt",
+              "sv": "Nuvarande solpanel effekt i watt",
+              "pl": "Aktualna moc paneli słonecznych w watach",
+              "ru": "Текущая мощность солнечных панелей в ваттах",
+              "ko": "현재 태양광 패널 발전량(와트)"
+            }
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Threshold",
+              "nl": "Drempel",
+              "da": "Tærskel",
+              "de": "Schwellenwert",
+              "es": "Umbral",
+              "fr": "Seuil",
+              "it": "Soglia",
+              "no": "Terskel",
+              "sv": "Tröskel",
+              "pl": "Próg",
+              "ru": "Порог",
+              "ko": "임계값"
+            },
+            "desc": {
+              "en": "The power threshold that was exceeded",
+              "nl": "De vermogensdrempel die werd overschreden",
+              "da": "Effekt-tærsklen der blev overskredet",
+              "de": "Der Leistungsschwellenwert, der überschritten wurde",
+              "es": "El umbral de potencia que se superó",
+              "fr": "Le seuil de puissance qui a été dépassé",
+              "it": "La soglia di potenza che è stata superata",
+              "no": "Effekt-terskelen som ble overskredet",
+              "sv": "Effekt-tröskeln som överskreds",
+              "pl": "Próg mocy, który został przekroczony",
+              "ru": "Порог мощности, который был превышен",
+              "ko": "초과된 전력 임계값"
+            }
+          }
+        ]
+      },
+      {
+        "id": "marstek_solar_generation_stops",
+        "title": {
+          "en": "Solar generation stops",
+          "nl": "Zonne-energieopwekking stopt",
+          "da": "Solenergi generation stopper",
+          "de": "Solarstromerzeugung stoppt",
+          "es": "Generación solar se detiene",
+          "fr": "Génération solaire s'arrête",
+          "it": "Generazione solare si ferma",
+          "no": "Solenergi generering stopper",
+          "sv": "Solenergi generation slutar",
+          "pl": "Generacja energii słonecznej zatrzymuje się",
+          "ru": "Солнечная генерация останавливается",
+          "ko": "태양광 발전이 중지됩니다"
+        },
+        "titleFormatted": {
+          "en": "Solar generation stops when below [[threshold]]W",
+          "nl": "Zonne-energieopwekking stopt wanneer onder [[threshold]]W",
+          "da": "Solenergi generation stopper når under [[threshold]]W",
+          "de": "Solarstromerzeugung stoppt wenn unter [[threshold]]W",
+          "es": "Generación solar se detiene cuando por debajo de [[threshold]]W",
+          "fr": "Génération solaire s'arrête quand en-dessous de [[threshold]]W",
+          "it": "Generazione solare si ferma quando sotto [[threshold]]W",
+          "no": "Solenergi generering stopper når under [[threshold]]W",
+          "sv": "Solenergi generation slutar när under [[threshold]]W",
+          "pl": "Generacja energii słonecznej zatrzymuje się gdy poniżej [[threshold]]W",
+          "ru": "Солнечная генерация останавливается  когда ниже [[threshold]]W",
+          "ko": "에서 태양광 발전이 [[threshold]]W 미만일 때 중지됩니다"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Power Threshold (W)",
+              "nl": "Vermogensdrempel (W)",
+              "da": "Effekt Tærskel (W)",
+              "de": "Leistungsschwellenwert (W)",
+              "es": "Umbral de Potencia (W)",
+              "fr": "Seuil de Puissance (W)",
+              "it": "Soglia di Potenza (W)",
+              "no": "Effekt Terskel (W)",
+              "sv": "Effekt Tröskel (W)",
+              "pl": "Próg Moc (W)",
+              "ru": "Порог Мощности (W)",
+              "ko": "전력 임계값 (W)"
+            },
+            "min": 0,
+            "max": 10000,
+            "step": 10,
+            "required": true
+          }
+        ],
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Current PV Power",
+              "nl": "Huidig PV Vermogen",
+              "da": "Nuværende PV Effekt",
+              "de": "Aktuelle PV-Leistung",
+              "es": "Potencia PV Actual",
+              "fr": "Puissance PV Actuelle",
+              "it": "Potenza PV Attuale",
+              "no": "Nåværende PV Effekt",
+              "sv": "Nuvarande PV Effekt",
+              "pl": "Aktualna Moc PV",
+              "ru": "Текущая Мощность PV",
+              "ko": "현재 PV 전력"
+            },
+            "desc": {
+              "en": "Current solar panel power generation in watts",
+              "nl": "Huidige zonnepaneel energieopwekking in watt",
+              "da": "Nuværende solpanel effekt i watt",
+              "de": "Aktuelle Solarpanel-Leistung in Watt",
+              "es": "Potencia actual de paneles solares en vatios",
+              "fr": "Puissance actuelle des panneaux solaires en watts",
+              "it": "Potenza attuale dei pannelli solari in watt",
+              "no": "Nåværende solpanel effekt i watt",
+              "sv": "Nuvarande solpanel effekt i watt",
+              "pl": "Aktualna moc paneli słonecznych w watach",
+              "ru": "Текущая мощность солнечных панелей в ваттах",
+              "ko": "현재 태양광 패널 발전량(와트)"
+            }
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Threshold",
+              "nl": "Drempel",
+              "da": "Tærskel",
+              "de": "Schwellenwert",
+              "es": "Umbral",
+              "fr": "Seuil",
+              "it": "Soglia",
+              "no": "Terskel",
+              "sv": "Tröskel",
+              "pl": "Próg",
+              "ru": "Порог",
+              "ko": "임계값"
+            },
+            "desc": {
+              "en": "The power threshold that was fallen below",
+              "nl": "De vermogensdrempel die werd onderschreden",
+              "da": "Effekt-tærsklen der blev faldet under",
+              "de": "Der Leistungsschwellenwert, der unterschritten wurde",
+              "es": "El umbral de potencia que se cayó por debajo",
+              "fr": "Le seuil de puissance qui a été descendu en dessous",
+              "it": "La soglia di potenza che è stata scesa sotto",
+              "no": "Effekt-terskelen som ble falt under",
+              "sv": "Effekt-tröskeln som föll under",
+              "pl": "Próg mocy, który został spadnięty poniżej",
+              "ru": "Порог мощности, ниже которого упал",
+              "ko": "미만으로 떨어진 전력 임계값"
+            }
+          }
+        ]
+      },
+      {
+        "id": "marstek_temperature_warning",
+        "title": {
+          "en": "Battery temperature warning",
+          "nl": "Batterij temperatuur waarschuwing",
+          "da": "Batteri temperatur advarsel",
+          "de": "Batterie Temperaturwarnung",
+          "es": "Advertencia de temperatura de batería",
+          "fr": "Avertissement de température de batterie",
+          "it": "Avviso temperatura batteria",
+          "no": "Batteri temperatur advarsel",
+          "sv": "Batteri temperatur varning",
+          "pl": "Ostrzeżenie temperatury baterii",
+          "ru": "Предупреждение о температуре батареи",
+          "ko": "배터리 온도 경고"
+        },
+        "titleFormatted": {
+          "en": "Battery temperature [[direction]] [[threshold]]°C",
+          "nl": "Batterij temperatuur [[direction]] [[threshold]]°C",
+          "da": "Batteri temperatur [[direction]] [[threshold]]°C",
+          "de": "Batterie Temperatur [[direction]] [[threshold]]°C",
+          "es": "Temperatura de batería [[direction]] [[threshold]]°C",
+          "fr": "Température de batterie [[direction]] [[threshold]]°C",
+          "it": "Temperatura batteria [[direction]] [[threshold]]°C",
+          "no": "Batteri temperatur [[direction]] [[threshold]]°C",
+          "sv": "Batteri temperatur [[direction]] [[threshold]]°C",
+          "pl": "Temperatura baterii [[direction]] [[threshold]]°C",
+          "ru": "Температура батареи [[direction]] [[threshold]]°C ",
+          "ko": "에서 배터리 온도가 [[threshold]]°C [[direction]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Temperature Threshold (°C)",
+              "nl": "Temperatuur Drempel (°C)",
+              "da": "Temperatur Tærskel (°C)",
+              "de": "Temperatur Schwellenwert (°C)",
+              "es": "Umbral de Temperatura (°C)",
+              "fr": "Seuil de Température (°C)",
+              "it": "Soglia Temperatura (°C)",
+              "no": "Temperatur Terskel (°C)",
+              "sv": "Temperatur Tröskel (°C)",
+              "pl": "Próg Temperatury (°C)",
+              "ru": "Порог Температуры (°C)",
+              "ko": "온도 임계값 (°C)"
+            },
+            "min": -20,
+            "max": 80,
+            "step": 1,
+            "required": true
+          },
+          {
+            "name": "direction",
+            "type": "dropdown",
+            "title": {
+              "en": "Direction",
+              "nl": "Richting",
+              "da": "Retning",
+              "de": "Richtung",
+              "es": "Dirección",
+              "fr": "Direction",
+              "it": "Direzione",
+              "no": "Retning",
+              "sv": "Riktning",
+              "pl": "Kierunek",
+              "ru": "Направление",
+              "ko": "방향"
+            },
+            "values": [
+              {
+                "id": "above",
+                "title": {
+                  "en": "goes above",
+                  "nl": "gaat boven",
+                  "da": "går over",
+                  "de": "geht über",
+                  "es": "va por encima",
+                  "fr": "dépasse",
+                  "it": "va sopra",
+                  "no": "går over",
+                  "sv": "går över",
+                  "pl": "przekracza",
+                  "ru": "превышает",
+                  "ko": "초과"
+                }
+              },
+              {
+                "id": "below",
+                "title": {
+                  "en": "goes below",
+                  "nl": "gaat onder",
+                  "da": "går under",
+                  "de": "geht unter",
+                  "es": "va por debajo",
+                  "fr": "passe en dessous",
+                  "it": "va sotto",
+                  "no": "går under",
+                  "sv": "går under",
+                  "pl": "spada poniżej",
+                  "ru": "опускается ниже",
+                  "ko": "미만"
+                }
+              }
+            ],
+            "required": true
+          }
+        ],
+        "tokens": [
+          {
+            "name": "temperature",
+            "type": "number",
+            "title": {
+              "en": "Current Temperature",
+              "nl": "Huidige Temperatuur",
+              "da": "Nuværende Temperatur",
+              "de": "Aktuelle Temperatur",
+              "es": "Temperatura Actual",
+              "fr": "Température Actuelle",
+              "it": "Temperatura Attuale",
+              "no": "Nåværende Temperatur",
+              "sv": "Nuvarande Temperatur",
+              "pl": "Aktualna Temperatura",
+              "ru": "Текущая Температура",
+              "ko": "현재 온도"
+            },
+            "desc": {
+              "en": "Current battery temperature in degrees Celsius",
+              "nl": "Huidige batterij temperatuur in graden Celsius",
+              "da": "Nuværende batteri temperatur i grader Celsius",
+              "de": "Aktuelle Batterie-Temperatur in Grad Celsius",
+              "es": "Temperatura actual de la batería en grados Celsius",
+              "fr": "Température actuelle de la batterie en degrés Celsius",
+              "it": "Temperatura attuale della batteria in gradi Celsius",
+              "no": "Nåværende batteri temperatur i grader Celsius",
+              "sv": "Nuvarande batteri temperatur i grader Celsius",
+              "pl": "Aktualna temperatura baterii w stopniach Celsiusza",
+              "ru": "Текущая температура батареи в градусах Цельсия",
+              "ko": "섭씨 단위의 현재 배터리 온도"
+            }
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Threshold",
+              "nl": "Drempel",
+              "da": "Tærskel",
+              "de": "Schwellenwert",
+              "es": "Umbral",
+              "fr": "Seuil",
+              "it": "Soglia",
+              "no": "Terskel",
+              "sv": "Tröskel",
+              "pl": "Próg",
+              "ru": "Порог",
+              "ko": "임계값"
+            },
+            "desc": {
+              "en": "The temperature threshold that was crossed",
+              "nl": "De temperatuur drempel die werd overschreden",
+              "da": "Temperatur-tærsklen der blev krydset",
+              "de": "Der Temperatur-Schwellenwert, der überschritten wurde",
+              "es": "El umbral de temperatura que se cruzó",
+              "fr": "Le seuil de température qui a été franchi",
+              "it": "La soglia di temperatura che è stata superata",
+              "no": "Temperatur-terskelen som ble krysset",
+              "sv": "Temperatur-tröskeln som överskreds",
+              "pl": "Próg temperatury, który został przekroczony",
+              "ru": "Порог температуры, который был пересечен",
+              "ko": "교차된 온도 임계값"
+            }
+          },
+          {
+            "name": "direction",
+            "type": "string",
+            "title": {
+              "en": "Direction",
+              "nl": "Richting",
+              "da": "Retning",
+              "de": "Richtung",
+              "es": "Dirección",
+              "fr": "Direction",
+              "it": "Direzione",
+              "no": "Retning",
+              "sv": "Riktning",
+              "pl": "Kierunek",
+              "ru": "Направление",
+              "ko": "방향"
+            },
+            "desc": {
+              "en": "Whether temperature went above or below the threshold",
+              "nl": "Of temperatuur boven of onder de drempel ging",
+              "da": "Om temperaturen gik over eller under tærsklen",
+              "de": "Ob Temperatur über oder unter den Schwellenwert ging",
+              "es": "Si la temperatura fue por encima o por debajo del umbral",
+              "fr": "Si la température est passée au-dessus ou en dessous du seuil",
+              "it": "Se la temperatura è andata sopra o sotto la soglia",
+              "no": "Om temperaturen gikk over eller under terskelen",
+              "sv": "Om temperaturen gick över eller under tröskeln",
+              "pl": "Czy temperatura przekroczyła próg w górę czy w dół",
+              "ru": "Превысила ли температура порог или опустилась ниже",
+              "ko": "온도가 임계값을 초과했는지 또는 미만인지"
+            }
+          }
+        ]
       },
       {
         "id": "statistics_entry_logged",
@@ -457,6 +1923,1626 @@
             "desc": {
               "en": "Method used for this calculation"
             }
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "marstek_battery_charging_condition",
+        "title": {
+          "en": "Battery is...",
+          "nl": "Batterij is...",
+          "da": "Batteri er...",
+          "de": "Batterie ist...",
+          "es": "Batería está...",
+          "fr": "Batterie est...",
+          "it": "Batteria è...",
+          "no": "Batteri er...",
+          "sv": "Batteri är...",
+          "pl": "Bateria jest...",
+          "ru": "Батарея...",
+          "ko": "배터리가..."
+        },
+        "titleFormatted": {
+          "en": "Battery is [[state]]",
+          "nl": "Batterij is [[state]]",
+          "da": "Batteri er [[state]]",
+          "de": "Batterie ist [[state]]",
+          "es": "Batería está [[state]]",
+          "fr": "Batterie est [[state]]",
+          "it": "Batteria è [[state]]",
+          "no": "Batteri er [[state]]",
+          "sv": "Batteri är [[state]]",
+          "pl": "Bateria jest [[state]]",
+          "ru": "Батарея  [[state]]",
+          "ko": "의 배터리가 [[state]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "state",
+            "type": "dropdown",
+            "title": {
+              "en": "Charging State",
+              "nl": "Laadtoestand",
+              "da": "Ladetilstand",
+              "de": "Ladezustand",
+              "es": "Estado de Carga",
+              "fr": "État de Charge",
+              "it": "Stato di Carica",
+              "no": "Ladetilstand",
+              "sv": "Laddningstillstånd",
+              "pl": "Stan Ładowania",
+              "ru": "Состояние Зарядки",
+              "ko": "충전 상태"
+            },
+            "values": [
+              {
+                "id": "charging",
+                "title": {
+                  "en": "charging",
+                  "nl": "bezig met laden",
+                  "da": "lader",
+                  "de": "lädt",
+                  "es": "cargando",
+                  "fr": "en charge",
+                  "it": "in carica",
+                  "no": "lader",
+                  "sv": "laddar",
+                  "pl": "ładuje się",
+                  "ru": "заряжается",
+                  "ko": "충전 중"
+                }
+              },
+              {
+                "id": "discharging",
+                "title": {
+                  "en": "discharging",
+                  "nl": "bezig met ontladen",
+                  "da": "aflader",
+                  "de": "entlädt",
+                  "es": "descargando",
+                  "fr": "en décharge",
+                  "it": "in scarica",
+                  "no": "utlader",
+                  "sv": "urladdar",
+                  "pl": "rozładowuje się",
+                  "ru": "разряжается",
+                  "ko": "방전 중"
+                }
+              },
+              {
+                "id": "idle",
+                "title": {
+                  "en": "idle",
+                  "nl": "inactief",
+                  "da": "inaktiv",
+                  "de": "inaktiv",
+                  "es": "inactivo",
+                  "fr": "inactif",
+                  "it": "inattivo",
+                  "no": "inaktiv",
+                  "sv": "inaktiv",
+                  "pl": "bezczynny",
+                  "ru": "неактивен",
+                  "ko": "대기 중"
+                }
+              }
+            ],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_battery_percentage_threshold_condition",
+        "title": {
+          "en": "Battery percentage is...",
+          "nl": "Batterij percentage is...",
+          "da": "Batteri procent er...",
+          "de": "Batterie Prozent ist...",
+          "es": "Porcentaje de batería es...",
+          "fr": "Pourcentage de batterie est...",
+          "it": "Percentuale batteria è...",
+          "no": "Batteri prosent er...",
+          "sv": "Batteri procent är...",
+          "pl": "Procent baterii jest...",
+          "ru": "Процент батареи...",
+          "ko": "배터리 백분율이..."
+        },
+        "titleFormatted": {
+          "en": "Battery percentage is [[comparison]] [[threshold]]%",
+          "nl": "Batterij percentage is [[comparison]] [[threshold]]%",
+          "da": "Batteri procent er [[comparison]] [[threshold]]%",
+          "de": "Batterie Prozent ist [[comparison]] [[threshold]]%",
+          "es": "Porcentaje de batería es [[comparison]] [[threshold]]%",
+          "fr": "Pourcentage de batterie est [[comparison]] [[threshold]]%",
+          "it": "Percentuale batteria è [[comparison]] [[threshold]]%",
+          "no": "Batteri prosent er [[comparison]] [[threshold]]%",
+          "sv": "Batteri procent är [[comparison]] [[threshold]]%",
+          "pl": "Procent baterii jest [[comparison]] [[threshold]]%",
+          "ru": "Процент батареи  [[comparison]] [[threshold]]%",
+          "ko": "의 배터리 백분율이 [[threshold]]% [[comparison]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "comparison",
+            "type": "dropdown",
+            "title": {
+              "en": "Comparison",
+              "nl": "Vergelijking",
+              "da": "Sammenligning",
+              "de": "Vergleich",
+              "es": "Comparación",
+              "fr": "Comparaison",
+              "it": "Confronto",
+              "no": "Sammenligning",
+              "sv": "Jämförelse",
+              "pl": "Porównanie",
+              "ru": "Сравнение",
+              "ko": "비교"
+            },
+            "values": [
+              {
+                "id": "above",
+                "title": {
+                  "en": "above",
+                  "nl": "boven",
+                  "da": "over",
+                  "de": "über",
+                  "es": "por encima de",
+                  "fr": "au-dessus de",
+                  "it": "sopra",
+                  "no": "over",
+                  "sv": "över",
+                  "pl": "powyżej",
+                  "ru": "выше",
+                  "ko": "초과"
+                }
+              },
+              {
+                "id": "below",
+                "title": {
+                  "en": "below",
+                  "nl": "onder",
+                  "da": "under",
+                  "de": "unter",
+                  "es": "por debajo de",
+                  "fr": "en dessous de",
+                  "it": "sotto",
+                  "no": "under",
+                  "sv": "under",
+                  "pl": "poniżej",
+                  "ru": "ниже",
+                  "ko": "미만"
+                }
+              }
+            ],
+            "required": true
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Percentage Threshold (%)",
+              "nl": "Percentage Drempel (%)",
+              "da": "Procent Tærskel (%)",
+              "de": "Prozent Schwellenwert (%)",
+              "es": "Umbral de Porcentaje (%)",
+              "fr": "Seuil de Pourcentage (%)",
+              "it": "Soglia Percentuale (%)",
+              "no": "Prosent Terskel (%)",
+              "sv": "Procent Tröskel (%)",
+              "pl": "Próg Procent (%)",
+              "ru": "Порог Процента (%)",
+              "ko": "백분율 임계값 (%)"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_battery_soc_condition",
+        "title": {
+          "en": "Battery SOC is...",
+          "nl": "Batterij SOC is...",
+          "da": "Batteri SOC er...",
+          "de": "Batterie SOC ist...",
+          "es": "SOC de batería es...",
+          "fr": "SOC de batterie est...",
+          "it": "SOC batteria è...",
+          "no": "Batteri SOC er...",
+          "sv": "Batteri SOC är...",
+          "pl": "SOC baterii jest...",
+          "ru": "SOC батареи...",
+          "ko": "배터리 SOC가..."
+        },
+        "titleFormatted": {
+          "en": "Battery SOC is [[comparison]] [[threshold]]%",
+          "nl": "Batterij SOC is [[comparison]] [[threshold]]%",
+          "da": "Batteri SOC er [[comparison]] [[threshold]]%",
+          "de": "Batterie SOC ist [[comparison]] [[threshold]]%",
+          "es": "SOC de batería es [[comparison]] [[threshold]]%",
+          "fr": "SOC de batterie est [[comparison]] [[threshold]]%",
+          "it": "SOC batteria è [[comparison]] [[threshold]]%",
+          "no": "Batteri SOC er [[comparison]] [[threshold]]%",
+          "sv": "Batteri SOC är [[comparison]] [[threshold]]%",
+          "pl": "SOC baterii jest [[comparison]] [[threshold]]%",
+          "ru": "SOC батареи  [[comparison]] [[threshold]]%",
+          "ko": "의 배터리 SOC가 [[threshold]]% [[comparison]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "comparison",
+            "type": "dropdown",
+            "title": {
+              "en": "Comparison",
+              "nl": "Vergelijking",
+              "da": "Sammenligning",
+              "de": "Vergleich",
+              "es": "Comparación",
+              "fr": "Comparaison",
+              "it": "Confronto",
+              "no": "Sammenligning",
+              "sv": "Jämförelse",
+              "pl": "Porównanie",
+              "ru": "Сравнение",
+              "ko": "비교"
+            },
+            "values": [
+              {
+                "id": "above",
+                "title": {
+                  "en": "above",
+                  "nl": "boven",
+                  "da": "over",
+                  "de": "über",
+                  "es": "por encima de",
+                  "fr": "au-dessus de",
+                  "it": "sopra",
+                  "no": "over",
+                  "sv": "över",
+                  "pl": "powyżej",
+                  "ru": "выше",
+                  "ko": "초과"
+                }
+              },
+              {
+                "id": "below",
+                "title": {
+                  "en": "below",
+                  "nl": "onder",
+                  "da": "under",
+                  "de": "unter",
+                  "es": "por debajo de",
+                  "fr": "en dessous de",
+                  "it": "sotto",
+                  "no": "under",
+                  "sv": "under",
+                  "pl": "poniżej",
+                  "ru": "ниже",
+                  "ko": "미만"
+                }
+              }
+            ],
+            "required": true
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "SOC Threshold (%)",
+              "nl": "SOC Drempel (%)",
+              "da": "SOC Tærskel (%)",
+              "de": "SOC Schwellenwert (%)",
+              "es": "Umbral SOC (%)",
+              "fr": "Seuil SOC (%)",
+              "it": "Soglia SOC (%)",
+              "no": "SOC Terskel (%)",
+              "sv": "SOC Tröskel (%)",
+              "pl": "Próg SOC (%)",
+              "ru": "Порог SOC (%)",
+              "ko": "SOC 임계값 (%)"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_charging_state_condition",
+        "title": {
+          "en": "Battery charging state is...",
+          "nl": "Batterij laadtoestand is...",
+          "da": "Batteri ladetilstand er...",
+          "de": "Batterie Ladezustand ist...",
+          "es": "Estado de carga de batería es...",
+          "fr": "État de charge de batterie est...",
+          "it": "Stato di carica batteria è...",
+          "no": "Batteri ladetilstand er...",
+          "sv": "Batteri laddningstillstånd är...",
+          "pl": "Stan ładowania baterii jest...",
+          "ru": "Состояние зарядки батареи...",
+          "ko": "배터리 충전 상태가..."
+        },
+        "titleFormatted": {
+          "en": "Battery charging state is [[state]]",
+          "nl": "Batterij laadtoestand is [[state]]",
+          "da": "Batteri ladetilstand er [[state]]",
+          "de": "Batterie Ladezustand ist [[state]]",
+          "es": "Estado de carga de batería es [[state]]",
+          "fr": "État de charge de batterie est [[state]]",
+          "it": "Stato di carica batteria è [[state]]",
+          "no": "Batteri ladetilstand er [[state]]",
+          "sv": "Batteri laddningstillstånd är [[state]]",
+          "pl": "Stan ładowania baterii jest [[state]]",
+          "ru": "Состояние зарядки батареи  [[state]]",
+          "ko": "의 배터리 충전 상태가 [[state]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "state",
+            "type": "dropdown",
+            "title": {
+              "en": "Charging State",
+              "nl": "Laadtoestand",
+              "da": "Ladetilstand",
+              "de": "Ladezustand",
+              "es": "Estado de Carga",
+              "fr": "État de Charge",
+              "it": "Stato di Carica",
+              "no": "Ladetilstand",
+              "sv": "Laddningstillstånd",
+              "pl": "Stan Ładowania",
+              "ru": "Состояние Зарядки",
+              "ko": "충전 상태"
+            },
+            "values": [
+              {
+                "id": "charging",
+                "title": {
+                  "en": "charging",
+                  "nl": "bezig met laden",
+                  "da": "lader",
+                  "de": "lädt",
+                  "es": "cargando",
+                  "fr": "en charge",
+                  "it": "in carica",
+                  "no": "lader",
+                  "sv": "laddar",
+                  "pl": "ładuje się",
+                  "ru": "заряжается",
+                  "ko": "충전 중"
+                }
+              },
+              {
+                "id": "discharging",
+                "title": {
+                  "en": "discharging",
+                  "nl": "bezig met ontladen",
+                  "da": "aflader",
+                  "de": "entlädt",
+                  "es": "descargando",
+                  "fr": "en décharge",
+                  "it": "in scarica",
+                  "no": "utlader",
+                  "sv": "urladdar",
+                  "pl": "rozładowuje się",
+                  "ru": "разряжается",
+                  "ko": "방전 중"
+                }
+              },
+              {
+                "id": "idle",
+                "title": {
+                  "en": "idle",
+                  "nl": "inactief",
+                  "da": "inaktiv",
+                  "de": "inaktiv",
+                  "es": "inactivo",
+                  "fr": "inactif",
+                  "it": "inattivo",
+                  "no": "inaktiv",
+                  "sv": "inaktiv",
+                  "pl": "bezczynny",
+                  "ru": "неактивен",
+                  "ko": "대기 중"
+                }
+              }
+            ],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_grid_connected_condition",
+        "title": {
+          "en": "Grid is connected",
+          "nl": "Net is verbonden",
+          "da": "Net er tilsluttet",
+          "de": "Netz ist verbunden",
+          "es": "Red está conectada",
+          "fr": "Réseau est connecté",
+          "it": "Rete è connessa",
+          "no": "Nett er tilkoblet",
+          "sv": "Nät är anslutet",
+          "pl": "Sieć jest podłączona",
+          "ru": "Сеть подключена",
+          "ko": "그리드가 연결됨"
+        },
+        "titleFormatted": {
+          "en": "Grid is connected",
+          "nl": "Net is verbonden",
+          "da": "Net er tilsluttet",
+          "de": "Netz ist verbunden",
+          "es": "Red está conectada",
+          "fr": "Réseau est connecté",
+          "it": "Rete è connessa",
+          "no": "Nett er tilkoblet",
+          "sv": "Nät är anslutet",
+          "pl": "Sieć jest podłączona",
+          "ru": "Сеть подключена ",
+          "ko": "에서 그리드가 연결됨"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_grid_export_condition",
+        "title": {
+          "en": "Grid is exporting",
+          "nl": "Net is exporterend",
+          "da": "Net eksporterer",
+          "de": "Netz exportiert",
+          "es": "Red está exportando",
+          "fr": "Réseau exporte",
+          "it": "Rete sta esportando",
+          "no": "Nett eksporterer",
+          "sv": "Nät exporterar",
+          "pl": "Sieć eksportuje",
+          "ru": "Сеть экспортирует",
+          "ko": "그리드가 내보내는 중"
+        },
+        "titleFormatted": {
+          "en": "Grid is exporting",
+          "nl": "Net is exporterend",
+          "da": "Net eksporterer",
+          "de": "Netz exportiert",
+          "es": "Red está exportando",
+          "fr": "Réseau exporte",
+          "it": "Rete sta esportando",
+          "no": "Nett eksporterer",
+          "sv": "Nät exporterar",
+          "pl": "Sieć eksportuje",
+          "ru": "Сеть экспортирует",
+          "ko": "그리드가 내보내는 중"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_grid_export_power_condition",
+        "title": {
+          "en": "Grid export power is...",
+          "nl": "Netexport vermogen is...",
+          "da": "Neteksport effekt er...",
+          "de": "Netzexport Leistung ist...",
+          "es": "Potencia de exportación de red es...",
+          "fr": "Puissance d'exportation réseau est...",
+          "it": "Potenza di esportazione rete è...",
+          "no": "Nettexport effekt er...",
+          "sv": "Nätexport effekt är...",
+          "pl": "Moc eksportu sieci jest...",
+          "ru": "Мощность экспорта сети...",
+          "ko": "그리드 수출 전력이..."
+        },
+        "titleFormatted": {
+          "en": "Grid export power is [[comparison]] [[threshold]]W",
+          "nl": "Netexport vermogen is [[comparison]] [[threshold]]W",
+          "da": "Neteksport effekt er [[comparison]] [[threshold]]W",
+          "de": "Netzexport Leistung ist [[comparison]] [[threshold]]W",
+          "es": "Potencia de exportación de red es [[comparison]] [[threshold]]W",
+          "fr": "Puissance d'exportation réseau est [[comparison]] [[threshold]]W",
+          "it": "Potenza di esportazione rete è [[comparison]] [[threshold]]W",
+          "no": "Nettexport effekt er [[comparison]] [[threshold]]W",
+          "sv": "Nätexport effekt är [[comparison]] [[threshold]]W",
+          "pl": "Moc eksportu sieci jest [[comparison]] [[threshold]]W",
+          "ru": "Мощность экспорта сети  [[comparison]] [[threshold]]W",
+          "ko": "의 그리드 수출 전력이 [[threshold]]W [[comparison]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "comparison",
+            "type": "dropdown",
+            "title": {
+              "en": "Comparison",
+              "nl": "Vergelijking",
+              "da": "Sammenligning",
+              "de": "Vergleich",
+              "es": "Comparación",
+              "fr": "Comparaison",
+              "it": "Confronto",
+              "no": "Sammenligning",
+              "sv": "Jämförelse",
+              "pl": "Porównanie",
+              "ru": "Сравнение",
+              "ko": "비교"
+            },
+            "values": [
+              {
+                "id": "above",
+                "title": {
+                  "en": "above",
+                  "nl": "boven",
+                  "da": "over",
+                  "de": "über",
+                  "es": "por encima de",
+                  "fr": "au-dessus de",
+                  "it": "sopra",
+                  "no": "over",
+                  "sv": "över",
+                  "pl": "powyżej",
+                  "ru": "выше",
+                  "ko": "초과"
+                }
+              },
+              {
+                "id": "below",
+                "title": {
+                  "en": "below",
+                  "nl": "onder",
+                  "da": "under",
+                  "de": "unter",
+                  "es": "por debajo de",
+                  "fr": "en dessous de",
+                  "it": "sotto",
+                  "no": "under",
+                  "sv": "under",
+                  "pl": "poniżej",
+                  "ru": "ниже",
+                  "ko": "미만"
+                }
+              }
+            ],
+            "required": true
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Export Power Threshold (W)",
+              "nl": "Export Vermogensdrempel (W)",
+              "da": "Eksport Effekt Tærskel (W)",
+              "de": "Export Leistungsschwellenwert (W)",
+              "es": "Umbral de Potencia de Exportación (W)",
+              "fr": "Seuil de Puissance d'Exportation (W)",
+              "it": "Soglia di Potenza di Esportazione (W)",
+              "no": "Eksport Effekt Terskel (W)",
+              "sv": "Export Effekt Tröskel (W)",
+              "pl": "Próg Moc Eksportu (W)",
+              "ru": "Порог Мощности Экспорта (W)",
+              "ko": "수출 전력 임계값 (W)"
+            },
+            "min": 0,
+            "max": 100000,
+            "step": 10,
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_grid_import_condition",
+        "title": {
+          "en": "Grid is importing",
+          "nl": "Net is importerend",
+          "da": "Net importerer",
+          "de": "Netz importiert",
+          "es": "Red está importando",
+          "fr": "Réseau importe",
+          "it": "Rete sta importando",
+          "no": "Nett importerer",
+          "sv": "Nät importerar",
+          "pl": "Sieć importuje",
+          "ru": "Сеть импортирует",
+          "ko": "그리드가 가져오는 중"
+        },
+        "titleFormatted": {
+          "en": "Grid is importing",
+          "nl": "Net is importerend",
+          "da": "Net importerer",
+          "de": "Netz importiert",
+          "es": "Red está importando",
+          "fr": "Réseau importe",
+          "it": "Rete sta importando",
+          "no": "Nett importerer",
+          "sv": "Nät importerar",
+          "pl": "Sieć importuje",
+          "ru": "Сеть импортирует",
+          "ko": "그리드가 가져오는 중"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_grid_import_power_condition",
+        "title": {
+          "en": "Grid import power is...",
+          "nl": "Netimport vermogen is...",
+          "da": "Netimport effekt er...",
+          "de": "Netzimport Leistung ist...",
+          "es": "Potencia de importación de red es...",
+          "fr": "Puissance d'importation réseau est...",
+          "it": "Potenza di importazione rete è...",
+          "no": "Nettimport effekt er...",
+          "sv": "Nätimport effekt är...",
+          "pl": "Moc importu sieci jest...",
+          "ru": "Мощность импорта сети...",
+          "ko": "그리드 수입 전력이..."
+        },
+        "titleFormatted": {
+          "en": "Grid import power is [[comparison]] [[threshold]]W",
+          "nl": "Netimport vermogen is [[comparison]] [[threshold]]W",
+          "da": "Netimport effekt er [[comparison]] [[threshold]]W",
+          "de": "Netzimport Leistung ist [[comparison]] [[threshold]]W",
+          "es": "Potencia de importación de red es [[comparison]] [[threshold]]W",
+          "fr": "Puissance d'importation réseau est [[comparison]] [[threshold]]W",
+          "it": "Potenza di importazione rete è [[comparison]] [[threshold]]W",
+          "no": "Nettimport effekt er [[comparison]] [[threshold]]W",
+          "sv": "Nätimport effekt är [[comparison]] [[threshold]]W",
+          "pl": "Moc importu sieci jest [[comparison]] [[threshold]]W",
+          "ru": "Мощность импорта сети  [[comparison]] [[threshold]]W",
+          "ko": "의 그리드 수입 전력이 [[threshold]]W [[comparison]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "comparison",
+            "type": "dropdown",
+            "title": {
+              "en": "Comparison",
+              "nl": "Vergelijking",
+              "da": "Sammenligning",
+              "de": "Vergleich",
+              "es": "Comparación",
+              "fr": "Comparaison",
+              "it": "Confronto",
+              "no": "Sammenligning",
+              "sv": "Jämförelse",
+              "pl": "Porównanie",
+              "ru": "Сравнение",
+              "ko": "비교"
+            },
+            "values": [
+              {
+                "id": "above",
+                "title": {
+                  "en": "above",
+                  "nl": "boven",
+                  "da": "over",
+                  "de": "über",
+                  "es": "por encima de",
+                  "fr": "au-dessus de",
+                  "it": "sopra",
+                  "no": "over",
+                  "sv": "över",
+                  "pl": "powyżej",
+                  "ru": "выше",
+                  "ko": "초과"
+                }
+              },
+              {
+                "id": "below",
+                "title": {
+                  "en": "below",
+                  "nl": "onder",
+                  "da": "under",
+                  "de": "unter",
+                  "es": "por debajo de",
+                  "fr": "en dessous de",
+                  "it": "sotto",
+                  "no": "under",
+                  "sv": "under",
+                  "pl": "poniżej",
+                  "ru": "ниже",
+                  "ko": "미만"
+                }
+              }
+            ],
+            "required": true
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Import Power Threshold (W)",
+              "nl": "Import Vermogensdrempel (W)",
+              "da": "Import Effekt Tærskel (W)",
+              "de": "Import Leistungsschwellenwert (W)",
+              "es": "Umbral de Potencia de Importación (W)",
+              "fr": "Seuil de Puissance d'Importation (W)",
+              "it": "Soglia di Potenza di Importazione (W)",
+              "no": "Import Effekt Terskel (W)",
+              "sv": "Import Effekt Tröskel (W)",
+              "pl": "Próg Moc Importu (W)",
+              "ru": "Порог Мощности Импорта (W)",
+              "ko": "수입 전력 임계값 (W)"
+            },
+            "min": 0,
+            "max": 100000,
+            "step": 10,
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_grid_power_threshold_condition",
+        "title": {
+          "en": "Grid power is...",
+          "nl": "Netvermogen is...",
+          "da": "Neteffekt er...",
+          "de": "Netzleistung ist...",
+          "es": "Potencia de red es...",
+          "fr": "Puissance réseau est...",
+          "it": "Potenza rete è...",
+          "no": "Netteffekt er...",
+          "sv": "Näteffekt är...",
+          "pl": "Moc sieci jest...",
+          "ru": "Мощность сети...",
+          "ko": "그리드 전력이..."
+        },
+        "titleFormatted": {
+          "en": "Grid power is [[comparison]] [[threshold]]W",
+          "nl": "Netvermogen is [[comparison]] [[threshold]]W",
+          "da": "Neteffekt er [[comparison]] [[threshold]]W",
+          "de": "Netzleistung ist [[comparison]] [[threshold]]W",
+          "es": "Potencia de red es [[comparison]] [[threshold]]W",
+          "fr": "Puissance réseau est [[comparison]] [[threshold]]W",
+          "it": "Potenza rete è [[comparison]] [[threshold]]W",
+          "no": "Netteffekt er [[comparison]] [[threshold]]W",
+          "sv": "Näteffekt är [[comparison]] [[threshold]]W",
+          "pl": "Moc sieci jest [[comparison]] [[threshold]]W",
+          "ru": "Мощность сети  [[comparison]] [[threshold]]W",
+          "ko": "의 그리드 전력이 [[threshold]]W [[comparison]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "comparison",
+            "type": "dropdown",
+            "title": {
+              "en": "Comparison",
+              "nl": "Vergelijking",
+              "da": "Sammenligning",
+              "de": "Vergleich",
+              "es": "Comparación",
+              "fr": "Comparaison",
+              "it": "Confronto",
+              "no": "Sammenligning",
+              "sv": "Jämförelse",
+              "pl": "Porównanie",
+              "ru": "Сравнение",
+              "ko": "비교"
+            },
+            "values": [
+              {
+                "id": "above",
+                "title": {
+                  "en": "above",
+                  "nl": "boven",
+                  "da": "over",
+                  "de": "über",
+                  "es": "por encima de",
+                  "fr": "au-dessus de",
+                  "it": "sopra",
+                  "no": "over",
+                  "sv": "över",
+                  "pl": "powyżej",
+                  "ru": "выше",
+                  "ko": "초과"
+                }
+              },
+              {
+                "id": "below",
+                "title": {
+                  "en": "below",
+                  "nl": "onder",
+                  "da": "under",
+                  "de": "unter",
+                  "es": "por debajo de",
+                  "fr": "en dessous de",
+                  "it": "sotto",
+                  "no": "under",
+                  "sv": "under",
+                  "pl": "poniżej",
+                  "ru": "ниже",
+                  "ko": "미만"
+                }
+              }
+            ],
+            "required": true
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Power Threshold (W)",
+              "nl": "Vermogensdrempel (W)",
+              "da": "Effekt Tærskel (W)",
+              "de": "Leistungsschwellenwert (W)",
+              "es": "Umbral de Potencia (W)",
+              "fr": "Seuil de Puissance (W)",
+              "it": "Soglia di Potenza (W)",
+              "no": "Effekt Terskel (W)",
+              "sv": "Effekt Tröskel (W)",
+              "pl": "Próg Moc (W)",
+              "ru": "Порог Мощности (W)",
+              "ko": "전력 임계값 (W)"
+            },
+            "min": -100000,
+            "max": 100000,
+            "step": 10,
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_mode_changed_condition",
+        "title": {
+          "en": "Battery mode is...",
+          "nl": "Batterijmodus is...",
+          "da": "Batterimodus er...",
+          "de": "Batteriemodus ist...",
+          "es": "Modo de batería es...",
+          "fr": "Mode batterie est...",
+          "it": "Modalità batteria è...",
+          "no": "Batterimodus er...",
+          "sv": "Batteriläge är...",
+          "pl": "Tryb baterii jest...",
+          "ru": "Режим батареи...",
+          "ko": "배터리 모드가..."
+        },
+        "titleFormatted": {
+          "en": "Battery mode is [[mode]]",
+          "nl": "Batterijmodus is [[mode]]",
+          "da": "Batterimodus er [[mode]]",
+          "de": "Batteriemodus ist [[mode]]",
+          "es": "Modo de batería es [[mode]]",
+          "fr": "Mode batterie est [[mode]]",
+          "it": "Modalità batteria è [[mode]]",
+          "no": "Batterimodus er [[mode]]",
+          "sv": "Batteriläge är [[mode]]",
+          "pl": "Tryb baterii jest [[mode]]",
+          "ru": "Режим батареи  [[mode]]",
+          "ko": "의 배터리 모드가 [[mode]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "mode",
+            "type": "dropdown",
+            "title": {
+              "en": "Mode",
+              "nl": "Modus",
+              "da": "Tilstand",
+              "de": "Modus",
+              "es": "Modo",
+              "fr": "Mode",
+              "it": "Modalità",
+              "no": "Modus",
+              "sv": "Läge",
+              "pl": "Tryb",
+              "ru": "Режим",
+              "ko": "모드"
+            },
+            "values": [
+              {
+                "id": "ai",
+                "title": {
+                  "en": "AI",
+                  "nl": "AI",
+                  "da": "AI",
+                  "de": "AI",
+                  "es": "IA",
+                  "fr": "IA",
+                  "it": "IA",
+                  "no": "AI",
+                  "sv": "AI",
+                  "pl": "AI",
+                  "ru": "ИИ",
+                  "ko": "AI"
+                }
+              },
+              {
+                "id": "auto",
+                "title": {
+                  "en": "Auto",
+                  "nl": "Auto",
+                  "da": "Auto",
+                  "de": "Auto",
+                  "es": "Auto",
+                  "fr": "Auto",
+                  "it": "Auto",
+                  "no": "Auto",
+                  "sv": "Auto",
+                  "pl": "Auto",
+                  "ru": "Авто",
+                  "ko": "자동"
+                }
+              },
+              {
+                "id": "force_charge",
+                "title": {
+                  "en": "Force Charge",
+                  "nl": "Geforceerd Laden",
+                  "da": "Tving Opladning",
+                  "de": "Erzwinge Laden",
+                  "es": "Forzar Carga",
+                  "fr": "Forcer Charge",
+                  "it": "Forza Carica",
+                  "no": "Tving Ladning",
+                  "sv": "Tving Laddning",
+                  "pl": "Wymuś Ładowanie",
+                  "ru": "Принудительная Зарядка",
+                  "ko": "강제 충전"
+                }
+              },
+              {
+                "id": "force_discharge",
+                "title": {
+                  "en": "Force Discharge",
+                  "nl": "Geforceerd Ontladen",
+                  "da": "Tving Afladning",
+                  "de": "Erzwinge Entladen",
+                  "es": "Forzar Descarga",
+                  "fr": "Forcer Décharge",
+                  "it": "Forza Scarica",
+                  "no": "Tving Utladning",
+                  "sv": "Tving Urladdning",
+                  "pl": "Wymuś Rozładowanie",
+                  "ru": "Принудительная Разрядка",
+                  "ko": "강제 방전"
+                }
+              }
+            ],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_rssi_condition",
+        "title": {
+          "en": "WiFi signal strength is...",
+          "nl": "WiFi signaalsterkte is...",
+          "da": "WiFi signalstyrke er...",
+          "de": "WLAN Signalstärke ist...",
+          "es": "Fuerza de señal WiFi está...",
+          "fr": "Force du signal WiFi est...",
+          "it": "Forza del segnale WiFi è...",
+          "no": "WiFi signalstyrke er...",
+          "sv": "WiFi signalstyrka är...",
+          "pl": "Siła sygnału WiFi jest...",
+          "ru": "Сила сигнала WiFi...",
+          "ko": "WiFi 신호 강도가..."
+        },
+        "titleFormatted": {
+          "en": "WiFi signal strength is [[direction]] [[threshold]] dBm",
+          "nl": "WiFi signaalsterkte is [[direction]] [[threshold]] dBm",
+          "da": "WiFi signalstyrke er [[direction]] [[threshold]] dBm",
+          "de": "WLAN Signalstärke ist [[direction]] [[threshold]] dBm",
+          "es": "Fuerza de señal WiFi está [[direction]] [[threshold]] dBm",
+          "fr": "Force du signal WiFi est [[direction]] [[threshold]] dBm",
+          "it": "Forza del segnale WiFi è [[direction]] [[threshold]] dBm",
+          "no": "WiFi signalstyrke er [[direction]] [[threshold]] dBm",
+          "sv": "WiFi signalstyrka är [[direction]] [[threshold]] dBm",
+          "pl": "Siła sygnału WiFi jest [[direction]] [[threshold]] dBm",
+          "ru": "Сила сигнала WiFi [[direction]] [[threshold]] dBm",
+          "ko": "WiFi 신호 강도가 [[threshold]] dBm [[direction]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "RSSI Threshold (dBm)",
+              "nl": "RSSI Drempel (dBm)",
+              "da": "RSSI Tærskel (dBm)",
+              "de": "RSSI Schwellenwert (dBm)",
+              "es": "Umbral RSSI (dBm)",
+              "fr": "Seuil RSSI (dBm)",
+              "it": "Soglia RSSI (dBm)",
+              "no": "RSSI Terskel (dBm)",
+              "sv": "RSSI Tröskel (dBm)",
+              "pl": "Próg RSSI (dBm)",
+              "ru": "Порог RSSI (dBm)",
+              "ko": "RSSI 임계값 (dBm)"
+            },
+            "min": -100,
+            "max": 0,
+            "step": 1,
+            "required": true
+          },
+          {
+            "name": "direction",
+            "type": "dropdown",
+            "title": {
+              "en": "Direction",
+              "nl": "Richting",
+              "da": "Retning",
+              "de": "Richtung",
+              "es": "Dirección",
+              "fr": "Direction",
+              "it": "Direzione",
+              "no": "Retning",
+              "sv": "Riktning",
+              "pl": "Kierunek",
+              "ru": "Направление",
+              "ko": "방향"
+            },
+            "values": [
+              {
+                "id": "above",
+                "title": {
+                  "en": "above",
+                  "nl": "boven",
+                  "da": "over",
+                  "de": "über",
+                  "es": "por encima de",
+                  "fr": "au-dessus de",
+                  "it": "sopra",
+                  "no": "over",
+                  "sv": "över",
+                  "pl": "powyżej",
+                  "ru": "выше",
+                  "ko": "초과"
+                }
+              },
+              {
+                "id": "below",
+                "title": {
+                  "en": "below",
+                  "nl": "onder",
+                  "da": "under",
+                  "de": "unter",
+                  "es": "por debajo de",
+                  "fr": "en dessous de",
+                  "it": "sotto",
+                  "no": "under",
+                  "sv": "under",
+                  "pl": "poniżej",
+                  "ru": "ниже",
+                  "ko": "미만"
+                }
+              }
+            ],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_solar_generating_condition",
+        "title": {
+          "en": "Solar is generating",
+          "nl": "Zon is aan het opwekken",
+          "da": "Sol er ved at generere",
+          "de": "Solar ist am Erzeugen",
+          "es": "Solar está generando",
+          "fr": "Solaire est en génération",
+          "it": "Solare sta generando",
+          "no": "Sol er i ferd med å generere",
+          "sv": "Sol är på väg att generera",
+          "pl": "Słońce generuje",
+          "ru": "Солнечная генерация",
+          "ko": "태양광이 발전 중입니다"
+        },
+        "titleFormatted": {
+          "en": "Solar power is [[comparison]] [[threshold]]W",
+          "nl": "Zonne-energie is [[comparison]] [[threshold]]W",
+          "da": "Solenergi er [[comparison]] [[threshold]]W",
+          "de": "Solarleistung ist [[comparison]] [[threshold]]W",
+          "es": "Potencia solar es [[comparison]] [[threshold]]W",
+          "fr": "Puissance solaire est [[comparison]] [[threshold]]W",
+          "it": "Potenza solare è [[comparison]] [[threshold]]W",
+          "no": "Solenergi er [[comparison]] [[threshold]]W",
+          "sv": "Solenergi är [[comparison]] [[threshold]]W",
+          "pl": "Moc słoneczna jest [[comparison]] [[threshold]]W",
+          "ru": "Солнечная мощность  [[comparison]] [[threshold]]W",
+          "ko": "의 태양광 전력이 [[threshold]]W [[comparison]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "comparison",
+            "type": "dropdown",
+            "title": {
+              "en": "Comparison",
+              "nl": "Vergelijking",
+              "da": "Sammenligning",
+              "de": "Vergleich",
+              "es": "Comparación",
+              "fr": "Comparaison",
+              "it": "Confronto",
+              "no": "Sammenligning",
+              "sv": "Jämförelse",
+              "pl": "Porównanie",
+              "ru": "Сравнение",
+              "ko": "비교"
+            },
+            "values": [
+              {
+                "id": "above",
+                "title": {
+                  "en": "above",
+                  "nl": "boven",
+                  "da": "over",
+                  "de": "über",
+                  "es": "por encima de",
+                  "fr": "au-dessus de",
+                  "it": "sopra",
+                  "no": "over",
+                  "sv": "över",
+                  "pl": "powyżej",
+                  "ru": "выше",
+                  "ko": "초과"
+                }
+              },
+              {
+                "id": "below",
+                "title": {
+                  "en": "below",
+                  "nl": "onder",
+                  "da": "under",
+                  "de": "unter",
+                  "es": "por debajo de",
+                  "fr": "en dessous de",
+                  "it": "sotto",
+                  "no": "under",
+                  "sv": "under",
+                  "pl": "poniżej",
+                  "ru": "ниже",
+                  "ko": "미만"
+                }
+              }
+            ],
+            "required": true
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Power Threshold (W)",
+              "nl": "Vermogensdrempel (W)",
+              "da": "Effekt Tærskel (W)",
+              "de": "Leistungsschwellenwert (W)",
+              "es": "Umbral de Potencia (W)",
+              "fr": "Seuil de Puissance (W)",
+              "it": "Soglia di Potenza (W)",
+              "no": "Effekt Terskel (W)",
+              "sv": "Effekt Tröskel (W)",
+              "pl": "Próg Moc (W)",
+              "ru": "Порог Мощности (W)",
+              "ko": "전력 임계값 (W)"
+            },
+            "min": 0,
+            "max": 10000,
+            "step": 10,
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_solar_power_threshold_condition",
+        "title": {
+          "en": "Solar power is...",
+          "nl": "Zonne-energie vermogen is...",
+          "da": "Solenergi effekt er...",
+          "de": "Solarleistung ist...",
+          "es": "Potencia solar es...",
+          "fr": "Puissance solaire est...",
+          "it": "Potenza solare è...",
+          "no": "Solenergi effekt er...",
+          "sv": "Solenergi effekt är...",
+          "pl": "Moc słoneczna jest...",
+          "ru": "Солнечная мощность...",
+          "ko": "태양광 전력이..."
+        },
+        "titleFormatted": {
+          "en": "Solar power is [[comparison]] [[threshold]]W",
+          "nl": "Zonne-energie vermogen is [[comparison]] [[threshold]]W",
+          "da": "Solenergi effekt er [[comparison]] [[threshold]]W",
+          "de": "Solarleistung ist [[comparison]] [[threshold]]W",
+          "es": "Potencia solar es [[comparison]] [[threshold]]W",
+          "fr": "Puissance solaire est [[comparison]] [[threshold]]W",
+          "it": "Potenza solare è [[comparison]] [[threshold]]W",
+          "no": "Solenergi effekt er [[comparison]] [[threshold]]W",
+          "sv": "Solenergi effekt är [[comparison]] [[threshold]]W",
+          "pl": "Moc słoneczna jest [[comparison]] [[threshold]]W",
+          "ru": "Солнечная мощность  [[comparison]] [[threshold]]W",
+          "ko": "의 태양광 전력이 [[threshold]]W [[comparison]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "comparison",
+            "type": "dropdown",
+            "title": {
+              "en": "Comparison",
+              "nl": "Vergelijking",
+              "da": "Sammenligning",
+              "de": "Vergleich",
+              "es": "Comparación",
+              "fr": "Comparaison",
+              "it": "Confronto",
+              "no": "Sammenligning",
+              "sv": "Jämförelse",
+              "pl": "Porównanie",
+              "ru": "Сравнение",
+              "ko": "비교"
+            },
+            "values": [
+              {
+                "id": "above",
+                "title": {
+                  "en": "above",
+                  "nl": "boven",
+                  "da": "over",
+                  "de": "über",
+                  "es": "por encima de",
+                  "fr": "au-dessus de",
+                  "it": "sopra",
+                  "no": "over",
+                  "sv": "över",
+                  "pl": "powyżej",
+                  "ru": "выше",
+                  "ko": "초과"
+                }
+              },
+              {
+                "id": "below",
+                "title": {
+                  "en": "below",
+                  "nl": "onder",
+                  "da": "under",
+                  "de": "unter",
+                  "es": "por debajo de",
+                  "fr": "en dessous de",
+                  "it": "sotto",
+                  "no": "under",
+                  "sv": "under",
+                  "pl": "poniżej",
+                  "ru": "ниже",
+                  "ko": "미만"
+                }
+              }
+            ],
+            "required": true
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Power Threshold (W)",
+              "nl": "Vermogensdrempel (W)",
+              "da": "Effekt Tærskel (W)",
+              "de": "Leistungsschwellenwert (W)",
+              "es": "Umbral de Potencia (W)",
+              "fr": "Seuil de Puissance (W)",
+              "it": "Soglia di Potenza (W)",
+              "no": "Effekt Terskel (W)",
+              "sv": "Effekt Tröskel (W)",
+              "pl": "Próg Moc (W)",
+              "ru": "Порог Мощности (W)",
+              "ko": "전력 임계값 (W)"
+            },
+            "min": 0,
+            "max": 100000,
+            "step": 10,
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_temperature_threshold_condition",
+        "title": {
+          "en": "Battery temperature is...",
+          "nl": "Batterij temperatuur is...",
+          "da": "Batteri temperatur er...",
+          "de": "Batterie Temperatur ist...",
+          "es": "Temperatura de batería es...",
+          "fr": "Température de batterie est...",
+          "it": "Temperatura batteria è...",
+          "no": "Batteri temperatur er...",
+          "sv": "Batteri temperatur är...",
+          "pl": "Temperatura baterii jest...",
+          "ru": "Температура батареи...",
+          "ko": "배터리 온도가..."
+        },
+        "titleFormatted": {
+          "en": "Battery temperature is [[comparison]] [[threshold]]°C",
+          "nl": "Batterij temperatuur is [[comparison]] [[threshold]]°C",
+          "da": "Batteri temperatur er [[comparison]] [[threshold]]°C",
+          "de": "Batterie Temperatur ist [[comparison]] [[threshold]]°C",
+          "es": "Temperatura de batería es [[comparison]] [[threshold]]°C",
+          "fr": "Température de batterie est [[comparison]] [[threshold]]°C",
+          "it": "Temperatura batteria è [[comparison]] [[threshold]]°C",
+          "no": "Batteri temperatur er [[comparison]] [[threshold]]°C",
+          "sv": "Batteri temperatur är [[comparison]] [[threshold]]°C",
+          "pl": "Temperatura baterii jest [[comparison]] [[threshold]]°C",
+          "ru": "Температура батареи  [[comparison]] [[threshold]]°C",
+          "ko": "의 배터리 온도가 [[threshold]]°C [[comparison]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "comparison",
+            "type": "dropdown",
+            "title": {
+              "en": "Comparison",
+              "nl": "Vergelijking",
+              "da": "Sammenligning",
+              "de": "Vergleich",
+              "es": "Comparación",
+              "fr": "Comparaison",
+              "it": "Confronto",
+              "no": "Sammenligning",
+              "sv": "Jämförelse",
+              "pl": "Porównanie",
+              "ru": "Сравнение",
+              "ko": "비교"
+            },
+            "values": [
+              {
+                "id": "above",
+                "title": {
+                  "en": "above",
+                  "nl": "boven",
+                  "da": "over",
+                  "de": "über",
+                  "es": "por encima de",
+                  "fr": "au-dessus de",
+                  "it": "sopra",
+                  "no": "over",
+                  "sv": "över",
+                  "pl": "powyżej",
+                  "ru": "выше",
+                  "ko": "초과"
+                }
+              },
+              {
+                "id": "below",
+                "title": {
+                  "en": "below",
+                  "nl": "onder",
+                  "da": "under",
+                  "de": "unter",
+                  "es": "por debajo de",
+                  "fr": "en dessous de",
+                  "it": "sotto",
+                  "no": "under",
+                  "sv": "under",
+                  "pl": "poniżej",
+                  "ru": "ниже",
+                  "ko": "미만"
+                }
+              }
+            ],
+            "required": true
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Temperature Threshold (°C)",
+              "nl": "Temperatuur Drempel (°C)",
+              "da": "Temperatur Tærskel (°C)",
+              "de": "Temperatur Schwellenwert (°C)",
+              "es": "Umbral de Temperatura (°C)",
+              "fr": "Seuil de Température (°C)",
+              "it": "Soglia Temperatura (°C)",
+              "no": "Temperatur Terskel (°C)",
+              "sv": "Temperatur Tröskel (°C)",
+              "pl": "Próg Temperatury (°C)",
+              "ru": "Порог Температуры (°C)",
+              "ko": "온도 임계값 (°C)"
+            },
+            "min": -20,
+            "max": 80,
+            "step": 1,
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_time_of_day_condition",
+        "title": {
+          "en": "Current time is...",
+          "nl": "Huidige tijd is...",
+          "da": "Aktuel tid er...",
+          "de": "Aktuelle Zeit ist...",
+          "es": "La hora actual es...",
+          "fr": "L'heure actuelle est...",
+          "it": "L'ora attuale è...",
+          "no": "Gjeldende tid er...",
+          "sv": "Aktuell tid är...",
+          "pl": "Aktualny czas to...",
+          "ru": "Текущее время...",
+          "ko": "현재 시간이..."
+        },
+        "titleFormatted": {
+          "en": "Current time is [[comparison]] [[time]]",
+          "nl": "Huidige tijd is [[comparison]] [[time]]",
+          "da": "Aktuel tid er [[comparison]] [[time]]",
+          "de": "Aktuelle Zeit ist [[comparison]] [[time]]",
+          "es": "La hora actual es [[comparison]] [[time]]",
+          "fr": "L'heure actuelle est [[comparison]] [[time]]",
+          "it": "L'ora attuale è [[comparison]] [[time]]",
+          "no": "Gjeldende tid er [[comparison]] [[time]]",
+          "sv": "Aktuell tid är [[comparison]] [[time]]",
+          "pl": "Aktualny czas to [[comparison]] [[time]]",
+          "ru": "Текущее время [[comparison]] [[time]]",
+          "ko": "현재 시간이 [[time]] [[comparison]]"
+        },
+        "args": [
+          {
+            "name": "comparison",
+            "type": "dropdown",
+            "title": {
+              "en": "Comparison",
+              "nl": "Vergelijking",
+              "da": "Sammenligning",
+              "de": "Vergleich",
+              "es": "Comparación",
+              "fr": "Comparaison",
+              "it": "Confronto",
+              "no": "Sammenligning",
+              "sv": "Jämförelse",
+              "pl": "Porównanie",
+              "ru": "Сравнение",
+              "ko": "비교"
+            },
+            "values": [
+              {
+                "id": "before",
+                "title": {
+                  "en": "before",
+                  "nl": "voor",
+                  "da": "før",
+                  "de": "vor",
+                  "es": "antes de",
+                  "fr": "avant",
+                  "it": "prima",
+                  "no": "før",
+                  "sv": "före",
+                  "pl": "przed",
+                  "ru": "до",
+                  "ko": "이전"
+                }
+              },
+              {
+                "id": "after",
+                "title": {
+                  "en": "after",
+                  "nl": "na",
+                  "da": "efter",
+                  "de": "nach",
+                  "es": "después de",
+                  "fr": "après",
+                  "it": "dopo",
+                  "no": "etter",
+                  "sv": "efter",
+                  "pl": "po",
+                  "ru": "после",
+                  "ko": "이후"
+                }
+              }
+            ],
+            "required": true
+          },
+          {
+            "name": "time",
+            "type": "time",
+            "title": {
+              "en": "Time",
+              "nl": "Tijd",
+              "da": "Tid",
+              "de": "Zeit",
+              "es": "Hora",
+              "fr": "Heure",
+              "it": "Ora",
+              "no": "Tid",
+              "sv": "Tid",
+              "pl": "Czas",
+              "ru": "Время",
+              "ko": "시간"
+            },
+            "required": true
           }
         ]
       }
@@ -613,6 +3699,82 @@
         }
       },
       {
+        "id": "marstek_adjust_energy_price",
+        "title": {
+          "en": "Adjust Energy Price",
+          "nl": "Energieprijs Aanpassen",
+          "da": "Juster Energipris",
+          "de": "Energiepreis anpassen",
+          "es": "Ajustar Precio de Energía",
+          "fr": "Ajuster le Prix de l'Énergie",
+          "it": "Regola il Prezzo dell'Energia",
+          "no": "Juster Energipris",
+          "sv": "Justera Energipris",
+          "pl": "Dostosuj Cenę Energii",
+          "ru": "Настроить Цену Энергии",
+          "ko": "에너지 가격 조정"
+        },
+        "titleFormatted": {
+          "en": "Set energy price to €[[price]]/kWh",
+          "nl": "Stel energieprijs in op €[[price]]/kWh voor ",
+          "da": "Indstil energipris til €[[price]]/kWh",
+          "de": "Energiepreis auf €[[price]]/kWh setzen",
+          "es": "Establecer precio de energía en €[[price]]/kWh para ",
+          "fr": "Définir le prix de l'énergie à €[[price]]/kWh pour ",
+          "it": "Imposta prezzo energia a €[[price]]/kWh",
+          "no": "Sett energipris til €[[price]]/kWh",
+          "sv": "Ställ in energipris till €[[price]]/kWh",
+          "pl": "Ustaw cenę energii na €[[price]]/kWh dla ",
+          "ru": "Установить цену энергии €[[price]]/kWh для ",
+          "ko": "의 에너지 가격을 €[[price]]/kWh로 설정"
+        },
+        "description": {
+          "en": "Dynamically adjust the energy price used for profit/loss calculations. This affects future statistics calculations.",
+          "nl": "Dynamisch de energieprijs aanpassen die wordt gebruikt voor winst/verlies berekeningen. Dit heeft invloed op toekomstige statistiekberekeningen.",
+          "da": "Juster dynamisk energiprisen, der bruges til profit/tab beregninger. Dette påvirker fremtidige statistikberegninger.",
+          "de": "Dynamisch den Energiepreis anpassen, der für Gewinn-/Verlustberechnungen verwendet wird. Dies wirkt sich auf zukünftige Statistikberechnungen aus.",
+          "es": "Ajustar dinámicamente el precio de energía utilizado para cálculos de ganancias/pérdidas. Esto afecta los cálculos de estadísticas futuras.",
+          "fr": "Ajuster dynamiquement le prix de l'énergie utilisé pour les calculs de profit/perte. Cela affecte les calculs statistiques futurs.",
+          "it": "Regola dinamicamente il prezzo dell'energia utilizzato per i calcoli di profitto/perdita. Questo influisce sui calcoli statistici futuri.",
+          "no": "Juster dynamisk energiprisen som brukes til fortjeneste/tap beregninger. Dette påvirker fremtidige statistikkberegninger.",
+          "sv": "Justera dynamiskt energipriset som används för vinst/förlustberäkningar. Detta påverkar framtida statistikberäkningar.",
+          "pl": "Dynamicznie dostosuj cenę energii używaną do obliczeń zysku/straty. Wpływa to na przyszłe obliczenia statystyczne.",
+          "ru": "Динамически настроить цену энергии, используемую для расчетов прибыли/убытков. Это влияет на будущие расчеты статистики.",
+          "ko": "손익 계산에 사용되는 에너지 가격을 동적으로 조정합니다. 이는 미래 통계 계산에 영향을 미칩니다."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "price",
+            "type": "number",
+            "title": {
+              "en": "Energy Price (€/kWh)",
+              "nl": "Energieprijs (€/kWh)",
+              "da": "Energipris (€/kWh)",
+              "de": "Energiepreis (€/kWh)",
+              "es": "Precio de Energía (€/kWh)",
+              "fr": "Prix de l'Énergie (€/kWh)",
+              "it": "Prezzo Energia (€/kWh)",
+              "no": "Energipris (€/kWh)",
+              "sv": "Energipris (€/kWh)",
+              "pl": "Cena Energii (€/kWh)",
+              "ru": "Цена Энергии (€/kWh)",
+              "ko": "에너지 가격 (€/kWh)"
+            },
+            "min": 0,
+            "max": 10,
+            "step": 0.01,
+            "decimals": 4,
+            "required": true
+          }
+        ]
+      },
+      {
         "id": "marstek_ai_mode",
         "title": {
           "en": "Set battery mode to 'AI'",
@@ -657,6 +3819,59 @@
             "name": "device",
             "type": "device",
             "filter": "driver_id=marstek-venus"
+          }
+        ]
+      },
+      {
+        "id": "marstek_emergency_mode",
+        "title": {
+          "en": "Set emergency mode",
+          "nl": "Stel noodmodus in",
+          "da": "Indstil nødtilstand",
+          "de": "Notfallmodus setzen",
+          "es": "Establecer modo de emergencia",
+          "fr": "Définir le mode urgence",
+          "it": "Imposta modalità emergenza",
+          "no": "Sett nødmodus",
+          "sv": "Ställ in nödläge",
+          "pl": "Ustaw tryb awaryjny",
+          "ru": "Установить аварийный режим",
+          "ko": "비상 모드 설정"
+        },
+        "titleFormatted": {
+          "en": "Set emergency mode",
+          "nl": "Stel noodmodus in",
+          "da": "Indstil nødtilstand",
+          "de": "Notfallmodus setzen",
+          "es": "Establecer modo de emergencia",
+          "fr": "Définir le mode urgence",
+          "it": "Imposta modalità emergenza",
+          "no": "Sett nødmodus",
+          "sv": "Ställ in nödläge",
+          "pl": "Ustaw tryb awaryjny",
+          "ru": "Установить аварийный режим ",
+          "ko": "에서 비상 모드 설정"
+        },
+        "description": {
+          "en": "Activate emergency mode on the battery system. This mode prioritizes system stability and safety over normal operations.",
+          "nl": "Activeer noodmodus op het batterijsysteem. Deze modus geeft prioriteit aan systeemstabiliteit en veiligheid boven normale operaties.",
+          "da": "Aktivér nødtilstand på batterisystemet. Denne tilstand prioriterer systemstabilitet og sikkerhed over normale operationer.",
+          "de": "Notfallmodus auf dem Batteriesystem aktivieren. Dieser Modus priorisiert Systemstabilität und Sicherheit gegenüber normalen Betrieb.",
+          "es": "Activar modo de emergencia en el sistema de batería. Este modo prioriza la estabilidad y seguridad del sistema sobre las operaciones normales.",
+          "fr": "Activer le mode urgence sur le système de batterie. Ce mode priorise la stabilité et la sécurité du système par rapport aux opérations normales.",
+          "it": "Attiva la modalità emergenza sul sistema batteria. Questa modalità prioritizza la stabilità e la sicurezza del sistema rispetto alle operazioni normali.",
+          "no": "Aktiver nødmodus på batterisystemet. Denne modusen prioriterer systemstabilitet og sikkerhet over normale operasjoner.",
+          "sv": "Aktivera nödläge på batterisystemet. Detta läge prioriterar systemstabilitet och säkerhet framför normala operationer.",
+          "pl": "Aktywuj tryb awaryjny w systemie baterii. Ten tryb priorytetowo traktuje stabilność i bezpieczeństwo systemu nad normalnymi operacjami.",
+          "ru": "Активировать аварийный режим в системе батареи. Этот режим отдает приоритет стабильности и безопасности системы над нормальными операциями.",
+          "ko": "배터리 시스템에서 비상 모드를 활성화합니다. 이 모드는 정상 작동보다 시스템 안정성과 안전을 우선시합니다."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
           }
         ]
       },
@@ -1078,6 +4293,699 @@
             },
             "min": 0,
             "step": 60
+          }
+        ]
+      },
+      {
+        "id": "marstek_reset_statistics_by_type",
+        "title": {
+          "en": "Reset Statistics by Type",
+          "nl": "Statistieken Resetten per Type",
+          "da": "Nulstil Statistikker efter Type",
+          "de": "Statistiken nach Typ zurücksetzen",
+          "es": "Restablecer Estadísticas por Tipo",
+          "fr": "Réinitialiser les Statistiques par Type",
+          "it": "Ripristina Statistiche per Tipo",
+          "no": "Tilbakestill Statistikk etter Type",
+          "sv": "Återställ Statistik efter Typ",
+          "pl": "Zresetuj Statystyki według Typu",
+          "ru": "Сбросить Статистику по Типу",
+          "ko": "유형별 통계 재설정"
+        },
+        "titleFormatted": {
+          "en": "Reset [[type]] statistics",
+          "nl": "Reset [[type]] statistieken voor ",
+          "da": "Nulstil [[type]] statistikker",
+          "de": "[[type]] Statistiken zurücksetzen",
+          "es": "Restablecer estadísticas [[type]] para ",
+          "fr": "Réinitialiser les statistiques [[type]] pour ",
+          "it": "Ripristina statistiche [[type]]",
+          "no": "Tilbakestill [[type]] statistikk",
+          "sv": "Återställ [[type]] statistik",
+          "pl": "Zresetuj statystyki [[type]] dla ",
+          "ru": "Сбросить статистику [[type]] для ",
+          "ko": "에 대한 [[type]] 통계 재설정"
+        },
+        "description": {
+          "en": "Reset specific types of accumulated energy statistics data for this device. This action cannot be undone.",
+          "nl": "Specifieke soorten opgebouwde energie-statistiekgegevens voor dit apparaat resetten. Deze actie kan niet ongedaan worden gemaakt.",
+          "da": "Nulstil specifikke typer af akkumulerede energistatistikdata for denne enhed. Denne handling kan ikke fortrydes.",
+          "de": "Bestimmte Arten von akkumulierten Energie-Statistikdaten für dieses Gerät zurücksetzen. Diese Aktion kann nicht rückgängig gemacht werden.",
+          "es": "Restablecer tipos específicos de datos estadísticos de energía acumulados para este dispositivo. Esta acción no se puede deshacer.",
+          "fr": "Réinitialiser des types spécifiques de données statistiques d'énergie accumulées pour cet appareil. Cette action ne peut pas être annulée.",
+          "it": "Ripristina tipi specifici di dati statistici di energia accumulati per questo dispositivo. Questa azione non può essere annullata.",
+          "no": "Tilbakestill spesifikke typer akkumulerte energistatistikdata for denne enheten. Denne handlingen kan ikke angres.",
+          "sv": "Återställ specifika typer av ackumulerad energistatistikdata för denna enhet. Denna åtgärd kan inte ångras.",
+          "pl": "Zresetuj określone typy zgromadzonych danych statystycznych energii dla tego urządzenia. Tej akcji nie można cofnąć.",
+          "ru": "Сбросить определенные типы накопленных статистических данных энергии для этого устройства. Это действие нельзя отменить.",
+          "ko": "이 장치에 대한 특정 유형의 축적된 에너지 통계 데이터를 재설정합니다. 이 작업은 취소할 수 없습니다."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "type",
+            "type": "dropdown",
+            "title": {
+              "en": "Statistics Type",
+              "nl": "Statistiek Type",
+              "da": "Statistik Type",
+              "de": "Statistik Typ",
+              "es": "Tipo de Estadísticas",
+              "fr": "Type de Statistiques",
+              "it": "Tipo di Statistiche",
+              "no": "Statistikk Type",
+              "sv": "Statistik Typ",
+              "pl": "Typ Statystyk",
+              "ru": "Тип Статистики",
+              "ko": "통계 유형"
+            },
+            "values": [
+              {
+                "id": "charging",
+                "title": {
+                  "en": "Charging Events",
+                  "nl": "Laadgebeurtenissen",
+                  "da": "Opladningshændelser",
+                  "de": "Ladevorgänge",
+                  "es": "Eventos de Carga",
+                  "fr": "Événements de Charge",
+                  "it": "Eventi di Ricarica",
+                  "no": "Ladehendelser",
+                  "sv": "Laddningshändelser",
+                  "pl": "Zdarzenia Ładowania",
+                  "ru": "События Зарядки",
+                  "ko": "충전 이벤트"
+                }
+              },
+              {
+                "id": "discharging",
+                "title": {
+                  "en": "Discharging Events",
+                  "nl": "Ontlaadgebeurtenissen",
+                  "da": "Afladningshændelser",
+                  "de": "Entladevorgänge",
+                  "es": "Eventos de Descarga",
+                  "fr": "Événements de Décharge",
+                  "it": "Eventi di Scarica",
+                  "no": "Utladningshendelser",
+                  "sv": "Urladdningshändelser",
+                  "pl": "Zdarzenia Rozładowania",
+                  "ru": "События Разрядки",
+                  "ko": "방전 이벤트"
+                }
+              },
+              {
+                "id": "all",
+                "title": {
+                  "en": "All Events",
+                  "nl": "Alle Gebeurtenissen",
+                  "da": "Alle Hændelser",
+                  "de": "Alle Vorgänge",
+                  "es": "Todos los Eventos",
+                  "fr": "Tous les Événements",
+                  "it": "Tutti gli Eventi",
+                  "no": "Alle Hendelser",
+                  "sv": "Alla Händelser",
+                  "pl": "Wszystkie Zdarzenia",
+                  "ru": "Все События",
+                  "ko": "모든 이벤트"
+                }
+              }
+            ],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_send_notification",
+        "title": {
+          "en": "Send battery notification",
+          "nl": "Batterij melding verzenden",
+          "da": "Send batteri notifikation",
+          "de": "Batterie-Benachrichtigung senden",
+          "es": "Enviar notificación de batería",
+          "fr": "Envoyer notification batterie",
+          "it": "Invia notifica batteria",
+          "no": "Send batteri-varsel",
+          "sv": "Skicka batteri-avisering",
+          "pl": "Wyślij powiadomienie o baterii",
+          "ru": "Отправить уведомление о батарее",
+          "ko": "배터리 알림 보내기"
+        },
+        "titleFormatted": {
+          "en": "Send notification for ",
+          "nl": "Batterij melding verzenden",
+          "da": "Send notifikation for ",
+          "de": "Benachrichtigung senden für ",
+          "es": "Enviar notificación para ",
+          "fr": "Envoyer notification pour ",
+          "it": "Invia notifica per ",
+          "no": "Send varsel for ",
+          "sv": "Skicka avisering för ",
+          "pl": "Wyślij powiadomienie dla ",
+          "ru": "Отправить уведомление для ",
+          "ko": "에 대한 알림 보내기"
+        },
+        "description": {
+          "en": "Send a notification with current battery status information including SOC, temperature, power, and other relevant data.",
+          "nl": "Verzend een melding met huidige batterij status informatie inclusief SOC, temperatuur, vermogen en andere relevante gegevens.",
+          "da": "Send en notifikation med aktuelle batteri status oplysninger inklusive SOC, temperatur, effekt og andre relevante data.",
+          "de": "Senden Sie eine Benachrichtigung mit aktuellen Batterie-Statusinformationen einschließlich SOC, Temperatur, Leistung und anderen relevanten Daten.",
+          "es": "Enviar una notificación con información actual del estado de la batería incluyendo SOC, temperatura, potencia y otros datos relevantes.",
+          "fr": "Envoyer une notification avec les informations actuelles sur l'état de la batterie incluant SOC, température, puissance et autres données pertinentes.",
+          "it": "Invia una notifica con le informazioni attuali sullo stato della batteria inclusi SOC, temperatura, potenza e altri dati rilevanti.",
+          "no": "Send et varsel med nåværende batteri status informasjon inkludert SOC, temperatur, effekt og andre relevante data.",
+          "sv": "Skicka en avisering med aktuell batteri status information inklusive SOC, temperatur, effekt och andra relevanta data.",
+          "pl": "Wyślij powiadomienie z aktualnymi informacjami o stanie baterii, w tym SOC, temperaturze, mocy i innych istotnych danych.",
+          "ru": "Отправить уведомление с текущей информацией о состоянии батареи, включая SOC, температуру, мощность и другие релевантные данные.",
+          "ko": "SOC, 온도, 전력 및 기타 관련 데이터를 포함한 현재 배터리 상태 정보로 알림을 보냅니다."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_set_manual_mode_preset",
+        "title": {
+          "en": "Set manual mode preset",
+          "nl": "Stel handmatige modus voorinstelling in",
+          "da": "Indstil manuel tilstand forudindstilling",
+          "de": "Manueller Modus-Voreinstellung setzen",
+          "es": "Establecer preajuste de modo manual",
+          "fr": "Définir le préréglage du mode manuel",
+          "it": "Imposta preimpostazione modalità manuale",
+          "no": "Sett manuell modus forhåndsinnstilling",
+          "sv": "Ställ in manuellt läge förinställning",
+          "pl": "Ustaw preset trybu ręcznego",
+          "ru": "Установить предустановку ручного режима",
+          "ko": "수동 모드 프리셋 설정"
+        },
+        "titleFormatted": {
+          "en": "Set manual mode preset from [[start_time]] to [[end_time]] on [[days]] at [[power]]W [[enable]]",
+          "nl": "Stel handmatige modus voorinstelling in van [[start_time]] tot [[end_time]] op [[days]] bij [[power]]W [[enable]]",
+          "da": "Indstil manuel tilstand forudindstilling fra [[start_time]] til [[end_time]] på [[days]] ved [[power]]W [[enable]]",
+          "de": "Manueller Modus-Voreinstellung setzen von [[start_time]] bis [[end_time]] an [[days]] bei [[power]]W [[enable]]",
+          "es": "Establecer preajuste de modo manual de [[start_time]] a [[end_time]] en [[days]] a [[power]]W [[enable]]",
+          "fr": "Définir le préréglage du mode manuel de [[start_time]] à [[end_time]] sur [[days]] à [[power]]W [[enable]]",
+          "it": "Imposta preimpostazione modalità manuale da [[start_time]] a [[end_time]] su [[days]] a [[power]]W [[enable]]",
+          "no": "Sett manuell modus forhåndsinnstilling fra [[start_time]] til [[end_time]] på [[days]] ved [[power]]W [[enable]]",
+          "sv": "Ställ in manuellt läge förinställning från [[start_time]] till [[end_time]] på [[days]] vid [[power]]W [[enable]]",
+          "pl": "Ustaw preset trybu ręcznego od [[start_time]] do [[end_time]] w [[days]] przy [[power]]W [[enable]]",
+          "ru": "Установить предустановку ручного режима с [[start_time]] до [[end_time]] в [[days]] при [[power]]W [[enable]]",
+          "ko": "[[days]]에 [[start_time]]부터 [[end_time]]까지 [[power]]W [[enable]]로 수동 모드 프리셋 설정"
+        },
+        "description": {
+          "en": "Configure a scheduled manual mode with specific start/end times, days of the week, and power settings.",
+          "nl": "Configureer een geplande handmatige modus met specifieke start-/eindtijden, dagen van de week en vermogensinstellingen.",
+          "da": "Konfigurer en planlagt manuel tilstand med specifikke start/slut tider, ugedage og effektindstillinger.",
+          "de": "Konfigurieren Sie einen geplanten manuellen Modus mit spezifischen Start-/Endzeiten, Wochentagen und Leistungseinstellungen.",
+          "es": "Configure un modo manual programado con horas de inicio/fin específicas, días de la semana y configuraciones de potencia.",
+          "fr": "Configurez un mode manuel programmé avec des heures de début/fin spécifiques, des jours de la semaine et des paramètres de puissance.",
+          "it": "Configura una modalità manuale programmata con orari di inizio/fine specifici, giorni della settimana e impostazioni di potenza.",
+          "no": "Konfigurer en planlagt manuell modus med spesifikke start/slutt tider, ukedager og effektinnstillinger.",
+          "sv": "Konfigurera ett schemalagt manuellt läge med specifika start/slut tider, veckodagar och effektinställningar.",
+          "pl": "Skonfiguruj zaplanowany tryb ręczny z określonymi godzinami rozpoczęcia/zakończenia, dniami tygodnia i ustawieniami mocy.",
+          "ru": "Настройте запланированный ручной режим с определенными временем начала/окончания, днями недели и настройками мощности.",
+          "ko": "특정 시작/종료 시간, 요일 및 전력 설정으로 예약된 수동 모드를 구성합니다."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "start_time",
+            "type": "text",
+            "title": {
+              "en": "Start Time (HH:MM)",
+              "nl": "Starttijd (UU:MM)",
+              "da": "Starttid (TT:MM)",
+              "de": "Startzeit (HH:MM)",
+              "es": "Hora de Inicio (HH:MM)",
+              "fr": "Heure de Début (HH:MM)",
+              "it": "Ora di Inizio (HH:MM)",
+              "no": "Starttid (TT:MM)",
+              "sv": "Starttid (HH:MM)",
+              "pl": "Czas Rozpoczęcia (GG:MM)",
+              "ru": "Время Начала (ЧЧ:ММ)",
+              "ko": "시작 시간 (HH:MM)"
+            },
+            "placeholder": {
+              "en": "08:30",
+              "nl": "08:30",
+              "da": "08:30",
+              "de": "08:30",
+              "es": "08:30",
+              "fr": "08:30",
+              "it": "08:30",
+              "no": "08:30",
+              "sv": "08:30",
+              "pl": "08:30",
+              "ru": "08:30",
+              "ko": "08:30"
+            },
+            "required": true
+          },
+          {
+            "name": "end_time",
+            "type": "text",
+            "title": {
+              "en": "End Time (HH:MM)",
+              "nl": "Eindtijd (UU:MM)",
+              "da": "Sluttid (TT:MM)",
+              "de": "Endzeit (HH:MM)",
+              "es": "Hora de Fin (HH:MM)",
+              "fr": "Heure de Fin (HH:MM)",
+              "it": "Ora di Fine (HH:MM)",
+              "no": "Sluttid (TT:MM)",
+              "sv": "Sluttid (HH:MM)",
+              "pl": "Czas Zakończenia (GG:MM)",
+              "ru": "Время Окончания (ЧЧ:ММ)",
+              "ko": "종료 시간 (HH:MM)"
+            },
+            "placeholder": {
+              "en": "20:30",
+              "nl": "20:30",
+              "da": "20:30",
+              "de": "20:30",
+              "es": "20:30",
+              "fr": "20:30",
+              "it": "20:30",
+              "no": "20:30",
+              "sv": "20:30",
+              "pl": "20:30",
+              "ru": "20:30",
+              "ko": "20:30"
+            },
+            "required": true
+          },
+          {
+            "name": "days",
+            "type": "dropdown",
+            "multiple": true,
+            "title": {
+              "en": "Days of Week",
+              "nl": "Dagen van de Week",
+              "da": "Ugedage",
+              "de": "Wochentage",
+              "es": "Días de la Semana",
+              "fr": "Jours de la Semaine",
+              "it": "Giorni della Settimana",
+              "no": "Ukedager",
+              "sv": "Veckodagar",
+              "pl": "Dni Tygodnia",
+              "ru": "Дни Недели",
+              "ko": "요일"
+            },
+            "values": [
+              {
+                "id": "0",
+                "title": {
+                  "en": "Sunday",
+                  "nl": "Zondag",
+                  "da": "Søndag",
+                  "de": "Sonntag",
+                  "es": "Domingo",
+                  "fr": "Dimanche",
+                  "it": "Domenica",
+                  "no": "Søndag",
+                  "sv": "Söndag",
+                  "pl": "Niedziela",
+                  "ru": "Воскресенье",
+                  "ko": "일요일"
+                }
+              },
+              {
+                "id": "1",
+                "title": {
+                  "en": "Monday",
+                  "nl": "Maandag",
+                  "da": "Mandag",
+                  "de": "Montag",
+                  "es": "Lunes",
+                  "fr": "Lundi",
+                  "it": "Lunedì",
+                  "no": "Mandag",
+                  "sv": "Måndag",
+                  "pl": "Poniedziałek",
+                  "ru": "Понедельник",
+                  "ko": "월요일"
+                }
+              },
+              {
+                "id": "2",
+                "title": {
+                  "en": "Tuesday",
+                  "nl": "Dinsdag",
+                  "da": "Tirsdag",
+                  "de": "Dienstag",
+                  "es": "Martes",
+                  "fr": "Mardi",
+                  "it": "Martedì",
+                  "no": "Tirsdag",
+                  "sv": "Tisdag",
+                  "pl": "Wtorek",
+                  "ru": "Вторник",
+                  "ko": "화요일"
+                }
+              },
+              {
+                "id": "3",
+                "title": {
+                  "en": "Wednesday",
+                  "nl": "Woensdag",
+                  "da": "Onsdag",
+                  "de": "Mittwoch",
+                  "es": "Miércoles",
+                  "fr": "Mercredi",
+                  "it": "Mercoledì",
+                  "no": "Onsdag",
+                  "sv": "Onsdag",
+                  "pl": "Środa",
+                  "ru": "Среда",
+                  "ko": "수요일"
+                }
+              },
+              {
+                "id": "4",
+                "title": {
+                  "en": "Thursday",
+                  "nl": "Donderdag",
+                  "da": "Torsdag",
+                  "de": "Donnerstag",
+                  "es": "Jueves",
+                  "fr": "Jeudi",
+                  "it": "Giovedì",
+                  "no": "Torsdag",
+                  "sv": "Torsdag",
+                  "pl": "Czwartek",
+                  "ru": "Четверг",
+                  "ko": "목요일"
+                }
+              },
+              {
+                "id": "5",
+                "title": {
+                  "en": "Friday",
+                  "nl": "Vrijdag",
+                  "da": "Fredag",
+                  "de": "Freitag",
+                  "es": "Viernes",
+                  "fr": "Vendredi",
+                  "it": "Venerdì",
+                  "no": "Fredag",
+                  "sv": "Fredag",
+                  "pl": "Piątek",
+                  "ru": "Пятница",
+                  "ko": "금요일"
+                }
+              },
+              {
+                "id": "6",
+                "title": {
+                  "en": "Saturday",
+                  "nl": "Zaterdag",
+                  "da": "Lørdag",
+                  "de": "Samstag",
+                  "es": "Sábado",
+                  "fr": "Samedi",
+                  "it": "Sabato",
+                  "no": "Lørdag",
+                  "sv": "Lördag",
+                  "pl": "Sobota",
+                  "ru": "Суббота",
+                  "ko": "토요일"
+                }
+              }
+            ],
+            "required": true
+          },
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Power (W)",
+              "nl": "Vermogen (W)",
+              "da": "Effekt (W)",
+              "de": "Leistung (W)",
+              "es": "Potencia (W)",
+              "fr": "Puissance (W)",
+              "it": "Potenza (W)",
+              "no": "Effekt (W)",
+              "sv": "Effekt (W)",
+              "pl": "Moc (W)",
+              "ru": "Мощность (Вт)",
+              "ko": "전력 (W)"
+            },
+            "min": -10000,
+            "max": 10000,
+            "step": 1,
+            "required": true
+          },
+          {
+            "name": "enable",
+            "type": "dropdown",
+            "title": {
+              "en": "Enable Schedule",
+              "nl": "Planning Inschakelen",
+              "da": "Aktivér Tidsplan",
+              "de": "Zeitplan Aktivieren",
+              "es": "Habilitar Programación",
+              "fr": "Activer Programmation",
+              "it": "Abilita Programmazione",
+              "no": "Aktiver Tidsplan",
+              "sv": "Aktivera Schema",
+              "pl": "Włącz Harmonogram",
+              "ru": "Включить Расписание",
+              "ko": "일정 활성화"
+            },
+            "values": [
+              {
+                "id": "true",
+                "title": {
+                  "en": "Enabled",
+                  "nl": "Ingeschakeld",
+                  "da": "Aktiveret",
+                  "de": "Aktiviert",
+                  "es": "Habilitado",
+                  "fr": "Activé",
+                  "it": "Abilitato",
+                  "no": "Aktivert",
+                  "sv": "Aktiverad",
+                  "pl": "Włączony",
+                  "ru": "Включено",
+                  "ko": "활성화됨"
+                }
+              },
+              {
+                "id": "false",
+                "title": {
+                  "en": "Disabled",
+                  "nl": "Uitgeschakeld",
+                  "da": "Deaktiveret",
+                  "de": "Deaktiviert",
+                  "es": "Deshabilitado",
+                  "fr": "Désactivé",
+                  "it": "Disabilitato",
+                  "no": "Deaktivert",
+                  "sv": "Inaktiverad",
+                  "pl": "Wyłączony",
+                  "ru": "Отключено",
+                  "ko": "비활성화됨"
+                }
+              }
+            ],
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "marstek_set_passive_mode_timed",
+        "title": {
+          "en": "Set timed passive mode",
+          "nl": "Stel getimede passieve modus in",
+          "da": "Indstil tidsbestemt passiv tilstand",
+          "de": "Zeitgesteuerten passiven Modus setzen",
+          "es": "Establecer modo pasivo temporizado",
+          "fr": "Définir le mode passif temporisé",
+          "it": "Imposta modalità passiva temporizzata",
+          "no": "Sett tidsbestemt passiv modus",
+          "sv": "Ställ in tidsbestämt passivt läge",
+          "pl": "Ustaw czasowy tryb pasywny",
+          "ru": "Установить временный пассивный режим",
+          "ko": "시간 제한 패시브 모드 설정"
+        },
+        "titleFormatted": {
+          "en": "Set timed passive mode to [[power]]W for [[seconds]]s",
+          "nl": "Stel getimede passieve modus in op [[power]]W voor [[seconds]]s",
+          "da": "Indstil tidsbestemt passiv tilstand til [[power]]W i [[seconds]]s",
+          "de": "Zeitgesteuerten passiven Modus auf [[power]]W für [[seconds]]s setzen",
+          "es": "Establecer modo pasivo temporizado a [[power]]W durante [[seconds]]s",
+          "fr": "Définir le mode passif temporisé à [[power]]W pendant [[seconds]]s",
+          "it": "Imposta modalità passiva temporizzata a [[power]]W per [[seconds]]s",
+          "no": "Sett tidsbestemt passiv modus til [[power]]W i [[seconds]]s",
+          "sv": "Ställ in tidsbestämt passivt läge till [[power]]W under [[seconds]]s",
+          "pl": "Ustaw czasowy tryb pasywny na [[power]]W przez [[seconds]]s",
+          "ru": "Установить временный пассивный режим на [[power]]W на [[seconds]]s",
+          "ko": "[[seconds]]s 동안 [[power]]W로 시간 제한 패시브 모드 설정"
+        },
+        "description": {
+          "en": "Set passive mode with specified power output and duration in seconds. The battery will maintain this power level for the specified time.",
+          "nl": "Stel passieve modus in met opgegeven vermogensuitgang en duur in seconden. De batterij zal dit vermogensniveau handhaven voor de opgegeven tijd.",
+          "da": "Indstil passiv tilstand med specificeret effektoutput og varighed i sekunder. Batteriet vil opretholde dette effektniveau i den angivne tid.",
+          "de": "Passiven Modus mit angegebener Leistungsabgabe und Dauer in Sekunden setzen. Die Batterie wird dieses Leistungsniveau für die angegebene Zeit beibehalten.",
+          "es": "Establecer modo pasivo con salida de potencia especificada y duración en segundos. La batería mantendrá este nivel de potencia durante el tiempo especificado.",
+          "fr": "Définir le mode passif avec la puissance de sortie spécifiée et la durée en secondes. La batterie maintiendra ce niveau de puissance pendant la durée spécifiée.",
+          "it": "Imposta la modalità passiva con l'output di potenza specificato e la durata in secondi. La batteria manterrà questo livello di potenza per il tempo specificato.",
+          "no": "Sett passiv modus med spesifisert effektoutput og varighet i sekunder. Batteriet vil opprettholde dette effektnivået i den angitte tiden.",
+          "sv": "Ställ in passivt läge med specificerad effektoutput och varaktighet i sekunder. Batteriet kommer att upprätthålla denna effektnivå under den angivna tiden.",
+          "pl": "Ustaw tryb pasywny z określoną mocą wyjściową i czasem trwania w sekundach. Bateria będzie utrzymywać ten poziom mocy przez określony czas.",
+          "ru": "Установить пассивный режим с указанной мощностью выхода и продолжительностью в секундах. Батарея будет поддерживать этот уровень мощности в течение указанного времени.",
+          "ko": "지정된 출력 전력과 초 단위 지속 시간으로 패시브 모드를 설정합니다. 배터리는 지정된 시간 동안 이 전력 수준을 유지합니다."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
+          },
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Power (W)",
+              "nl": "Vermogen (W)",
+              "da": "Effekt (W)",
+              "de": "Leistung (W)",
+              "es": "Potencia (W)",
+              "fr": "Puissance (W)",
+              "it": "Potenza (W)",
+              "no": "Effekt (W)",
+              "sv": "Effekt (W)",
+              "pl": "Moc (W)",
+              "ru": "Мощность (Вт)",
+              "ko": "전력 (W)"
+            },
+            "placeholder": {
+              "en": "100",
+              "nl": "100",
+              "da": "100",
+              "de": "100",
+              "es": "100",
+              "fr": "100",
+              "it": "100",
+              "no": "100",
+              "sv": "100",
+              "pl": "100",
+              "ru": "100",
+              "ko": "100"
+            },
+            "min": -10000,
+            "max": 10000,
+            "step": 1,
+            "required": true
+          },
+          {
+            "name": "seconds",
+            "type": "number",
+            "title": {
+              "en": "Duration (seconds)",
+              "nl": "Duur (seconden)",
+              "da": "Varighed (sekunder)",
+              "de": "Dauer (Sekunden)",
+              "es": "Duración (segundos)",
+              "fr": "Durée (secondes)",
+              "it": "Durata (secondi)",
+              "no": "Varighet (sekunder)",
+              "sv": "Varaktighet (sekunder)",
+              "pl": "Czas trwania (sekundy)",
+              "ru": "Продолжительность (секунды)",
+              "ko": "지속 시간 (초)"
+            },
+            "placeholder": {
+              "en": "300",
+              "nl": "300",
+              "da": "300",
+              "de": "300",
+              "es": "300",
+              "fr": "300",
+              "it": "300",
+              "no": "300",
+              "sv": "300",
+              "pl": "300",
+              "ru": "300",
+              "ko": "300"
+            },
+            "min": 1,
+            "max": 86400,
+            "step": 1,
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "reset_statistics",
+        "title": {
+          "en": "Reset Statistics",
+          "nl": "Statistieken Resetten",
+          "da": "Nulstil Statistikker",
+          "de": "Statistiken Zurücksetzen",
+          "es": "Restablecer Estadísticas",
+          "fr": "Réinitialiser les Statistiques",
+          "it": "Ripristina Statistiche",
+          "no": "Tilbakestill Statistikk",
+          "sv": "Återställ Statistik",
+          "pl": "Zresetuj Statystyki",
+          "ru": "Сбросить Статистику",
+          "ko": "통계 재설정"
+        },
+        "titleFormatted": {
+          "en": "Reset statistics",
+          "nl": "Statistieken resetten ",
+          "da": "Nulstil statistikker",
+          "de": "Statistiken zurücksetzen",
+          "es": "Restablecer estadísticas para ",
+          "fr": "Réinitialiser les statistiques pour ",
+          "it": "Ripristina statistiche",
+          "no": "Tilbakestill statistikk",
+          "sv": "Återställ statistik",
+          "pl": "Zresetuj statystyki dla ",
+          "ru": "Сбросить статистику для ",
+          "ko": "에 대한 통계 재설정"
+        },
+        "description": {
+          "en": "Reset all accumulated energy statistics data for this device. This action cannot be undone.",
+          "nl": "Alle opgebouwde energie-statistiekgegevens voor dit apparaat resetten. Deze actie kan niet ongedaan worden gemaakt.",
+          "da": "Nulstil alle akkumulerede energistatistikdata for denne enhed. Denne handling kan ikke fortrydes.",
+          "de": "Alle akkumulierten Energie-Statistikdaten für dieses Gerät zurücksetzen. Diese Aktion kann nicht rückgängig gemacht werden.",
+          "es": "Restablecer todos los datos estadísticos de energía acumulados para este dispositivo. Esta acción no se puede deshacer.",
+          "fr": "Réinitialiser toutes les données statistiques d'énergie accumulées pour cet appareil. Cette action ne peut pas être annulée.",
+          "it": "Ripristina tutti i dati statistici di energia accumulati per questo dispositivo. Questa azione non può essere annullata.",
+          "no": "Tilbakestill alle akkumulerte energistatistikdata for denne enheten. Denne handlingen kan ikke angres.",
+          "sv": "Återställ all ackumulerad energistatistikdata för denna enhet. Denna åtgärd kan inte ångras.",
+          "pl": "Zresetuj wszystkie zgromadzone dane statystyczne energii dla tego urządzenia. Tej akcji nie można cofnąć.",
+          "ru": "Сбросить все накопленные статистические данные энергии для этого устройства. Это действие нельзя отменить.",
+          "ko": "이 장치에 대한 모든 축적된 에너지 통계 데이터를 재설정합니다. 이 작업은 취소할 수 없습니다."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus",
+            "required": true
           }
         ]
       },
@@ -2027,6 +5935,39 @@
           "value": 30,
           "min": 1,
           "max": 365
+        },
+        {
+          "id": "reset_statistics",
+          "type": "checkbox",
+          "label": {
+            "en": "Reset Statistics Now",
+            "nl": "Statistieken Nu Resetten",
+            "da": "Nulstil Statistikker Nu",
+            "de": "Statistiken Jetzt Zurücksetzen",
+            "es": "Restablecer Estadísticas Ahora",
+            "fr": "Réinitialiser les Statistiques Maintenant",
+            "it": "Ripristina Statistiche Ora",
+            "no": "Tilbakestill Statistikk Nå",
+            "sv": "Återställ Statistik Nu",
+            "pl": "Zresetuj Statystyki Teraz",
+            "ru": "Сбросить Статистику Сейчас",
+            "ko": "통계 지금 재설정"
+          },
+          "hint": {
+            "en": "Check this to reset all accumulated statistics data. This action cannot be undone and will clear all charge/discharge history.",
+            "nl": "Vink dit aan om alle opgebouwde statistiekgegevens te resetten. Deze actie kan niet ongedaan worden gemaakt en wist alle laad/ontlaadgeschiedenis.",
+            "da": "Markér dette for at nulstille alle akkumulerede statistikdata. Denne handling kan ikke fortrydes og vil rydde al opladnings/afladningshistorik.",
+            "de": "Aktivieren Sie dies, um alle akkumulierten Statistikdaten zurückzusetzen. Diese Aktion kann nicht rückgängig gemacht werden und löscht den gesamten Lade-/Entlade-Verlauf.",
+            "es": "Marque esto para restablecer todos los datos estadísticos acumulados. Esta acción no se puede deshacer y borrará todo el historial de carga/descarga.",
+            "fr": "Cochez ceci pour réinitialiser toutes les données statistiques accumulées. Cette action ne peut pas être annulée et effacera tout l'historique de charge/décharge.",
+            "it": "Seleziona questo per ripristinare tutti i dati statistici accumulati. Questa azione non può essere annullata e cancellerà tutta la cronologia di carica/scarica.",
+            "no": "Merk av dette for å tilbakestille alle akkumulerte statistikkdata. Denne handlingen kan ikke angres og vil slette all lade-/utladehistorikk.",
+            "sv": "Markera detta för att återställa all ackumulerad statistikdata. Denna åtgärd kan inte ångras och kommer att rensa all laddnings/urladdningshistorik.",
+            "pl": "Zaznacz to, aby zresetować wszystkie zgromadzone dane statystyczne. Tej akcji nie można cofnąć i usunie całą historię ładowania/rozładowania.",
+            "ru": "Отметьте это, чтобы сбросить все накопленные статистические данные. Это действие нельзя отменить, и оно очистит всю историю зарядки/разрядки.",
+            "ko": "축적된 모든 통계 데이터를 재설정하려면 이를 선택하십시오. 이 작업은 취소할 수 없으며 모든 충전/방전 기록을 지웁니다."
+          },
+          "value": false
         },
         {
           "id": "export_format",

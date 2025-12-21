@@ -1,0 +1,53 @@
+{
+  "id": "reset_statistics",
+  "title": {
+    "en": "Reset Statistics",
+    "nl": "Statistieken Resetten",
+    "da": "Nulstil Statistikker",
+    "de": "Statistiken Zurücksetzen",
+    "es": "Restablecer Estadísticas",
+    "fr": "Réinitialiser les Statistiques",
+    "it": "Ripristina Statistiche",
+    "no": "Tilbakestill Statistikk",
+    "sv": "Återställ Statistik",
+    "pl": "Zresetuj Statystyki",
+    "ru": "Сбросить Статистику",
+    "ko": "통계 재설정"
+  },
+  "titleFormatted": {
+    "en": "Reset statistics",
+    "nl": "Statistieken resetten ",
+    "da": "Nulstil statistikker",
+    "de": "Statistiken zurücksetzen",
+    "es": "Restablecer estadísticas para ",
+    "fr": "Réinitialiser les statistiques pour ",
+    "it": "Ripristina statistiche",
+    "no": "Tilbakestill statistikk",
+    "sv": "Återställ statistik",
+    "pl": "Zresetuj statystyki dla ",
+    "ru": "Сбросить статистику для ",
+    "ko": "에 대한 통계 재설정"
+  },
+  "description": {
+    "en": "Reset all accumulated energy statistics data for this device. This action cannot be undone.",
+    "nl": "Alle opgebouwde energie-statistiekgegevens voor dit apparaat resetten. Deze actie kan niet ongedaan worden gemaakt.",
+    "da": "Nulstil alle akkumulerede energistatistikdata for denne enhed. Denne handling kan ikke fortrydes.",
+    "de": "Alle akkumulierten Energie-Statistikdaten für dieses Gerät zurücksetzen. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "es": "Restablecer todos los datos estadísticos de energía acumulados para este dispositivo. Esta acción no se puede deshacer.",
+    "fr": "Réinitialiser toutes les données statistiques d'énergie accumulées pour cet appareil. Cette action ne peut pas être annulée.",
+    "it": "Ripristina tutti i dati statistici di energia accumulati per questo dispositivo. Questa azione non può essere annullata.",
+    "no": "Tilbakestill alle akkumulerte energistatistikdata for denne enheten. Denne handlingen kan ikke angres.",
+    "sv": "Återställ all ackumulerad energistatistikdata för denna enhet. Denna åtgärd kan inte ångras.",
+    "pl": "Zresetuj wszystkie zgromadzone dane statystyczne energii dla tego urządzenia. Tej akcji nie można cofnąć.",
+    "ru": "Сбросить все накопленные статистические данные энергии для этого устройства. Это действие нельзя отменить.",
+    "ko": "이 장치에 대한 모든 축적된 에너지 통계 데이터를 재설정합니다. 이 작업은 취소할 수 없습니다."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    }
+  ]
+}

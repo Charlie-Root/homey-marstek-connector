@@ -1,0 +1,127 @@
+{
+  "id": "marstek_solar_generation_stops",
+  "title": {
+    "en": "Solar generation stops",
+    "nl": "Zonne-energieopwekking stopt",
+    "da": "Solenergi generation stopper",
+    "de": "Solarstromerzeugung stoppt",
+    "es": "Generación solar se detiene",
+    "fr": "Génération solaire s'arrête",
+    "it": "Generazione solare si ferma",
+    "no": "Solenergi generering stopper",
+    "sv": "Solenergi generation slutar",
+    "pl": "Generacja energii słonecznej zatrzymuje się",
+    "ru": "Солнечная генерация останавливается",
+    "ko": "태양광 발전이 중지됩니다"
+  },
+  "titleFormatted": {
+    "en": "Solar generation stops when below [[threshold]]W",
+    "nl": "Zonne-energieopwekking stopt wanneer onder [[threshold]]W",
+    "da": "Solenergi generation stopper når under [[threshold]]W",
+    "de": "Solarstromerzeugung stoppt wenn unter [[threshold]]W",
+    "es": "Generación solar se detiene cuando por debajo de [[threshold]]W",
+    "fr": "Génération solaire s'arrête quand en-dessous de [[threshold]]W",
+    "it": "Generazione solare si ferma quando sotto [[threshold]]W",
+    "no": "Solenergi generering stopper når under [[threshold]]W",
+    "sv": "Solenergi generation slutar när under [[threshold]]W",
+    "pl": "Generacja energii słonecznej zatrzymuje się gdy poniżej [[threshold]]W",
+    "ru": "Солнечная генерация останавливается  когда ниже [[threshold]]W",
+    "ko": "에서 태양광 발전이 [[threshold]]W 미만일 때 중지됩니다"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Power Threshold (W)",
+        "nl": "Vermogensdrempel (W)",
+        "da": "Effekt Tærskel (W)",
+        "de": "Leistungsschwellenwert (W)",
+        "es": "Umbral de Potencia (W)",
+        "fr": "Seuil de Puissance (W)",
+        "it": "Soglia di Potenza (W)",
+        "no": "Effekt Terskel (W)",
+        "sv": "Effekt Tröskel (W)",
+        "pl": "Próg Moc (W)",
+        "ru": "Порог Мощности (W)",
+        "ko": "전력 임계값 (W)"
+      },
+      "min": 0,
+      "max": 10000,
+      "step": 10,
+      "required": true
+    }
+  ],
+  "tokens": [
+    {
+      "name": "power",
+      "type": "number",
+      "title": {
+        "en": "Current PV Power",
+        "nl": "Huidig PV Vermogen",
+        "da": "Nuværende PV Effekt",
+        "de": "Aktuelle PV-Leistung",
+        "es": "Potencia PV Actual",
+        "fr": "Puissance PV Actuelle",
+        "it": "Potenza PV Attuale",
+        "no": "Nåværende PV Effekt",
+        "sv": "Nuvarande PV Effekt",
+        "pl": "Aktualna Moc PV",
+        "ru": "Текущая Мощность PV",
+        "ko": "현재 PV 전력"
+      },
+      "desc": {
+        "en": "Current solar panel power generation in watts",
+        "nl": "Huidige zonnepaneel energieopwekking in watt",
+        "da": "Nuværende solpanel effekt i watt",
+        "de": "Aktuelle Solarpanel-Leistung in Watt",
+        "es": "Potencia actual de paneles solares en vatios",
+        "fr": "Puissance actuelle des panneaux solaires en watts",
+        "it": "Potenza attuale dei pannelli solari in watt",
+        "no": "Nåværende solpanel effekt i watt",
+        "sv": "Nuvarande solpanel effekt i watt",
+        "pl": "Aktualna moc paneli słonecznych w watach",
+        "ru": "Текущая мощность солнечных панелей в ваттах",
+        "ko": "현재 태양광 패널 발전량(와트)"
+      }
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Threshold",
+        "nl": "Drempel",
+        "da": "Tærskel",
+        "de": "Schwellenwert",
+        "es": "Umbral",
+        "fr": "Seuil",
+        "it": "Soglia",
+        "no": "Terskel",
+        "sv": "Tröskel",
+        "pl": "Próg",
+        "ru": "Порог",
+        "ko": "임계값"
+      },
+      "desc": {
+        "en": "The power threshold that was fallen below",
+        "nl": "De vermogensdrempel die werd onderschreden",
+        "da": "Effekt-tærsklen der blev faldet under",
+        "de": "Der Leistungsschwellenwert, der unterschritten wurde",
+        "es": "El umbral de potencia que se cayó por debajo",
+        "fr": "Le seuil de puissance qui a été descendu en dessous",
+        "it": "La soglia di potenza che è stata scesa sotto",
+        "no": "Effekt-terskelen som ble falt under",
+        "sv": "Effekt-tröskeln som föll under",
+        "pl": "Próg mocy, który został spadnięty poniżej",
+        "ru": "Порог мощности, ниже которого упал",
+        "ko": "미만으로 떨어진 전력 임계값"
+      }
+    }
+  ]
+}

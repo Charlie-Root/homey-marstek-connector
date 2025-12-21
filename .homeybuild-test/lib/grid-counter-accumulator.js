@@ -5,7 +5,7 @@
  * Purpose:
  * - Convert authoritative cumulative grid counters into bounded-size interval deltas.
  * - Provide reset/out-of-order protection.
- * - Provide deterministic flush behavior (e.g. hourly or at UTC day boundary).
+ * - Provide deterministic flush behavior with configurable intervals and delta triggers.
  *
  * Authoritative inputs (from device payload `result`):
  * - `total_grid_input_energy`  (cumulative grid import counter)
@@ -22,10 +22,11 @@ const utcDayKey = (timestampSec) => new Date(timestampSec * 1000).toISOString().
  * - Out-of-order timestamp: ignored.
  * - Divisor change: resets baseline (prevents unit mixing).
  * - Counter decrease: treated as reset (baseline reset).
- * - Otherwise: accumulates deltas and optionally flushes.
+ * - Otherwise: accumulates deltas and optionally flushes based on time or delta triggers.
  */
 function updateGridCounterAccumulator(previousState, sample, options) {
-    const flushIntervalMinutes = options?.flushIntervalMinutes ?? 60;
+    const flushIntervalMinutes = options?.flushIntervalMinutes ?? 15; // Reduced from 60 to 15 minutes
+    const minDeltaTriggerRaw = options?.minDeltaTriggerRaw ?? 10; // New: minimum delta to trigger immediate flush
     const initState = () => ({
         divisorRawPerKwh: sample.divisorRawPerKwh,
         lastTimestampSec: sample.timestampSec,
@@ -64,9 +65,25 @@ function updateGridCounterAccumulator(previousState, sample, options) {
     };
     const durationMinutes = (sample.timestampSec - nextState.accStartTimestampSec) / 60;
     const crossedUtcDayBoundary = utcDayKey(sample.timestampSec) !== utcDayKey(nextState.accStartTimestampSec);
-    const shouldFlush = crossedUtcDayBoundary || durationMinutes >= flushIntervalMinutes;
+    // Check for minimum delta trigger (immediate flush when meaningful energy flow is detected)
+    const hasMeaningfulDelta = nextState.accInputDeltaRaw >= minDeltaTriggerRaw || nextState.accOutputDeltaRaw >= minDeltaTriggerRaw;
+    // Determine flush conditions
+    const shouldFlush = crossedUtcDayBoundary ||
+        durationMinutes >= flushIntervalMinutes ||
+        hasMeaningfulDelta;
     if (!shouldFlush) {
         return { state: nextState, reason: 'no_flush' };
+    }
+    // Determine flush reason for logging
+    let flushReason = 'no_flush';
+    if (crossedUtcDayBoundary) {
+        flushReason = 'utc_day_boundary';
+    }
+    else if (durationMinutes >= flushIntervalMinutes) {
+        flushReason = 'time_interval';
+    }
+    else if (hasMeaningfulDelta) {
+        flushReason = 'delta_trigger';
     }
     const flush = {
         startTimestampSec: nextState.accStartTimestampSec,
@@ -86,5 +103,5 @@ function updateGridCounterAccumulator(previousState, sample, options) {
     nextState.accStartOutputRaw = sample.outputRaw;
     nextState.accInputDeltaRaw = 0;
     nextState.accOutputDeltaRaw = 0;
-    return { state: nextState, flush };
+    return { state: nextState, flush, reason: flushReason };
 }

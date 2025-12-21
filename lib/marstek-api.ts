@@ -73,14 +73,18 @@ export default class MarstekSocket {
       return new Promise((resolve, reject) => {
         // If socket already exists, just resolve
         if (this.socket && this.connected) {
-          this.log('Socket already exists, resolve without binding');
+          if (this.debug) {
+            this.log('Socket already exists, resolve without binding');
+          }
           resolve(this.socket);
           return;
         }
 
         // If socket not found, create and connect (bind)
         try {
-          this.log('Create and bind socket');
+          if (this.debug) {
+            this.log('Create and bind socket');
+          }
 
           // If socket is available, make sure to disconnect
           if (this.socket) this.disconnect();
@@ -93,10 +97,14 @@ export default class MarstekSocket {
           }, async (message: Buffer, remote: dgram.RemoteInfo) => {
             // ignore messages from our own broadcast
             if (remote.address !== this.getLocalIPAddress()) {
-              this.log('Message received from', remote.address);
+              if (this.debug) {
+                this.log('Message received from', remote.address);
+              }
               try {
                 const json = JSON.parse(message.toString());
-                this.log('Message parsed', JSON.stringify(json));
+                if (this.debug) {
+                  this.log('Message parsed', JSON.stringify(json));
+                }
                 await this.callback(json, remote);
               } catch (err) {
                 this.error('Problem encountered processing received message data (with parsing or callback)', message ? message.toString() : '', (err as Error).message || err);
@@ -106,17 +114,23 @@ export default class MarstekSocket {
 
           // Log network interface details before binding
           const iface = this.getInterface();
-          this.log('Network interface details:', {
-            address: iface?.address,
-            netmask: iface?.netmask,
-            family: iface?.family,
-            internal: iface?.internal,
-          });
+          if (this.debug) {
+            this.log('Network interface details:', {
+              address: iface?.address,
+              netmask: iface?.netmask,
+              family: iface?.family,
+              internal: iface?.internal,
+            });
+          }
 
           // Log broadcast address calculation
           const broadcast = this.getBroadcastAddress();
-          this.log('Broadcast address:', broadcast);
-          this.log('Local IP address:', this.getLocalIPAddress());
+          if (this.debug) {
+            this.log('Broadcast address:', broadcast);
+          }
+          if (this.debug) {
+            this.log('Local IP address:', this.getLocalIPAddress());
+          }
 
           // Bind to our IP address(es) using dynamic local port
           this.socket.bind({
@@ -124,7 +138,9 @@ export default class MarstekSocket {
             address: undefined, // Bind to all local addresses
             exclusive: false, // Allow shared binding since port is dynamic
           }, () => {
-            this.log('Socket bound to dynamic local port', this.socket?.address()?.port);
+            if (this.debug) {
+              this.log('Socket bound to dynamic local port', this.socket?.address()?.port);
+            }
             // Make sure to receive all broadcasted messages (catch in case of binding problems)
             try {
               if (!this.socket) throw new Error('Socket not available after binding');
@@ -247,7 +263,9 @@ export default class MarstekSocket {
       // Set address to broadcast when not given
       if (!address) {
         address = this.getBroadcastAddress();
-        this.log('No target address given, using broadcast address', address);
+        if (this.debug) {
+          this.log('No target address given, using broadcast address', address);
+        }
       }
 
       // Use provided port or default remotePort
@@ -256,7 +274,9 @@ export default class MarstekSocket {
       // Send using promise
       await new Promise((resolve, reject) => {
         try {
-          this.log('Transmit:', message, 'to', `${address}:${targetPort}`);
+          if (this.debug) {
+            this.log('Transmit:', message, 'to', `${address}:${targetPort}`);
+          }
           const buffer = Buffer.from(message);
           this.socket?.send(buffer, 0, buffer.length, targetPort, address, (err: Error | null, bytes: number) => {
             if (err) {
@@ -279,7 +299,9 @@ export default class MarstekSocket {
      * @param {Function} handler
      */
     on(handler: Function) {
-      this.log('Handler added');
+      if (this.debug) {
+        this.log('Handler added');
+      }
       if (!this.handlers.includes(handler)) {
         this.handlers.push(handler); // won't add again
       }
@@ -290,7 +312,9 @@ export default class MarstekSocket {
      * @param {Function} handler
      */
     off(handler: Function) {
-      this.log('Handler removed');
+      if (this.debug) {
+        this.log('Handler removed');
+      }
       const index = this.handlers.indexOf(handler);
       if (index !== -1) {
         this.handlers.splice(index, 1);
@@ -336,6 +360,10 @@ export default class MarstekSocket {
     destroy() {
       this.disconnect();
       this.handlers = [];
+    }
+
+    get debug(): boolean {
+      return config.isTestVersion;
     }
 
 }

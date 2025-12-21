@@ -1,0 +1,105 @@
+{
+  "id": "marstek_ct_disconnected",
+  "title": {
+    "en": "CT sensor disconnected",
+    "nl": "CT sensor losgekoppeld",
+    "da": "CT sensor afbrudt",
+    "de": "CT Sensor getrennt",
+    "es": "Sensor CT desconectado",
+    "fr": "Capteur CT déconnecté",
+    "it": "Sensore CT disconnesso",
+    "no": "CT sensor frakoblet",
+    "sv": "CT sensor frånkopplad",
+    "pl": "Czujnik CT odłączony",
+    "ru": "Датчик CT отключен",
+    "ko": "CT 센서 연결 해제됨"
+  },
+  "titleFormatted": {
+    "en": "CT sensor disconnected",
+    "nl": "CT sensor losgekoppeld",
+    "da": "CT sensor afbrudt",
+    "de": "CT Sensor getrennt",
+    "es": "Sensor CT desconectado",
+    "fr": "Capteur CT déconnecté",
+    "it": "Sensore CT disconnesso",
+    "no": "CT sensor frakoblet",
+    "sv": "CT sensor frånkopplad",
+    "pl": "Czujnik CT odłączony",
+    "ru": "Датчик CT отключен ",
+    "ko": "에서 CT 센서 연결 해제됨"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    }
+  ],
+  "tokens": [
+    {
+      "name": "ct_state",
+      "type": "number",
+      "title": {
+        "en": "CT State",
+        "nl": "CT Status",
+        "da": "CT Status",
+        "de": "CT Status",
+        "es": "Estado CT",
+        "fr": "État CT",
+        "it": "Stato CT",
+        "no": "CT Status",
+        "sv": "CT Status",
+        "pl": "Stan CT",
+        "ru": "Состояние CT",
+        "ko": "CT 상태"
+      },
+      "desc": {
+        "en": "Current CT sensor state (0 = disconnected, 1 = connected)",
+        "nl": "Huidige CT sensor status (0 = losgekoppeld, 1 = gekoppeld)",
+        "da": "Nuværende CT sensor status (0 = afbrudt, 1 = tilsluttet)",
+        "de": "Aktueller CT Sensor Status (0 = getrennt, 1 = verbunden)",
+        "es": "Estado actual del sensor CT (0 = desconectado, 1 = conectado)",
+        "fr": "État actuel du capteur CT (0 = déconnecté, 1 = connecté)",
+        "it": "Stato attuale del sensore CT (0 = disconnesso, 1 = connesso)",
+        "no": "Nåværende CT sensor status (0 = frakoblet, 1 = tilkoblet)",
+        "sv": "Nuvarande CT sensor status (0 = frånkopplad, 1 = ansluten)",
+        "pl": "Aktualny stan czujnika CT (0 = odłączony, 1 = podłączony)",
+        "ru": "Текущее состояние датчика CT (0 = отключен, 1 = подключен)",
+        "ko": "현재 CT 센서 상태 (0 = 연결 해제됨, 1 = 연결됨)"
+      }
+    },
+    {
+      "name": "previous_state",
+      "type": "number",
+      "title": {
+        "en": "Previous CT State",
+        "nl": "Vorige CT Status",
+        "da": "Tidligere CT Status",
+        "de": "Vorheriger CT Status",
+        "es": "Estado CT Anterior",
+        "fr": "État CT Précédent",
+        "it": "Stato CT Precedente",
+        "no": "Tidligere CT Status",
+        "sv": "Tidigare CT Status",
+        "pl": "Poprzedni Stan CT",
+        "ru": "Предыдущее Состояние CT",
+        "ko": "이전 CT 상태"
+      },
+      "desc": {
+        "en": "Previous CT sensor state before disconnection",
+        "nl": "Vorige CT sensor status voor loskoppeling",
+        "da": "Tidligere CT sensor status før afbrydelse",
+        "de": "Vorheriger CT Sensor Status vor Trennung",
+        "es": "Estado anterior del sensor CT antes de desconexión",
+        "fr": "État précédent du capteur CT avant déconnexion",
+        "it": "Stato precedente del sensore CT prima della disconnessione",
+        "no": "Tidligere CT sensor status før frakobling",
+        "sv": "Tidigare CT sensor status före frånkoppling",
+        "pl": "Poprzedni stan czujnika CT przed odłączeniem",
+        "ru": "Предыдущее состояние датчика CT перед отключением",
+        "ko": "연결 해제 전 이전 CT 센서 상태"
+      }
+    }
+  ]
+}

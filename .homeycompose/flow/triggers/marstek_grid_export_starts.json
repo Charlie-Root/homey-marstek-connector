@@ -1,0 +1,105 @@
+{
+  "id": "marstek_grid_export_starts",
+  "title": {
+    "en": "Grid export starts",
+    "nl": "Netexport begint",
+    "da": "Neteksport starter",
+    "de": "Netzexport beginnt",
+    "es": "Exportación de red comienza",
+    "fr": "Exportation réseau commence",
+    "it": "Esportazione rete inizia",
+    "no": "Netteksport starter",
+    "sv": "Nät export börjar",
+    "pl": "Eksport sieciowy rozpoczyna się",
+    "ru": "Экспорт сети начинается",
+    "ko": "그리드 내보내기 시작"
+  },
+  "titleFormatted": {
+    "en": "Grid export starts",
+    "nl": "Netexport begint",
+    "da": "Neteksport starter",
+    "de": "Netzexport beginnt",
+    "es": "Exportación de red comienza",
+    "fr": "Exportation réseau commence",
+    "it": "Esportazione rete inizia",
+    "no": "Netteksport starter",
+    "sv": "Nät export börjar",
+    "pl": "Eksport sieciowy rozpoczyna się",
+    "ru": "Экспорт сети начинается ",
+    "ko": "에서 그리드 내보내기 시작"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    }
+  ],
+  "tokens": [
+    {
+      "name": "power",
+      "type": "number",
+      "title": {
+        "en": "Current grid power",
+        "nl": "Huidig netvermogen",
+        "da": "Nuværende neteffekt",
+        "de": "Aktuelle Netzleistung",
+        "es": "Potencia de red actual",
+        "fr": "Puissance réseau actuelle",
+        "it": "Potenza rete attuale",
+        "no": "Nåværende netteffekt",
+        "sv": "Nuvarande näteffekt",
+        "pl": "Aktualna moc sieciowa",
+        "ru": "Текущая мощность сети",
+        "ko": "현재 그리드 전력"
+      },
+      "desc": {
+        "en": "Current grid power in watts (negative = export)",
+        "nl": "Huidig netvermogen in watt (negatief = export)",
+        "da": "Nuværende neteffekt i watt (negativ = eksport)",
+        "de": "Aktuelle Netzleistung in Watt (negativ = Export)",
+        "es": "Potencia de red actual en vatios (negativo = exportación)",
+        "fr": "Puissance réseau actuelle en watts (négatif = exportation)",
+        "it": "Potenza rete attuale in watt (negativo = esportazione)",
+        "no": "Nåværende netteffekt i watt (negativ = eksport)",
+        "sv": "Nuvarande näteffekt i watt (negativ = export)",
+        "pl": "Aktualna moc sieciowa w watach (ujemna = eksport)",
+        "ru": "Текущая мощность сети в ваттах (отрицательная = экспорт)",
+        "ko": "현재 그리드 전력 (와트) (음수 = 내보내기)"
+      }
+    },
+    {
+      "name": "direction",
+      "type": "string",
+      "title": {
+        "en": "Direction",
+        "nl": "Richting",
+        "da": "Retning",
+        "de": "Richtung",
+        "es": "Dirección",
+        "fr": "Direction",
+        "it": "Direzione",
+        "no": "Retning",
+        "sv": "Riktning",
+        "pl": "Kierunek",
+        "ru": "Направление",
+        "ko": "방향"
+      },
+      "desc": {
+        "en": "Power flow direction (import/export)",
+        "nl": "Vermogensstroomrichting (import/export)",
+        "da": "Effektstrømretning (import/eksport)",
+        "de": "Leistungsflussrichtung (Import/Export)",
+        "es": "Dirección del flujo de potencia (importación/exportación)",
+        "fr": "Direction du flux de puissance (importation/exportation)",
+        "it": "Direzione del flusso di potenza (importazione/esportazione)",
+        "no": "Effektstrømretning (import/eksport)",
+        "sv": "Effektflödesriktning (import/export)",
+        "pl": "Kierunek przepływu mocy (import/eksport)",
+        "ru": "Направление потока мощности (импорт/экспорт)",
+        "ko": "전력 흐름 방향 (가져오기/내보내기)"
+      }
+    }
+  ]
+}

@@ -312,6 +312,39 @@
     "max": 365
   },
   {
+    "id": "reset_statistics",
+    "type": "checkbox",
+    "label": {
+      "en": "Reset Statistics Now",
+      "nl": "Statistieken Nu Resetten",
+      "da": "Nulstil Statistikker Nu",
+      "de": "Statistiken Jetzt Zurücksetzen",
+      "es": "Restablecer Estadísticas Ahora",
+      "fr": "Réinitialiser les Statistiques Maintenant",
+      "it": "Ripristina Statistiche Ora",
+      "no": "Tilbakestill Statistikk Nå",
+      "sv": "Återställ Statistik Nu",
+      "pl": "Zresetuj Statystyki Teraz",
+      "ru": "Сбросить Статистику Сейчас",
+      "ko": "통계 지금 재설정"
+    },
+    "hint": {
+      "en": "Check this to reset all accumulated statistics data. This action cannot be undone and will clear all charge/discharge history.",
+      "nl": "Vink dit aan om alle opgebouwde statistiekgegevens te resetten. Deze actie kan niet ongedaan worden gemaakt en wist alle laad/ontlaadgeschiedenis.",
+      "da": "Markér dette for at nulstille alle akkumulerede statistikdata. Denne handling kan ikke fortrydes og vil rydde al opladnings/afladningshistorik.",
+      "de": "Aktivieren Sie dies, um alle akkumulierten Statistikdaten zurückzusetzen. Diese Aktion kann nicht rückgängig gemacht werden und löscht den gesamten Lade-/Entlade-Verlauf.",
+      "es": "Marque esto para restablecer todos los datos estadísticos acumulados. Esta acción no se puede deshacer y borrará todo el historial de carga/descarga.",
+      "fr": "Cochez ceci pour réinitialiser toutes les données statistiques accumulées. Cette action ne peut pas être annulée et effacera tout l'historique de charge/décharge.",
+      "it": "Seleziona questo per ripristinare tutti i dati statistici accumulati. Questa azione non può essere annullata e cancellerà tutta la cronologia di carica/scarica.",
+      "no": "Merk av dette for å tilbakestille alle akkumulerte statistikkdata. Denne handlingen kan ikke angres og vil slette all lade-/utladehistorikk.",
+      "sv": "Markera detta för att återställa all ackumulerad statistikdata. Denna åtgärd kan inte ångras och kommer att rensa all laddnings/urladdningshistorik.",
+      "pl": "Zaznacz to, aby zresetować wszystkie zgromadzone dane statystyczne. Tej akcji nie można cofnąć i usunie całą historię ładowania/rozładowania.",
+      "ru": "Отметьте это, чтобы сбросить все накопленные статистические данные. Это действие нельзя отменить, и оно очистит всю историю зарядки/разрядки.",
+      "ko": "축적된 모든 통계 데이터를 재설정하려면 이를 선택하십시오. 이 작업은 취소할 수 없으며 모든 충전/방전 기록을 지웁니다."
+    },
+    "value": false
+  },
+  {
     "id": "export_format",
     "type": "dropdown",
     "label": {

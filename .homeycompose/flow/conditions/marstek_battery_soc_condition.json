@@ -1,0 +1,116 @@
+{
+  "id": "marstek_battery_soc_condition",
+  "title": {
+    "en": "Battery SOC is...",
+    "nl": "Batterij SOC is...",
+    "da": "Batteri SOC er...",
+    "de": "Batterie SOC ist...",
+    "es": "SOC de batería es...",
+    "fr": "SOC de batterie est...",
+    "it": "SOC batteria è...",
+    "no": "Batteri SOC er...",
+    "sv": "Batteri SOC är...",
+    "pl": "SOC baterii jest...",
+    "ru": "SOC батареи...",
+    "ko": "배터리 SOC가..."
+  },
+  "titleFormatted": {
+    "en": "Battery SOC is [[comparison]] [[threshold]]%",
+    "nl": "Batterij SOC is [[comparison]] [[threshold]]%",
+    "da": "Batteri SOC er [[comparison]] [[threshold]]%",
+    "de": "Batterie SOC ist [[comparison]] [[threshold]]%",
+    "es": "SOC de batería es [[comparison]] [[threshold]]%",
+    "fr": "SOC de batterie est [[comparison]] [[threshold]]%",
+    "it": "SOC batteria è [[comparison]] [[threshold]]%",
+    "no": "Batteri SOC er [[comparison]] [[threshold]]%",
+    "sv": "Batteri SOC är [[comparison]] [[threshold]]%",
+    "pl": "SOC baterii jest [[comparison]] [[threshold]]%",
+    "ru": "SOC батареи  [[comparison]] [[threshold]]%",
+    "ko": "의 배터리 SOC가 [[threshold]]% [[comparison]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    },
+    {
+      "name": "comparison",
+      "type": "dropdown",
+      "title": {
+        "en": "Comparison",
+        "nl": "Vergelijking",
+        "da": "Sammenligning",
+        "de": "Vergleich",
+        "es": "Comparación",
+        "fr": "Comparaison",
+        "it": "Confronto",
+        "no": "Sammenligning",
+        "sv": "Jämförelse",
+        "pl": "Porównanie",
+        "ru": "Сравнение",
+        "ko": "비교"
+      },
+      "values": [
+        {
+          "id": "above",
+          "title": {
+            "en": "above",
+            "nl": "boven",
+            "da": "over",
+            "de": "über",
+            "es": "por encima de",
+            "fr": "au-dessus de",
+            "it": "sopra",
+            "no": "over",
+            "sv": "över",
+            "pl": "powyżej",
+            "ru": "выше",
+            "ko": "초과"
+          }
+        },
+        {
+          "id": "below",
+          "title": {
+            "en": "below",
+            "nl": "onder",
+            "da": "under",
+            "de": "unter",
+            "es": "por debajo de",
+            "fr": "en dessous de",
+            "it": "sotto",
+            "no": "under",
+            "sv": "under",
+            "pl": "poniżej",
+            "ru": "ниже",
+            "ko": "미만"
+          }
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "SOC Threshold (%)",
+        "nl": "SOC Drempel (%)",
+        "da": "SOC Tærskel (%)",
+        "de": "SOC Schwellenwert (%)",
+        "es": "Umbral SOC (%)",
+        "fr": "Seuil SOC (%)",
+        "it": "Soglia SOC (%)",
+        "no": "SOC Terskel (%)",
+        "sv": "SOC Tröskel (%)",
+        "pl": "Próg SOC (%)",
+        "ru": "Порог SOC (%)",
+        "ko": "SOC 임계값 (%)"
+      },
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "required": true
+    }
+  ]
+}

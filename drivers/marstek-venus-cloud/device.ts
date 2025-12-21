@@ -383,7 +383,9 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
 
           // Log warnings if any
           for (const warning of energyResult.warnings) {
-            this.log(`Energy accumulation warning: ${warning}`);
+            if (this.debug) {
+              this.log(`Energy accumulation warning: ${warning}`);
+            }
           }
         }
       }
@@ -412,10 +414,14 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
       }
 
       if (validation.warnings && validation.warnings.length > 0) {
-        this.log(`Energy price warnings: ${validation.warnings.join('; ')}`);
+        if (this.debug) {
+          this.log(`Energy price warnings: ${validation.warnings.join('; ')}`);
+        }
       }
 
-      this.log('Using validated energy price from settings:', price, '€/kWh');
+      if (this.debug) {
+        this.log('Using validated energy price from settings:', price, '€/kWh');
+      }
       return price;
     }
 
@@ -483,7 +489,9 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
       const todayStat = dailyStats.find((ds) => ds.date === today);
 
       const dailyProfit = todayStat ? todayStat.totalProfit : 0;
-      this.log('Calculated daily profit:', dailyProfit);
+      if (this.debug) {
+        this.log('Calculated daily profit:', dailyProfit);
+      }
       await this.setCapabilityValue('measure_battery_profit_daily', dailyProfit);
 
       // Hourly profit: total daily profit divided by hours elapsed in the day
@@ -491,7 +499,9 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
       const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const hoursElapsed = (now.getTime() - startOfDay.getTime()) / (1000 * 60 * 60);
       const hourlyProfit = (hoursElapsed > 0) ? dailyProfit / hoursElapsed : 0;
-      this.log('Calculated hourly profit:', hourlyProfit);
+      if (this.debug) {
+        this.log('Calculated hourly profit:', hourlyProfit);
+      }
       await this.setCapabilityValue('measure_battery_profit_hourly', hourlyProfit);
 
       // Update detailed breakdown capabilities

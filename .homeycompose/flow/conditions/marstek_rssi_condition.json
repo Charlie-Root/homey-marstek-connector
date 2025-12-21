@@ -1,0 +1,116 @@
+{
+  "id": "marstek_rssi_condition",
+  "title": {
+    "en": "WiFi signal strength is...",
+    "nl": "WiFi signaalsterkte is...",
+    "da": "WiFi signalstyrke er...",
+    "de": "WLAN Signalstärke ist...",
+    "es": "Fuerza de señal WiFi está...",
+    "fr": "Force du signal WiFi est...",
+    "it": "Forza del segnale WiFi è...",
+    "no": "WiFi signalstyrke er...",
+    "sv": "WiFi signalstyrka är...",
+    "pl": "Siła sygnału WiFi jest...",
+    "ru": "Сила сигнала WiFi...",
+    "ko": "WiFi 신호 강도가..."
+  },
+  "titleFormatted": {
+    "en": "WiFi signal strength is [[direction]] [[threshold]] dBm",
+    "nl": "WiFi signaalsterkte is [[direction]] [[threshold]] dBm",
+    "da": "WiFi signalstyrke er [[direction]] [[threshold]] dBm",
+    "de": "WLAN Signalstärke ist [[direction]] [[threshold]] dBm",
+    "es": "Fuerza de señal WiFi está [[direction]] [[threshold]] dBm",
+    "fr": "Force du signal WiFi est [[direction]] [[threshold]] dBm",
+    "it": "Forza del segnale WiFi è [[direction]] [[threshold]] dBm",
+    "no": "WiFi signalstyrke er [[direction]] [[threshold]] dBm",
+    "sv": "WiFi signalstyrka är [[direction]] [[threshold]] dBm",
+    "pl": "Siła sygnału WiFi jest [[direction]] [[threshold]] dBm",
+    "ru": "Сила сигнала WiFi [[direction]] [[threshold]] dBm",
+    "ko": "WiFi 신호 강도가 [[threshold]] dBm [[direction]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "RSSI Threshold (dBm)",
+        "nl": "RSSI Drempel (dBm)",
+        "da": "RSSI Tærskel (dBm)",
+        "de": "RSSI Schwellenwert (dBm)",
+        "es": "Umbral RSSI (dBm)",
+        "fr": "Seuil RSSI (dBm)",
+        "it": "Soglia RSSI (dBm)",
+        "no": "RSSI Terskel (dBm)",
+        "sv": "RSSI Tröskel (dBm)",
+        "pl": "Próg RSSI (dBm)",
+        "ru": "Порог RSSI (dBm)",
+        "ko": "RSSI 임계값 (dBm)"
+      },
+      "min": -100,
+      "max": 0,
+      "step": 1,
+      "required": true
+    },
+    {
+      "name": "direction",
+      "type": "dropdown",
+      "title": {
+        "en": "Direction",
+        "nl": "Richting",
+        "da": "Retning",
+        "de": "Richtung",
+        "es": "Dirección",
+        "fr": "Direction",
+        "it": "Direzione",
+        "no": "Retning",
+        "sv": "Riktning",
+        "pl": "Kierunek",
+        "ru": "Направление",
+        "ko": "방향"
+      },
+      "values": [
+        {
+          "id": "above",
+          "title": {
+            "en": "above",
+            "nl": "boven",
+            "da": "over",
+            "de": "über",
+            "es": "por encima de",
+            "fr": "au-dessus de",
+            "it": "sopra",
+            "no": "over",
+            "sv": "över",
+            "pl": "powyżej",
+            "ru": "выше",
+            "ko": "초과"
+          }
+        },
+        {
+          "id": "below",
+          "title": {
+            "en": "below",
+            "nl": "onder",
+            "da": "under",
+            "de": "unter",
+            "es": "por debajo de",
+            "fr": "en dessous de",
+            "it": "sotto",
+            "no": "under",
+            "sv": "under",
+            "pl": "poniżej",
+            "ru": "ниже",
+            "ko": "미만"
+          }
+        }
+      ],
+      "required": true
+    }
+  ]
+}

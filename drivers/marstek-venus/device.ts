@@ -47,6 +47,15 @@ export default class MarstekVenusDevice extends Homey.Device {
     // Lock to prevent race conditions in statistics operations
     private statisticsLock: boolean = false;
 
+    // Flow trigger state tracking
+    private lastSocValue: number | null = null;
+    private lastChargingState: string | null = null;
+    private lastGridPowerDirection: 'import' | 'export' | 'idle' | null = null;
+    private lastPvPowerValue: number | null = null;
+    private lastTemperatureValue: number | null = null;
+    private lastCtState: number | null = null;
+    private lastMode: string | null = null;
+
     /**
      * Called by Homey when the device is initialized.
      * Starts listening to the shared UDP socket, resets capabilities,
@@ -285,7 +294,9 @@ export default class MarstekVenusDevice extends Homey.Device {
             }
 
           } else {
-            this.log('[stats] Battery power not available');
+            if (this.debug) {
+              this.log('[stats] Battery power not available');
+            }
             if (!isNaN(result.ongrid_power)) {
               try {
                 // Read persisted detection flag (true = positive means export/discharging)
@@ -334,7 +345,7 @@ export default class MarstekVenusDevice extends Homey.Device {
           }
 
           // Input and output energy (kWh)
-          const divisor = (firmware >= 154) ? 10.0 : 100.0;
+          const divisor = (firmware >= 154) ? 100.0 : 100.0;
           if (this.debug) this.log('Firmware:', firmware, 'divisor:', divisor);
           if (!isNaN(result.total_grid_input_energy)) {
             if (this.debug) this.log('Raw total_grid_input_energy:', result.total_grid_input_energy);
@@ -372,6 +383,8 @@ export default class MarstekVenusDevice extends Homey.Device {
             // Only set battery_mode if it's a setable mode
             if (['ai', 'auto', 'force_charge', 'force_discharge'].includes(mode)) {
               await this.setCapabilityValue('battery_mode', mode);
+              // Check for mode change trigger
+              await this.checkAndTriggerModeChange(mode);
             }
           }
 
@@ -381,10 +394,21 @@ export default class MarstekVenusDevice extends Homey.Device {
             const newCtState = result.ct_state.toString();
             if (currentCtState !== newCtState) {
               await this.setCapabilityValue('measure_ct_state', newCtState);
-              // Trigger flow
+              // Trigger existing flow
               await this.homey.flow.getTriggerCard('marstek_ct_state_changed').trigger({ state: result.ct_state });
+              // Trigger CT disconnected flow when state becomes 0 (disconnected)
+              if (result.ct_state === 0 && this.lastCtState !== 0) {
+                await this.homey.flow.getTriggerCard('marstek_ct_disconnected').trigger({
+                  ct_state: result.ct_state,
+                  previous_state: this.lastCtState
+                });
+              }
             }
+            this.lastCtState = result.ct_state;
           }
+
+          // Flow trigger logic for battery state changes
+          await this.checkAndTriggerBatteryFlows(result);
           if (!isNaN(result.a_power)) await this.setCapabilityValue('measure_power.a', result.a_power);
           if (!isNaN(result.b_power)) await this.setCapabilityValue('measure_power.b', result.b_power);
           if (!isNaN(result.c_power)) await this.setCapabilityValue('measure_power.c', result.c_power);
@@ -431,9 +455,13 @@ export default class MarstekVenusDevice extends Homey.Device {
         const deltaInput = currentInputRaw - storedState.lastInputRaw;
         const deltaOutput = currentOutputRaw - storedState.lastOutputRaw;
         if (deltaInput === 0 && deltaOutput === 0) {
-          this.log(`[P&L] WARNING: Grid counters are static - no energy flow detected. Input: ${currentInputRaw}, Output: ${currentOutputRaw}`);
+          if (this.debug) {
+            this.log(`[P&L] WARNING: Grid counters are static - no energy flow detected. Input: ${currentInputRaw}, Output: ${currentOutputRaw}`);
+          }
         } else {
-          this.log(`[P&L] Energy flow detected: input_delta=${deltaInput}, output_delta=${deltaOutput}`);
+          if (this.debug) {
+            this.log(`[P&L] Energy flow detected: input_delta=${deltaInput}, output_delta=${deltaOutput}`);
+          }
         }
       }
 
@@ -476,30 +504,34 @@ export default class MarstekVenusDevice extends Homey.Device {
           const deltaInputRaw = currentInputRaw - storedState.lastInputRaw;
           const deltaOutputRaw = currentOutputRaw - storedState.lastOutputRaw;
           if (deltaInputRaw >= 0) {
-            this.log(
-              '[P&L] Computed input energy delta:',
-              deltaInputRaw / divisorRawPerKwh,
-              'kWh (raw:',
-              deltaInputRaw,
-              'current:',
-              currentInputRaw,
-              'previous:',
-              storedState.lastInputRaw,
-              ')',
-            );
+            if (this.debug) {
+              this.log(
+                '[P&L] Computed input energy delta:',
+                deltaInputRaw / divisorRawPerKwh,
+                'kWh (raw:',
+                deltaInputRaw,
+                'current:',
+                currentInputRaw,
+                'previous:',
+                storedState.lastInputRaw,
+                ')',
+              );
+            }
           }
           if (deltaOutputRaw >= 0) {
-            this.log(
-              '[P&L] Computed output energy delta:',
-              deltaOutputRaw / divisorRawPerKwh,
-              'kWh (raw:',
-              deltaOutputRaw,
-              'current:',
-              currentOutputRaw,
-              'previous:',
-              storedState.lastOutputRaw,
-              ')',
-            );
+            if (this.debug) {
+              this.log(
+                '[P&L] Computed output energy delta:',
+                deltaOutputRaw / divisorRawPerKwh,
+                'kWh (raw:',
+                deltaOutputRaw,
+                'current:',
+                currentOutputRaw,
+                'previous:',
+                storedState.lastOutputRaw,
+                ')',
+              );
+            }
           }
         }
 
@@ -586,7 +618,8 @@ export default class MarstekVenusDevice extends Homey.Device {
             if (!Number.isFinite(kwh)) return true;
             if (kwh < 0) return true;
             if (batteryCapacityKwh && kwh > (batteryCapacityKwh * 2)) return true; // more than twice battery capacity in one flush
-            if (!batteryCapacityKwh && kwh > 20) return true; // default absolute threshold
+            // Reduce default absolute threshold to catch cases where a wrong divisor yields a 10x inflated value
+            if (!batteryCapacityKwh && kwh > 10) return true; // default absolute threshold (reduced)
             return false;
           };
 
@@ -891,6 +924,20 @@ export default class MarstekVenusDevice extends Homey.Device {
         }, 1000);
       }
 
+      // Handle statistics reset checkbox
+      if (event.changedKeys.includes('reset_statistics') && event.newSettings.reset_statistics === true) {
+        // Perform the reset
+        await this.resetStatistics();
+        // Auto-uncheck the checkbox after reset
+        this.homey.setTimeout(async () => {
+          try {
+            await this.setSettings({ reset_statistics: false });
+          } catch (err) {
+            this.error('Failed to uncheck reset_statistics setting:', err);
+          }
+        }, 100);
+      }
+
     }
 
     /**
@@ -1099,11 +1146,17 @@ export default class MarstekVenusDevice extends Homey.Device {
       }
 
       if (validation.warnings && validation.warnings.length > 0) {
-        this.log(`Energy price warnings: ${validation.warnings.join('; ')}`);
+        if (this.debug) {
+          this.log(`Energy price warnings: ${validation.warnings.join('; ')}`);
+        }
       }
 
-      this.log('Using validated energy price from settings:', price, '€/kWh');
-      if (this.debug) this.log('[P&L] Applied price type check: typeof =', typeof price, ', isFinite =', Number.isFinite(price));
+      if (this.debug) {
+        this.log('Using validated energy price from settings:', price, '€/kWh');
+      }
+      if (this.debug) {
+        this.log('[P&L] Applied price type check: typeof =', typeof price, ', isFinite =', Number.isFinite(price));
+      }
       // Record a price snapshot for time-weighted calculations (fire-and-forget)
       try {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -1394,6 +1447,58 @@ export default class MarstekVenusDevice extends Homey.Device {
     }
 
     /**
+     * Reset all accumulated statistics data for this device.
+     * Clears the statistics store and grid counter accumulator, then updates capabilities to reflect the reset.
+     * This operation is thread-safe and cannot be undone.
+     */
+    async resetStatistics(): Promise<void> {
+      // Wait for lock to be released if another operation is in progress
+      while (this.statisticsLock) {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      }
+
+      // Acquire lock
+      this.statisticsLock = true;
+
+      try {
+        // Clear the statistics store
+        await this.setStoreValue('statistics', []);
+
+        // Clear the grid counter accumulator store
+        await this.setStoreValue(MarstekVenusDevice.GRID_COUNTER_ACCUMULATOR_STORE_KEY, null);
+
+        // Reset all profit-related capabilities to 0
+        const profitCapabilities = [
+          'measure_battery_profit_daily',
+          'measure_battery_profit_hourly',
+          'measure_battery_charge_energy_daily',
+          'measure_battery_discharge_energy_daily',
+          'measure_battery_savings_daily',
+          'measure_battery_cost_daily',
+          'measure_battery_net_profit_daily',
+        ];
+
+        for (const cap of profitCapabilities) {
+          await this.setCapabilityValueSafe(cap, 0);
+        }
+
+        // Update calculation timestamp to current time
+        const timestamp = Math.floor(Date.now() / 1000);
+        await this.setCapabilityValueSafe('measure_calculation_timestamp', timestamp);
+
+        // Keep current energy price and calculation method as-is
+
+        if (this.debug) {
+          this.log('Statistics reset completed successfully');
+        }
+
+      } finally {
+        // Release lock
+        this.statisticsLock = false;
+      }
+    }
+
+    /**
      * Safely set a capability value with proper formatting and error handling
      * @param capability The capability name
      * @param value The value to set
@@ -1402,7 +1507,9 @@ export default class MarstekVenusDevice extends Homey.Device {
       try {
         // Ensure value is a valid number for numeric capabilities
         if (typeof value === 'number' && !Number.isFinite(value)) {
-          this.log(`[P&L] WARNING: Invalid numeric value ${value} for capability ${capability}, setting to 0`);
+          if (this.debug) {
+            this.log(`[P&L] WARNING: Invalid numeric value ${value} for capability ${capability}, setting to 0`);
+          }
           value = 0;
         }
 
@@ -1470,6 +1577,159 @@ export default class MarstekVenusDevice extends Homey.Device {
       } catch (error) {
         this.error('[P&L] Failed to force UI refresh:', error);
       }
+    }
+
+    /**
+     * Check and trigger battery-related flow cards based on state changes
+     * @param result The API response result containing battery data
+     */
+    private async checkAndTriggerBatteryFlows(result: any): Promise<void> {
+       try {
+         // Check SOC threshold triggers
+         if (!isNaN(result.bat_soc)) {
+           await this.checkAndTriggerSocThreshold(result.bat_soc);
+         }
+
+         // Check charging state change triggers
+         if (!isNaN(result.bat_power)) {
+           const currentChargingState = (result.bat_power > 0) ? 'charging' :
+                                         (result.bat_power < 0) ? 'discharging' : 'idle';
+           await this.checkAndTriggerChargingStateChange(currentChargingState, result.bat_soc, result.bat_power);
+         }
+
+         // Check temperature threshold triggers
+         if (!isNaN(result.bat_temp)) {
+           let temperature = result.bat_temp;
+           // Apply same temperature adjustment as in main processing
+           if (temperature > 50) temperature /= 10.0;
+           await this.checkAndTriggerTemperatureWarning(temperature);
+         }
+
+         // Check grid power direction changes
+         await this.checkAndTriggerGridPowerChange(result);
+
+         // Check solar generation triggers
+         if (!isNaN(result.pv_power)) {
+           await this.checkAndTriggerSolarFlows(result.pv_power);
+         }
+       } catch (error) {
+         this.error('Error checking battery flow triggers:', error);
+       }
+     }
+
+    /**
+     * Check and trigger SOC threshold flow cards
+     * @param currentSoc Current battery SOC value
+     */
+    private async checkAndTriggerSocThreshold(currentSoc: number): Promise<void> {
+      // Only trigger if we have a previous value to compare against
+      if (this.lastSocValue === null) {
+        this.lastSocValue = currentSoc;
+        return;
+      }
+
+      // Check if threshold was crossed (we trigger for all possible thresholds and directions)
+      // Homey's flow engine will filter to only active flows that match
+      const crossedAbove = this.lastSocValue <= currentSoc; // SOC increased
+      const crossedBelow = this.lastSocValue >= currentSoc; // SOC decreased
+
+      if (crossedAbove || crossedBelow) {
+        // Trigger for all possible threshold crossings
+        // Homey will only execute flows that match the current SOC and threshold conditions
+        await this.homey.flow.getTriggerCard('marstek_battery_soc_threshold').trigger({
+          soc: currentSoc,
+          threshold: currentSoc, // This will be matched against flow conditions
+          direction: crossedAbove ? 'above' : 'below'
+        });
+
+        if (this.debug) {
+          this.log(`SOC threshold trigger fired: ${this.lastSocValue}% -> ${currentSoc}%`);
+        }
+      }
+
+      this.lastSocValue = currentSoc;
+    }
+
+    /**
+     * Check and trigger charging state change flow cards
+     * @param currentState Current charging state
+     * @param soc Current SOC value
+     * @param power Current power value
+     */
+    private async checkAndTriggerChargingStateChange(currentState: string, soc: number, power: number): Promise<void> {
+      // Only trigger if we have a previous state to compare against
+      if (this.lastChargingState === null) {
+        this.lastChargingState = currentState;
+        return;
+      }
+
+      // Check if state actually changed
+      if (this.lastChargingState === currentState) {
+        return;
+      }
+
+      // Determine the type of state change
+      let stateChangeType = '';
+      if (this.lastChargingState !== 'charging' && currentState === 'charging') {
+        stateChangeType = 'starts_charging';
+      } else if (this.lastChargingState === 'charging' && currentState !== 'charging') {
+        stateChangeType = 'stops_charging';
+      } else if (this.lastChargingState !== 'discharging' && currentState === 'discharging') {
+        stateChangeType = 'starts_discharging';
+      } else if (this.lastChargingState === 'discharging' && currentState !== 'discharging') {
+        stateChangeType = 'stops_discharging';
+      } else if (this.lastChargingState !== 'idle' && currentState === 'idle') {
+        stateChangeType = 'becomes_idle';
+      }
+
+      if (stateChangeType) {
+        // Trigger the flow card - Homey will filter to flows that match this state change
+        await this.homey.flow.getTriggerCard('marstek_battery_charging_state_changed').trigger({
+          state: stateChangeType,
+          previous_state: this.lastChargingState,
+          soc: soc,
+          power: power
+        });
+
+        if (this.debug) {
+          this.log(`Charging state change trigger fired: ${this.lastChargingState} -> ${currentState} (${stateChangeType})`);
+        }
+      }
+
+      this.lastChargingState = currentState;
+    }
+
+    /**
+     * Check and trigger temperature warning flow cards
+     * @param currentTemperature Current battery temperature value
+     */
+    private async checkAndTriggerTemperatureWarning(currentTemperature: number): Promise<void> {
+      // Only trigger if we have a previous value to compare against
+      if (this.lastTemperatureValue === null) {
+        this.lastTemperatureValue = currentTemperature;
+        return;
+      }
+
+      // Check if threshold was crossed (we trigger for all possible thresholds and directions)
+      // Homey's flow engine will filter to only active flows that match
+      const crossedAbove = this.lastTemperatureValue <= currentTemperature; // Temperature increased
+      const crossedBelow = this.lastTemperatureValue >= currentTemperature; // Temperature decreased
+
+      if (crossedAbove || crossedBelow) {
+        // Trigger for all possible threshold crossings
+        // Homey will only execute flows that match the current temperature and threshold conditions
+        await this.homey.flow.getTriggerCard('marstek_temperature_warning').trigger({
+          temperature: currentTemperature,
+          threshold: currentTemperature, // This will be matched against flow conditions
+          direction: crossedAbove ? 'above' : 'below'
+        });
+
+        if (this.debug) {
+          this.log(`Temperature warning trigger fired: ${this.lastTemperatureValue}°C -> ${currentTemperature}°C`);
+        }
+      }
+
+      this.lastTemperatureValue = currentTemperature;
     }
 
     /** Retrieve our current debug setting, based on actual setting and version
@@ -1564,6 +1824,132 @@ export default class MarstekVenusDevice extends Homey.Device {
       return csvRows.join('\n');
 
     }
+
+  /**
+   * Check and trigger grid power direction change flow cards
+   * @param result The API response result containing grid power data
+   */
+  private async checkAndTriggerGridPowerChange(result: any): Promise<void> {
+    try {
+      if (!isNaN(result.ongrid_power)) {
+        const gridPower = result.ongrid_power * -1; // measure_power_ongrid value
+        const currentDirection: 'import' | 'export' | 'idle' =
+          gridPower > 0 ? 'import' :
+          gridPower < 0 ? 'export' : 'idle';
+
+        // Only trigger if we have a previous direction to compare against
+        if (this.lastGridPowerDirection === null) {
+          this.lastGridPowerDirection = currentDirection;
+          return;
+        }
+
+        // Check if direction actually changed
+        if (this.lastGridPowerDirection === currentDirection) {
+          return;
+        }
+
+        // Trigger appropriate flow card when direction changes to import or export
+        if (currentDirection === 'import' && this.lastGridPowerDirection !== 'import') {
+          await this.homey.flow.getTriggerCard('marstek_grid_import_starts').trigger({
+            power: gridPower,
+            direction: 'import'
+          });
+          if (this.debug) {
+            this.log(`Grid import starts trigger fired: ${this.lastGridPowerDirection} -> ${currentDirection} (${gridPower}W)`);
+          }
+        } else if (currentDirection === 'export' && this.lastGridPowerDirection !== 'export') {
+          await this.homey.flow.getTriggerCard('marstek_grid_export_starts').trigger({
+            power: gridPower,
+            direction: 'export'
+          });
+          if (this.debug) {
+            this.log(`Grid export starts trigger fired: ${this.lastGridPowerDirection} -> ${currentDirection} (${gridPower}W)`);
+          }
+        }
+
+        this.lastGridPowerDirection = currentDirection;
+      }
+    } catch (error) {
+      this.error('Error checking grid power flow triggers:', error);
+    }
+  }
+
+  /**
+   * Check and trigger solar generation flow cards based on PV power changes
+   * @param currentPvPower Current PV power value in watts
+   */
+  private async checkAndTriggerSolarFlows(currentPvPower: number): Promise<void> {
+    try {
+      // Only trigger if we have a previous value to compare against
+      if (this.lastPvPowerValue === null) {
+        this.lastPvPowerValue = currentPvPower;
+        return;
+      }
+
+      // Check if threshold was crossed (we trigger for all possible thresholds and directions)
+      // Homey's flow engine will filter to only active flows that match
+      const crossedAbove = this.lastPvPowerValue <= currentPvPower; // PV power increased
+      const crossedBelow = this.lastPvPowerValue >= currentPvPower; // PV power decreased
+
+      if (crossedAbove || crossedBelow) {
+        // Trigger for all possible threshold crossings
+        // Homey will only execute flows that match the current PV power and threshold conditions
+        await this.homey.flow.getTriggerCard('marstek_solar_generation_starts').trigger({
+          power: currentPvPower,
+          threshold: currentPvPower, // This will be matched against flow conditions
+        });
+
+        await this.homey.flow.getTriggerCard('marstek_solar_generation_stops').trigger({
+          power: currentPvPower,
+          threshold: currentPvPower, // This will be matched against flow conditions
+        });
+
+        if (this.debug) {
+          this.log(`Solar generation triggers fired: ${this.lastPvPowerValue}W -> ${currentPvPower}W`);
+        }
+      }
+
+      this.lastPvPowerValue = currentPvPower;
+    } catch (error) {
+      this.error('Error checking solar flow triggers:', error);
+    }
+  }
+
+  /**
+   * Check and trigger mode change flow cards
+   * @param currentMode Current battery mode
+   */
+  private async checkAndTriggerModeChange(currentMode: string): Promise<void> {
+    try {
+      // Only trigger if we have a previous mode to compare against
+      if (this.lastMode === null) {
+        this.lastMode = currentMode;
+        return;
+      }
+
+      // Check if mode actually changed
+      if (this.lastMode === currentMode) {
+        return;
+      }
+
+      // Trigger the mode change flow card
+      await this.homey.flow.getTriggerCard('marstek_mode_changed').trigger({
+        mode: currentMode,
+        previous_mode: this.lastMode
+      }, {
+        mode: currentMode,
+        previous_mode: this.lastMode
+      });
+
+      if (this.debug) {
+        this.log(`Mode change trigger fired: ${this.lastMode} -> ${currentMode}`);
+      }
+
+      this.lastMode = currentMode;
+    } catch (error) {
+      this.error('Error checking mode change flow triggers:', error);
+    }
+  }
 
 }
 

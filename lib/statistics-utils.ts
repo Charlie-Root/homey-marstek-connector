@@ -585,9 +585,38 @@ export function calculateDetailedBreakdown(entries: StatisticsEntry[]) {
     }
   }
 
-  const netProfit = savings - cost;
+  let netProfit = savings - cost;
 
   console.log(`[BREAKDOWN] Results: chargeEnergy=${chargeEnergy.toFixed(3)} kWh, dischargeEnergy=${dischargeEnergy.toFixed(3)} kWh, savings=€${savings.toFixed(2)}, cost=€${cost.toFixed(2)}, netProfit=€${netProfit.toFixed(2)}`);
+  // Heuristic correction for historical scaling bug (some devices reported raw counters
+  // that were off by a factor of 10). This is conservative and only applied to the
+  // displayed breakdown (does not modify stored entries). Conditions:
+  // - No explicit battery capacity hint provided
+  // - Today's chargeEnergy is implausibly large (>10 kWh) but dividing by 10 yields
+  //   a plausible value (<10 kWh)
+  // - Majority of today's entries are "large" (abs energy > 1 kWh), indicating
+  //   a unit mismatch rather than many tiny events
+  try {
+    const batteryCapacityKwh = undefined; // caller may pass a hint in future
+    const totalEntries = todayEntries.length;
+    const largeEntries = todayEntries.filter(e => Math.abs(e.energyAmount) > 1).length;
+    if (!batteryCapacityKwh && totalEntries > 0) {
+      const plausibleAfterDiv10 = (chargeEnergy / 10) < 10;
+      const shouldScaleBy10 = chargeEnergy > 10 && plausibleAfterDiv10 && (largeEntries / totalEntries) > 0.6;
+      if (shouldScaleBy10) {
+        console.log('[BREAKDOWN] Detected likely 10x inflation in today\'s entries - applying /10 correction for display');
+        chargeEnergy = chargeEnergy / 10;
+        dischargeEnergy = dischargeEnergy / 10;
+        savings = savings / 10;
+        cost = cost / 10;
+        // Recompute netProfit
+        netProfit = savings - cost;
+      }
+    }
+  } catch (err) {
+    // Never throw from breakdown helper; log and continue with original numbers
+    console.log('[BREAKDOWN] Scaling heuristic failed:', err);
+  }
 
   return {
     chargeEnergy,

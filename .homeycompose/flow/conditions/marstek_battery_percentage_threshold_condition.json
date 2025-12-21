@@ -1,0 +1,116 @@
+{
+  "id": "marstek_battery_percentage_threshold_condition",
+  "title": {
+    "en": "Battery percentage is...",
+    "nl": "Batterij percentage is...",
+    "da": "Batteri procent er...",
+    "de": "Batterie Prozent ist...",
+    "es": "Porcentaje de batería es...",
+    "fr": "Pourcentage de batterie est...",
+    "it": "Percentuale batteria è...",
+    "no": "Batteri prosent er...",
+    "sv": "Batteri procent är...",
+    "pl": "Procent baterii jest...",
+    "ru": "Процент батареи...",
+    "ko": "배터리 백분율이..."
+  },
+  "titleFormatted": {
+    "en": "Battery percentage is [[comparison]] [[threshold]]%",
+    "nl": "Batterij percentage is [[comparison]] [[threshold]]%",
+    "da": "Batteri procent er [[comparison]] [[threshold]]%",
+    "de": "Batterie Prozent ist [[comparison]] [[threshold]]%",
+    "es": "Porcentaje de batería es [[comparison]] [[threshold]]%",
+    "fr": "Pourcentage de batterie est [[comparison]] [[threshold]]%",
+    "it": "Percentuale batteria è [[comparison]] [[threshold]]%",
+    "no": "Batteri prosent er [[comparison]] [[threshold]]%",
+    "sv": "Batteri procent är [[comparison]] [[threshold]]%",
+    "pl": "Procent baterii jest [[comparison]] [[threshold]]%",
+    "ru": "Процент батареи  [[comparison]] [[threshold]]%",
+    "ko": "의 배터리 백분율이 [[threshold]]% [[comparison]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    },
+    {
+      "name": "comparison",
+      "type": "dropdown",
+      "title": {
+        "en": "Comparison",
+        "nl": "Vergelijking",
+        "da": "Sammenligning",
+        "de": "Vergleich",
+        "es": "Comparación",
+        "fr": "Comparaison",
+        "it": "Confronto",
+        "no": "Sammenligning",
+        "sv": "Jämförelse",
+        "pl": "Porównanie",
+        "ru": "Сравнение",
+        "ko": "비교"
+      },
+      "values": [
+        {
+          "id": "above",
+          "title": {
+            "en": "above",
+            "nl": "boven",
+            "da": "over",
+            "de": "über",
+            "es": "por encima de",
+            "fr": "au-dessus de",
+            "it": "sopra",
+            "no": "over",
+            "sv": "över",
+            "pl": "powyżej",
+            "ru": "выше",
+            "ko": "초과"
+          }
+        },
+        {
+          "id": "below",
+          "title": {
+            "en": "below",
+            "nl": "onder",
+            "da": "under",
+            "de": "unter",
+            "es": "por debajo de",
+            "fr": "en dessous de",
+            "it": "sotto",
+            "no": "under",
+            "sv": "under",
+            "pl": "poniżej",
+            "ru": "ниже",
+            "ko": "미만"
+          }
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Percentage Threshold (%)",
+        "nl": "Percentage Drempel (%)",
+        "da": "Procent Tærskel (%)",
+        "de": "Prozent Schwellenwert (%)",
+        "es": "Umbral de Porcentaje (%)",
+        "fr": "Seuil de Pourcentage (%)",
+        "it": "Soglia Percentuale (%)",
+        "no": "Prosent Terskel (%)",
+        "sv": "Procent Tröskel (%)",
+        "pl": "Próg Procent (%)",
+        "ru": "Порог Процента (%)",
+        "ko": "백분율 임계값 (%)"
+      },
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "required": true
+    }
+  ]
+}

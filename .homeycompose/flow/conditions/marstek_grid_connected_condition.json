@@ -1,0 +1,39 @@
+{
+  "id": "marstek_grid_connected_condition",
+  "title": {
+    "en": "Grid is connected",
+    "nl": "Net is verbonden",
+    "da": "Net er tilsluttet",
+    "de": "Netz ist verbunden",
+    "es": "Red está conectada",
+    "fr": "Réseau est connecté",
+    "it": "Rete è connessa",
+    "no": "Nett er tilkoblet",
+    "sv": "Nät är anslutet",
+    "pl": "Sieć jest podłączona",
+    "ru": "Сеть подключена",
+    "ko": "그리드가 연결됨"
+  },
+  "titleFormatted": {
+    "en": "Grid is connected",
+    "nl": "Net is verbonden",
+    "da": "Net er tilsluttet",
+    "de": "Netz ist verbunden",
+    "es": "Red está conectada",
+    "fr": "Réseau est connecté",
+    "it": "Rete è connessa",
+    "no": "Nett er tilkoblet",
+    "sv": "Nät är anslutet",
+    "pl": "Sieć jest podłączona",
+    "ru": "Сеть подключена ",
+    "ko": "에서 그리드가 연결됨"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    }
+  ]
+}

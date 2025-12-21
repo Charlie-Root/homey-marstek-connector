@@ -1,0 +1,337 @@
+{
+  "id": "marstek_set_manual_mode_preset",
+  "title": {
+    "en": "Set manual mode preset",
+    "nl": "Stel handmatige modus voorinstelling in",
+    "da": "Indstil manuel tilstand forudindstilling",
+    "de": "Manueller Modus-Voreinstellung setzen",
+    "es": "Establecer preajuste de modo manual",
+    "fr": "Définir le préréglage du mode manuel",
+    "it": "Imposta preimpostazione modalità manuale",
+    "no": "Sett manuell modus forhåndsinnstilling",
+    "sv": "Ställ in manuellt läge förinställning",
+    "pl": "Ustaw preset trybu ręcznego",
+    "ru": "Установить предустановку ручного режима",
+    "ko": "수동 모드 프리셋 설정"
+  },
+  "titleFormatted": {
+    "en": "Set manual mode preset from [[start_time]] to [[end_time]] on [[days]] at [[power]]W [[enable]]",
+    "nl": "Stel handmatige modus voorinstelling in van [[start_time]] tot [[end_time]] op [[days]] bij [[power]]W [[enable]]",
+    "da": "Indstil manuel tilstand forudindstilling fra [[start_time]] til [[end_time]] på [[days]] ved [[power]]W [[enable]]",
+    "de": "Manueller Modus-Voreinstellung setzen von [[start_time]] bis [[end_time]] an [[days]] bei [[power]]W [[enable]]",
+    "es": "Establecer preajuste de modo manual de [[start_time]] a [[end_time]] en [[days]] a [[power]]W [[enable]]",
+    "fr": "Définir le préréglage du mode manuel de [[start_time]] à [[end_time]] sur [[days]] à [[power]]W [[enable]]",
+    "it": "Imposta preimpostazione modalità manuale da [[start_time]] a [[end_time]] su [[days]] a [[power]]W [[enable]]",
+    "no": "Sett manuell modus forhåndsinnstilling fra [[start_time]] til [[end_time]] på [[days]] ved [[power]]W [[enable]]",
+    "sv": "Ställ in manuellt läge förinställning från [[start_time]] till [[end_time]] på [[days]] vid [[power]]W [[enable]]",
+    "pl": "Ustaw preset trybu ręcznego od [[start_time]] do [[end_time]] w [[days]] przy [[power]]W [[enable]]",
+    "ru": "Установить предустановку ручного режима с [[start_time]] до [[end_time]] в [[days]] при [[power]]W [[enable]]",
+    "ko": "[[days]]에 [[start_time]]부터 [[end_time]]까지 [[power]]W [[enable]]로 수동 모드 프리셋 설정"
+  },
+  "description": {
+    "en": "Configure a scheduled manual mode with specific start/end times, days of the week, and power settings.",
+    "nl": "Configureer een geplande handmatige modus met specifieke start-/eindtijden, dagen van de week en vermogensinstellingen.",
+    "da": "Konfigurer en planlagt manuel tilstand med specifikke start/slut tider, ugedage og effektindstillinger.",
+    "de": "Konfigurieren Sie einen geplanten manuellen Modus mit spezifischen Start-/Endzeiten, Wochentagen und Leistungseinstellungen.",
+    "es": "Configure un modo manual programado con horas de inicio/fin específicas, días de la semana y configuraciones de potencia.",
+    "fr": "Configurez un mode manuel programmé avec des heures de début/fin spécifiques, des jours de la semaine et des paramètres de puissance.",
+    "it": "Configura una modalità manuale programmata con orari di inizio/fine specifici, giorni della settimana e impostazioni di potenza.",
+    "no": "Konfigurer en planlagt manuell modus med spesifikke start/slutt tider, ukedager og effektinnstillinger.",
+    "sv": "Konfigurera ett schemalagt manuellt läge med specifika start/slut tider, veckodagar och effektinställningar.",
+    "pl": "Skonfiguruj zaplanowany tryb ręczny z określonymi godzinami rozpoczęcia/zakończenia, dniami tygodnia i ustawieniami mocy.",
+    "ru": "Настройте запланированный ручной режим с определенными временем начала/окончания, днями недели и настройками мощности.",
+    "ko": "특정 시작/종료 시간, 요일 및 전력 설정으로 예약된 수동 모드를 구성합니다."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    },
+    {
+      "name": "start_time",
+      "type": "text",
+      "title": {
+        "en": "Start Time (HH:MM)",
+        "nl": "Starttijd (UU:MM)",
+        "da": "Starttid (TT:MM)",
+        "de": "Startzeit (HH:MM)",
+        "es": "Hora de Inicio (HH:MM)",
+        "fr": "Heure de Début (HH:MM)",
+        "it": "Ora di Inizio (HH:MM)",
+        "no": "Starttid (TT:MM)",
+        "sv": "Starttid (HH:MM)",
+        "pl": "Czas Rozpoczęcia (GG:MM)",
+        "ru": "Время Начала (ЧЧ:ММ)",
+        "ko": "시작 시간 (HH:MM)"
+      },
+      "placeholder": {
+        "en": "08:30",
+        "nl": "08:30",
+        "da": "08:30",
+        "de": "08:30",
+        "es": "08:30",
+        "fr": "08:30",
+        "it": "08:30",
+        "no": "08:30",
+        "sv": "08:30",
+        "pl": "08:30",
+        "ru": "08:30",
+        "ko": "08:30"
+      },
+      "required": true
+    },
+    {
+      "name": "end_time",
+      "type": "text",
+      "title": {
+        "en": "End Time (HH:MM)",
+        "nl": "Eindtijd (UU:MM)",
+        "da": "Sluttid (TT:MM)",
+        "de": "Endzeit (HH:MM)",
+        "es": "Hora de Fin (HH:MM)",
+        "fr": "Heure de Fin (HH:MM)",
+        "it": "Ora di Fine (HH:MM)",
+        "no": "Sluttid (TT:MM)",
+        "sv": "Sluttid (HH:MM)",
+        "pl": "Czas Zakończenia (GG:MM)",
+        "ru": "Время Окончания (ЧЧ:ММ)",
+        "ko": "종료 시간 (HH:MM)"
+      },
+      "placeholder": {
+        "en": "20:30",
+        "nl": "20:30",
+        "da": "20:30",
+        "de": "20:30",
+        "es": "20:30",
+        "fr": "20:30",
+        "it": "20:30",
+        "no": "20:30",
+        "sv": "20:30",
+        "pl": "20:30",
+        "ru": "20:30",
+        "ko": "20:30"
+      },
+      "required": true
+    },
+    {
+      "name": "days",
+      "type": "dropdown",
+      "multiple": true,
+      "title": {
+        "en": "Days of Week",
+        "nl": "Dagen van de Week",
+        "da": "Ugedage",
+        "de": "Wochentage",
+        "es": "Días de la Semana",
+        "fr": "Jours de la Semaine",
+        "it": "Giorni della Settimana",
+        "no": "Ukedager",
+        "sv": "Veckodagar",
+        "pl": "Dni Tygodnia",
+        "ru": "Дни Недели",
+        "ko": "요일"
+      },
+      "values": [
+        {
+          "id": "0",
+          "title": {
+            "en": "Sunday",
+            "nl": "Zondag",
+            "da": "Søndag",
+            "de": "Sonntag",
+            "es": "Domingo",
+            "fr": "Dimanche",
+            "it": "Domenica",
+            "no": "Søndag",
+            "sv": "Söndag",
+            "pl": "Niedziela",
+            "ru": "Воскресенье",
+            "ko": "일요일"
+          }
+        },
+        {
+          "id": "1",
+          "title": {
+            "en": "Monday",
+            "nl": "Maandag",
+            "da": "Mandag",
+            "de": "Montag",
+            "es": "Lunes",
+            "fr": "Lundi",
+            "it": "Lunedì",
+            "no": "Mandag",
+            "sv": "Måndag",
+            "pl": "Poniedziałek",
+            "ru": "Понедельник",
+            "ko": "월요일"
+          }
+        },
+        {
+          "id": "2",
+          "title": {
+            "en": "Tuesday",
+            "nl": "Dinsdag",
+            "da": "Tirsdag",
+            "de": "Dienstag",
+            "es": "Martes",
+            "fr": "Mardi",
+            "it": "Martedì",
+            "no": "Tirsdag",
+            "sv": "Tisdag",
+            "pl": "Wtorek",
+            "ru": "Вторник",
+            "ko": "화요일"
+          }
+        },
+        {
+          "id": "3",
+          "title": {
+            "en": "Wednesday",
+            "nl": "Woensdag",
+            "da": "Onsdag",
+            "de": "Mittwoch",
+            "es": "Miércoles",
+            "fr": "Mercredi",
+            "it": "Mercoledì",
+            "no": "Onsdag",
+            "sv": "Onsdag",
+            "pl": "Środa",
+            "ru": "Среда",
+            "ko": "수요일"
+          }
+        },
+        {
+          "id": "4",
+          "title": {
+            "en": "Thursday",
+            "nl": "Donderdag",
+            "da": "Torsdag",
+            "de": "Donnerstag",
+            "es": "Jueves",
+            "fr": "Jeudi",
+            "it": "Giovedì",
+            "no": "Torsdag",
+            "sv": "Torsdag",
+            "pl": "Czwartek",
+            "ru": "Четверг",
+            "ko": "목요일"
+          }
+        },
+        {
+          "id": "5",
+          "title": {
+            "en": "Friday",
+            "nl": "Vrijdag",
+            "da": "Fredag",
+            "de": "Freitag",
+            "es": "Viernes",
+            "fr": "Vendredi",
+            "it": "Venerdì",
+            "no": "Fredag",
+            "sv": "Fredag",
+            "pl": "Piątek",
+            "ru": "Пятница",
+            "ko": "금요일"
+          }
+        },
+        {
+          "id": "6",
+          "title": {
+            "en": "Saturday",
+            "nl": "Zaterdag",
+            "da": "Lørdag",
+            "de": "Samstag",
+            "es": "Sábado",
+            "fr": "Samedi",
+            "it": "Sabato",
+            "no": "Lørdag",
+            "sv": "Lördag",
+            "pl": "Sobota",
+            "ru": "Суббота",
+            "ko": "토요일"
+          }
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "power",
+      "type": "number",
+      "title": {
+        "en": "Power (W)",
+        "nl": "Vermogen (W)",
+        "da": "Effekt (W)",
+        "de": "Leistung (W)",
+        "es": "Potencia (W)",
+        "fr": "Puissance (W)",
+        "it": "Potenza (W)",
+        "no": "Effekt (W)",
+        "sv": "Effekt (W)",
+        "pl": "Moc (W)",
+        "ru": "Мощность (Вт)",
+        "ko": "전력 (W)"
+      },
+      "min": -10000,
+      "max": 10000,
+      "step": 1,
+      "required": true
+    },
+    {
+      "name": "enable",
+      "type": "dropdown",
+      "title": {
+        "en": "Enable Schedule",
+        "nl": "Planning Inschakelen",
+        "da": "Aktivér Tidsplan",
+        "de": "Zeitplan Aktivieren",
+        "es": "Habilitar Programación",
+        "fr": "Activer Programmation",
+        "it": "Abilita Programmazione",
+        "no": "Aktiver Tidsplan",
+        "sv": "Aktivera Schema",
+        "pl": "Włącz Harmonogram",
+        "ru": "Включить Расписание",
+        "ko": "일정 활성화"
+      },
+      "values": [
+        {
+          "id": "true",
+          "title": {
+            "en": "Enabled",
+            "nl": "Ingeschakeld",
+            "da": "Aktiveret",
+            "de": "Aktiviert",
+            "es": "Habilitado",
+            "fr": "Activé",
+            "it": "Abilitato",
+            "no": "Aktivert",
+            "sv": "Aktiverad",
+            "pl": "Włączony",
+            "ru": "Включено",
+            "ko": "활성화됨"
+          }
+        },
+        {
+          "id": "false",
+          "title": {
+            "en": "Disabled",
+            "nl": "Uitgeschakeld",
+            "da": "Deaktiveret",
+            "de": "Deaktiviert",
+            "es": "Deshabilitado",
+            "fr": "Désactivé",
+            "it": "Disabilitato",
+            "no": "Deaktivert",
+            "sv": "Inaktiverad",
+            "pl": "Wyłączony",
+            "ru": "Отключено",
+            "ko": "비활성화됨"
+          }
+        }
+      ],
+      "required": true
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "id": "marstek_adjust_energy_price",
+  "title": {
+    "en": "Adjust Energy Price",
+    "nl": "Energieprijs Aanpassen",
+    "da": "Juster Energipris",
+    "de": "Energiepreis anpassen",
+    "es": "Ajustar Precio de Energía",
+    "fr": "Ajuster le Prix de l'Énergie",
+    "it": "Regola il Prezzo dell'Energia",
+    "no": "Juster Energipris",
+    "sv": "Justera Energipris",
+    "pl": "Dostosuj Cenę Energii",
+    "ru": "Настроить Цену Энергии",
+    "ko": "에너지 가격 조정"
+  },
+  "titleFormatted": {
+    "en": "Set energy price to €[[price]]/kWh",
+    "nl": "Stel energieprijs in op €[[price]]/kWh voor ",
+    "da": "Indstil energipris til €[[price]]/kWh",
+    "de": "Energiepreis auf €[[price]]/kWh setzen",
+    "es": "Establecer precio de energía en €[[price]]/kWh para ",
+    "fr": "Définir le prix de l'énergie à €[[price]]/kWh pour ",
+    "it": "Imposta prezzo energia a €[[price]]/kWh",
+    "no": "Sett energipris til €[[price]]/kWh",
+    "sv": "Ställ in energipris till €[[price]]/kWh",
+    "pl": "Ustaw cenę energii na €[[price]]/kWh dla ",
+    "ru": "Установить цену энергии €[[price]]/kWh для ",
+    "ko": "의 에너지 가격을 €[[price]]/kWh로 설정"
+  },
+  "description": {
+    "en": "Dynamically adjust the energy price used for profit/loss calculations. This affects future statistics calculations.",
+    "nl": "Dynamisch de energieprijs aanpassen die wordt gebruikt voor winst/verlies berekeningen. Dit heeft invloed op toekomstige statistiekberekeningen.",
+    "da": "Juster dynamisk energiprisen, der bruges til profit/tab beregninger. Dette påvirker fremtidige statistikberegninger.",
+    "de": "Dynamisch den Energiepreis anpassen, der für Gewinn-/Verlustberechnungen verwendet wird. Dies wirkt sich auf zukünftige Statistikberechnungen aus.",
+    "es": "Ajustar dinámicamente el precio de energía utilizado para cálculos de ganancias/pérdidas. Esto afecta los cálculos de estadísticas futuras.",
+    "fr": "Ajuster dynamiquement le prix de l'énergie utilisé pour les calculs de profit/perte. Cela affecte les calculs statistiques futurs.",
+    "it": "Regola dinamicamente il prezzo dell'energia utilizzato per i calcoli di profitto/perdita. Questo influisce sui calcoli statistici futuri.",
+    "no": "Juster dynamisk energiprisen som brukes til fortjeneste/tap beregninger. Dette påvirker fremtidige statistikkberegninger.",
+    "sv": "Justera dynamiskt energipriset som används för vinst/förlustberäkningar. Detta påverkar framtida statistikberäkningar.",
+    "pl": "Dynamicznie dostosuj cenę energii używaną do obliczeń zysku/straty. Wpływa to na przyszłe obliczenia statystyczne.",
+    "ru": "Динамически настроить цену энергии, используемую для расчетов прибыли/убытков. Это влияет на будущие расчеты статистики.",
+    "ko": "손익 계산에 사용되는 에너지 가격을 동적으로 조정합니다. 이는 미래 통계 계산에 영향을 미칩니다."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    },
+    {
+      "name": "price",
+      "type": "number",
+      "title": {
+        "en": "Energy Price (€/kWh)",
+        "nl": "Energieprijs (€/kWh)",
+        "da": "Energipris (€/kWh)",
+        "de": "Energiepreis (€/kWh)",
+        "es": "Precio de Energía (€/kWh)",
+        "fr": "Prix de l'Énergie (€/kWh)",
+        "it": "Prezzo Energia (€/kWh)",
+        "no": "Energipris (€/kWh)",
+        "sv": "Energipris (€/kWh)",
+        "pl": "Cena Energii (€/kWh)",
+        "ru": "Цена Энергии (€/kWh)",
+        "ko": "에너지 가격 (€/kWh)"
+      },
+      "min": 0,
+      "max": 10,
+      "step": 0.01,
+      "decimals": 4,
+      "required": true
+    }
+  ]
+}

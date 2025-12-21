@@ -1,0 +1,107 @@
+{
+  "id": "marstek_time_of_day_condition",
+  "title": {
+    "en": "Current time is...",
+    "nl": "Huidige tijd is...",
+    "da": "Aktuel tid er...",
+    "de": "Aktuelle Zeit ist...",
+    "es": "La hora actual es...",
+    "fr": "L'heure actuelle est...",
+    "it": "L'ora attuale è...",
+    "no": "Gjeldende tid er...",
+    "sv": "Aktuell tid är...",
+    "pl": "Aktualny czas to...",
+    "ru": "Текущее время...",
+    "ko": "현재 시간이..."
+  },
+  "titleFormatted": {
+    "en": "Current time is [[comparison]] [[time]]",
+    "nl": "Huidige tijd is [[comparison]] [[time]]",
+    "da": "Aktuel tid er [[comparison]] [[time]]",
+    "de": "Aktuelle Zeit ist [[comparison]] [[time]]",
+    "es": "La hora actual es [[comparison]] [[time]]",
+    "fr": "L'heure actuelle est [[comparison]] [[time]]",
+    "it": "L'ora attuale è [[comparison]] [[time]]",
+    "no": "Gjeldende tid er [[comparison]] [[time]]",
+    "sv": "Aktuell tid är [[comparison]] [[time]]",
+    "pl": "Aktualny czas to [[comparison]] [[time]]",
+    "ru": "Текущее время [[comparison]] [[time]]",
+    "ko": "현재 시간이 [[time]] [[comparison]]"
+  },
+  "args": [
+    {
+      "name": "comparison",
+      "type": "dropdown",
+      "title": {
+        "en": "Comparison",
+        "nl": "Vergelijking",
+        "da": "Sammenligning",
+        "de": "Vergleich",
+        "es": "Comparación",
+        "fr": "Comparaison",
+        "it": "Confronto",
+        "no": "Sammenligning",
+        "sv": "Jämförelse",
+        "pl": "Porównanie",
+        "ru": "Сравнение",
+        "ko": "비교"
+      },
+      "values": [
+        {
+          "id": "before",
+          "title": {
+            "en": "before",
+            "nl": "voor",
+            "da": "før",
+            "de": "vor",
+            "es": "antes de",
+            "fr": "avant",
+            "it": "prima",
+            "no": "før",
+            "sv": "före",
+            "pl": "przed",
+            "ru": "до",
+            "ko": "이전"
+          }
+        },
+        {
+          "id": "after",
+          "title": {
+            "en": "after",
+            "nl": "na",
+            "da": "efter",
+            "de": "nach",
+            "es": "después de",
+            "fr": "après",
+            "it": "dopo",
+            "no": "etter",
+            "sv": "efter",
+            "pl": "po",
+            "ru": "после",
+            "ko": "이후"
+          }
+        }
+      ],
+      "required": true
+    },
+    {
+      "name": "time",
+      "type": "time",
+      "title": {
+        "en": "Time",
+        "nl": "Tijd",
+        "da": "Tid",
+        "de": "Zeit",
+        "es": "Hora",
+        "fr": "Heure",
+        "it": "Ora",
+        "no": "Tid",
+        "sv": "Tid",
+        "pl": "Czas",
+        "ru": "Время",
+        "ko": "시간"
+      },
+      "required": true
+    }
+  ]
+}

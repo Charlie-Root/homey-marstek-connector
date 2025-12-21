@@ -1,0 +1,39 @@
+{
+  "id": "marstek_grid_import_condition",
+  "title": {
+    "en": "Grid is importing",
+    "nl": "Net is importerend",
+    "da": "Net importerer",
+    "de": "Netz importiert",
+    "es": "Red está importando",
+    "fr": "Réseau importe",
+    "it": "Rete sta importando",
+    "no": "Nett importerer",
+    "sv": "Nät importerar",
+    "pl": "Sieć importuje",
+    "ru": "Сеть импортирует",
+    "ko": "그리드가 가져오는 중"
+  },
+  "titleFormatted": {
+    "en": "Grid is importing",
+    "nl": "Net is importerend",
+    "da": "Net importerer",
+    "de": "Netz importiert",
+    "es": "Red está importando",
+    "fr": "Réseau importe",
+    "it": "Rete sta importando",
+    "no": "Nett importerer",
+    "sv": "Nät importerar",
+    "pl": "Sieć importuje",
+    "ru": "Сеть импортирует",
+    "ko": "그리드가 가져오는 중"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "id": "marstek_charging_state_condition",
+  "title": {
+    "en": "Battery charging state is...",
+    "nl": "Batterij laadtoestand is...",
+    "da": "Batteri ladetilstand er...",
+    "de": "Batterie Ladezustand ist...",
+    "es": "Estado de carga de batería es...",
+    "fr": "État de charge de batterie est...",
+    "it": "Stato di carica batteria è...",
+    "no": "Batteri ladetilstand er...",
+    "sv": "Batteri laddningstillstånd är...",
+    "pl": "Stan ładowania baterii jest...",
+    "ru": "Состояние зарядки батареи...",
+    "ko": "배터리 충전 상태가..."
+  },
+  "titleFormatted": {
+    "en": "Battery charging state is [[state]]",
+    "nl": "Batterij laadtoestand is [[state]]",
+    "da": "Batteri ladetilstand er [[state]]",
+    "de": "Batterie Ladezustand ist [[state]]",
+    "es": "Estado de carga de batería es [[state]]",
+    "fr": "État de charge de batterie est [[state]]",
+    "it": "Stato di carica batteria è [[state]]",
+    "no": "Batteri ladetilstand er [[state]]",
+    "sv": "Batteri laddningstillstånd är [[state]]",
+    "pl": "Stan ładowania baterii jest [[state]]",
+    "ru": "Состояние зарядки батареи  [[state]]",
+    "ko": "의 배터리 충전 상태가 [[state]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus",
+      "required": true
+    },
+    {
+      "name": "state",
+      "type": "dropdown",
+      "title": {
+        "en": "Charging State",
+        "nl": "Laadtoestand",
+        "da": "Ladetilstand",
+        "de": "Ladezustand",
+        "es": "Estado de Carga",
+        "fr": "État de Charge",
+        "it": "Stato di Carica",
+        "no": "Ladetilstand",
+        "sv": "Laddningstillstånd",
+        "pl": "Stan Ładowania",
+        "ru": "Состояние Зарядки",
+        "ko": "충전 상태"
+      },
+      "values": [
+        {
+          "id": "charging",
+          "title": {
+            "en": "charging",
+            "nl": "bezig met laden",
+            "da": "lader",
+            "de": "lädt",
+            "es": "cargando",
+            "fr": "en charge",
+            "it": "in carica",
+            "no": "lader",
+            "sv": "laddar",
+            "pl": "ładuje się",
+            "ru": "заряжается",
+            "ko": "충전 중"
+          }
+        },
+        {
+          "id": "discharging",
+          "title": {
+            "en": "discharging",
+            "nl": "bezig met ontladen",
+            "da": "aflader",
+            "de": "entlädt",
+            "es": "descargando",
+            "fr": "en décharge",
+            "it": "in scarica",
+            "no": "utlader",
+            "sv": "urladdar",
+            "pl": "rozładowuje się",
+            "ru": "разряжается",
+            "ko": "방전 중"
+          }
+        },
+        {
+          "id": "idle",
+          "title": {
+            "en": "idle",
+            "nl": "inactief",
+            "da": "inaktiv",
+            "de": "inaktiv",
+            "es": "inactivo",
+            "fr": "inactif",
+            "it": "inattivo",
+            "no": "inaktiv",
+            "sv": "inaktiv",
+            "pl": "bezczynny",
+            "ru": "неактивен",
+            "ko": "대기 중"
+          }
+        }
+      ],
+      "required": true
+    }
+  ]
+}
