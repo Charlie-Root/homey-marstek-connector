@@ -423,7 +423,9 @@ export function aggregateDailyStatsOptimized(
   }
 
   // Convert to sorted array efficiently
-  return Array.from(dailyMap.values()).sort((a, b) => a.date.localeCompare(b.date));
+  const result = Array.from(dailyMap.values()).sort((a, b) => a.date.localeCompare(b.date));
+  
+  return result;
 }
 
 /**
@@ -553,27 +555,23 @@ export function generateStatisticsMemoryReport(entries: StatisticsEntry[]): Stat
  * @returns Object with detailed breakdown metrics
  */
 export function calculateDetailedBreakdown(entries: StatisticsEntry[]) {
-  const dailyStats = aggregateDailyStats(entries);
   const today = new Date().toISOString().split('T')[0];
-  const todayStat = dailyStats.find((ds) => ds.date === today);
 
-  if (!todayStat) {
-    return {
-      chargeEnergy: 0,
-      dischargeEnergy: 0,
-      savings: 0,
-      cost: 0,
-      netProfit: 0,
-    };
-  }
+  // Filter entries for today
+  const todayEntries = entries.filter(entry => {
+    const entryDate = new Date(entry.timestamp * 1000).toISOString().split('T')[0];
+    return entryDate === today;
+  });
 
-  // Calculate detailed breakdown
+  console.log(`[BREAKDOWN] Today's date: ${today}, Total entries: ${entries.length}, Today's entries: ${todayEntries.length}`);
+
+  // Calculate detailed breakdown from today's entries
   let chargeEnergy = 0;
   let dischargeEnergy = 0;
   let savings = 0;
   let cost = 0;
 
-  for (const entry of todayStat.events) {
+  for (const entry of todayEntries) {
     if (entry.type === 'charging') {
       chargeEnergy += Math.abs(entry.energyAmount);
       if (entry.priceAtTime) {
@@ -588,6 +586,8 @@ export function calculateDetailedBreakdown(entries: StatisticsEntry[]) {
   }
 
   const netProfit = savings - cost;
+
+  console.log(`[BREAKDOWN] Results: chargeEnergy=${chargeEnergy.toFixed(3)} kWh, dischargeEnergy=${dischargeEnergy.toFixed(3)} kWh, savings=€${savings.toFixed(2)}, cost=€${cost.toFixed(2)}, netProfit=€${netProfit.toFixed(2)}`);
 
   return {
     chargeEnergy,

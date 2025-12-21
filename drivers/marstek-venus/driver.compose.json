@@ -284,6 +284,78 @@
       },
       "decimals": 0,
       "units": "method"
+    },
+    "measure_power.a": {
+      "title": {
+        "en": "Phase A Power",
+        "nl": "Fase A Vermogen",
+        "da": "Fase A Effekt",
+        "de": "Phase A Leistung",
+        "es": "Potencia Fase A",
+        "fr": "Puissance Phase A",
+        "it": "Potenza Fase A",
+        "no": "Fase A Effekt",
+        "sv": "Fas A Effekt",
+        "pl": "Moc Fazy A",
+        "ru": "Мощность Фазы A",
+        "ko": "A상 전력"
+      },
+      "decimals": 0,
+      "units": "W"
+    },
+    "measure_power.b": {
+      "title": {
+        "en": "Phase B Power",
+        "nl": "Fase B Vermogen",
+        "da": "Fase B Effekt",
+        "de": "Phase B Leistung",
+        "es": "Potencia Fase B",
+        "fr": "Puissance Phase B",
+        "it": "Potenza Fase B",
+        "no": "Fase B Effekt",
+        "sv": "Fas B Effekt",
+        "pl": "Moc Fazy B",
+        "ru": "Мощность Фазы B",
+        "ko": "B상 전력"
+      },
+      "decimals": 0,
+      "units": "W"
+    },
+    "measure_power.c": {
+      "title": {
+        "en": "Phase C Power",
+        "nl": "Fase C Vermogen",
+        "da": "Fase C Effekt",
+        "de": "Phase C Leistung",
+        "es": "Potencia Fase C",
+        "fr": "Puissance Phase C",
+        "it": "Potenza Fase C",
+        "no": "Fase C Effekt",
+        "sv": "Fas C Effekt",
+        "pl": "Moc Fazy C",
+        "ru": "Мощность Фазы C",
+        "ko": "C상 전력"
+      },
+      "decimals": 0,
+      "units": "W"
+    },
+    "measure_power.total": {
+      "title": {
+        "en": "Total Power",
+        "nl": "Totaal Vermogen",
+        "da": "Total Effekt",
+        "de": "Gesamtleistung",
+        "es": "Potencia Total",
+        "fr": "Puissance Totale",
+        "it": "Potenza Totale",
+        "no": "Total Effekt",
+        "sv": "Total Effekt",
+        "pl": "Moc Całkowita",
+        "ru": "Общая Мощность",
+        "ko": "총 전력"
+      },
+      "decimals": 0,
+      "units": "W"
     }
   },
   "capabilityGroups": {
@@ -350,8 +422,34 @@
         "measure_power",
         "measure_power_ongrid",
         "measure_power_offgrid",
+        "measure_power.a",
+        "measure_power.b",
+        "measure_power.c",
+        "measure_power.total",
         "last_message_received",
         "measure_rssi"
+      ]
+    },
+    "phase_power_group": {
+      "name": {
+        "en": "Phase Power",
+        "nl": "Fase Vermogen",
+        "da": "Fase Effekt",
+        "de": "Phasenleistung",
+        "es": "Potencia de Fase",
+        "fr": "Puissance de Phase",
+        "it": "Potenza di Fase",
+        "no": "Fase Effekt",
+        "sv": "Fas Effekt",
+        "pl": "Moc Fazy",
+        "ru": "Мощность Фазы",
+        "ko": "위상 전력"
+      },
+      "capabilities": [
+        "measure_power.a",
+        "measure_power.b",
+        "measure_power.c",
+        "measure_power.total"
       ]
     }
   },

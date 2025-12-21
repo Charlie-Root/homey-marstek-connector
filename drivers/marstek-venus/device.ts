@@ -68,6 +68,18 @@ export default class MarstekVenusDevice extends Homey.Device {
       // Register capability listeners
       await this.registerCapabilityListener('battery_mode', this.onCapabilityBatteryMode.bind(this));
 
+      // Register listeners for P&L capabilities to ensure UI updates
+      await this.registerCapabilityListener('measure_battery_profit_daily', this.onCapabilityProfitDaily.bind(this));
+      await this.registerCapabilityListener('measure_battery_profit_hourly', this.onCapabilityProfitHourly.bind(this));
+      await this.registerCapabilityListener('measure_battery_charge_energy_daily', this.onCapabilityChargeEnergyDaily.bind(this));
+      await this.registerCapabilityListener('measure_battery_discharge_energy_daily', this.onCapabilityDischargeEnergyDaily.bind(this));
+      await this.registerCapabilityListener('measure_battery_savings_daily', this.onCapabilitySavingsDaily.bind(this));
+      await this.registerCapabilityListener('measure_battery_cost_daily', this.onCapabilityCostDaily.bind(this));
+      await this.registerCapabilityListener('measure_battery_net_profit_daily', this.onCapabilityNetProfitDaily.bind(this));
+      await this.registerCapabilityListener('measure_calculation_timestamp', this.onCapabilityCalculationTimestamp.bind(this));
+      await this.registerCapabilityListener('measure_current_energy_price', this.onCapabilityEnergyPrice.bind(this));
+      await this.registerCapabilityListener('measure_calculation_method', this.onCapabilityCalculationMethod.bind(this));
+
       // Send initial requests to populate data immediately
       await this.sendInitialRequests();
 
@@ -208,10 +220,15 @@ export default class MarstekVenusDevice extends Homey.Device {
         // Try to retrieve the firmware version from the settings (including deprecated method)
         let firmware = 0;
         if (this.getSetting('firmware')) {
-          firmware = Number(this.getSetting('firmware'));
+           firmware = Number(String(this.getSetting('firmware')).replace(/\./g, ''));
         } else {
-          const model = this.getSetting('model');
-          if (model) firmware = Number(model.split(' v')[1]);
+           const model = this.getSetting('model');
+           if (model) {
+             const versionPart = model.split(' v')[1];
+             if (versionPart) {
+               firmware = Number(versionPart.replace(/\./g, ''));
+             }
+           }
         }
 
         // Determine the capabilities to changed based on the content of the received message
@@ -238,9 +255,14 @@ export default class MarstekVenusDevice extends Homey.Device {
           // Battery power and charging state
           if (!isNaN(result.bat_power)) {
             // Charge state (Possible values: "idle", "charging", "discharging")
-            this.log('[stats] Battery power:', result.bat_power);
+            if (this.debug) this.log('[stats] Battery power:', result.bat_power);
             await this.setCapabilityValue('battery_charging_state', (result.bat_power > 0) ? 'charging' : (result.bat_power < 0) ? 'discharging' : 'idle');
             await this.setCapabilityValue('measure_power', result.bat_power / ((firmware >= 154) ? 1.0 : 10.0));
+          } else {
+            this.log('[stats] Battery power not available');
+            if (!isNaN(result.ongrid_power)) {
+              await this.setCapabilityValue('battery_charging_state', (result.ongrid_power > 0) ? 'charging' : (result.bat_power < 0) ? 'discharging' : 'idle');
+            }
           }
 
           // Input and output energy (kWh)
@@ -302,8 +324,11 @@ export default class MarstekVenusDevice extends Homey.Device {
 
           // Statistics/profit calculation: strictly based on authoritative grid counters
           if (this.getSetting('enable_statistics')) {
+            if (this.debug) this.log('[P&L] Statistics enabled, processing grid counter statistics');
             await this.processGridCounterStatistics(result, divisor);
-            await this.updateProfitCapabilities();
+            if (this.debug) this.log('[P&L] Grid counter statistics processing completed');
+          } else {
+            if (this.debug) this.log('[P&L] Statistics disabled, skipping statistics processing');
           }
         }
       } catch (error) {
@@ -325,16 +350,37 @@ export default class MarstekVenusDevice extends Homey.Device {
      */
     private async processGridCounterStatistics(result: any, divisorRawPerKwh: number): Promise<void> {
       if (this.debug) this.log('enable_statistics is enabled, processing grid counter statistics');
+      // DEBUG: Log current grid counter values for troubleshooting
+      if (this.debug && this.getSetting('statistics_debug')) {
+        this.log(`[P&L] Current grid counters: input=${result.total_grid_input_energy}, output=${result.total_grid_output_energy}, divisor=${divisorRawPerKwh}`);
+      }
+
+      // DEBUG: Check if counters are static (no energy flow)
+      const storedState: GridCounterAccumulatorState | null = this.getStoreValue(MarstekVenusDevice.GRID_COUNTER_ACCUMULATOR_STORE_KEY) || null;
+      if (storedState && this.debug && this.getSetting('statistics_debug')) {
+        const currentInputRaw = Number(result.total_grid_input_energy);
+        const currentOutputRaw = Number(result.total_grid_output_energy);
+        const deltaInput = currentInputRaw - storedState.lastInputRaw;
+        const deltaOutput = currentOutputRaw - storedState.lastOutputRaw;
+        if (deltaInput === 0 && deltaOutput === 0) {
+          this.log(`[P&L] WARNING: Grid counters are static - no energy flow detected. Input: ${currentInputRaw}, Output: ${currentOutputRaw}`);
+        } else {
+          this.log(`[P&L] Energy flow detected: input_delta=${deltaInput}, output_delta=${deltaOutput}`);
+        }
+      }
 
       // Wait for lock to be released if another operation is in progress
       while (this.statisticsLock) {
         await new Promise((resolve) => setTimeout(resolve, 10));
       }
 
-      // Acquire lock
-      this.statisticsLock = true;
+  // Acquire lock
+  this.statisticsLock = true;
 
-      try {
+  // Prepare an array to collect entries that must be persisted after the lock is released
+  const pendingEntries: StatisticsEntry[] = [];
+
+  try {
         const now = new Date();
         const nowSec = Math.floor(now.getTime() / 1000);
 
@@ -395,14 +441,50 @@ export default class MarstekVenusDevice extends Homey.Device {
           outputRaw: currentOutputRaw,
           divisorRawPerKwh,
         }, {
-          flushIntervalMinutes: 60,
+          flushIntervalMinutes: 15, // Reduced from 60 to 15 minutes for faster calculation triggers
+          minDeltaTriggerRaw: 5, // New: minimum delta to trigger immediate flush (5 raw units)
         });
-
-        if (this.debug && update.reason && update.reason !== 'no_flush') {
-          this.log('[grid_counters] accumulator update:', update.reason);
+        // DEBUG: Log accumulator update result
+        if (this.debug && this.getSetting('statistics_debug')) {
+          this.log(`[P&L] Accumulator update: reason=${update.reason}, hasFlush=${!!update.flush}, accInputDelta=${update.state.accInputDeltaRaw}, accOutputDelta=${update.state.accOutputDeltaRaw}`);
         }
 
-        if (update.flush) {
+        // Enhanced logging for flush triggers and reasons
+        if (update.reason && update.reason !== 'no_flush') {
+          if (this.debug && this.getSetting('statistics_debug')) {
+            this.log('[grid_counters] accumulator update:', update.reason);
+          }
+
+          // Log flush trigger details
+          if (update.flush) {
+            const flushDetails = {
+              reason: update.reason,
+              durationMinutes: update.flush.durationMinutes,
+              inputDeltaRaw: update.flush.deltaInputRaw,
+              outputDeltaRaw: update.flush.deltaOutputRaw,
+              divisorRawPerKwh: update.flush.divisorRawPerKwh,
+              inputDeltaKwh: update.flush.deltaInputRaw / update.flush.divisorRawPerKwh,
+              outputDeltaKwh: update.flush.deltaOutputRaw / update.flush.divisorRawPerKwh,
+              timestamp: new Date(update.flush.endTimestampSec * 1000).toISOString()
+            };
+
+            if (this.debug && this.getSetting('statistics_debug')) {
+              this.log(`[P&L] FLUSH TRIGGERED: ${update.reason.toUpperCase()}`);
+              this.log(`[P&L] Flush details:`, JSON.stringify(flushDetails, null, 2));
+
+              // Log specific trigger conditions
+              if (update.reason === 'delta_trigger') {
+                this.log(`[P&L] Delta trigger activated: input=${update.flush.deltaInputRaw}, output=${update.flush.deltaOutputRaw}, minDelta=5`);
+              } else if (update.reason === 'time_interval') {
+                this.log(`[P&L] Time interval trigger activated: duration=${update.flush.durationMinutes}min, threshold=15min`);
+              } else if (update.reason === 'utc_day_boundary') {
+                this.log(`[P&L] UTC day boundary trigger activated`);
+              }
+            }
+          }
+        }
+
+  if (update.flush) {
           const {
             startTimestampSec,
             endTimestampSec,
@@ -415,7 +497,7 @@ export default class MarstekVenusDevice extends Homey.Device {
             deltaOutputRaw,
           } = update.flush;
 
-          if (this.debug) {
+          if (this.debug && this.getSetting('statistics_debug')) {
             this.log('[grid_counters] Flushing accumulated deltas', {
               durationMinutes,
               deltaInputRaw,
@@ -425,8 +507,54 @@ export default class MarstekVenusDevice extends Homey.Device {
           }
 
           const duration = Math.max(0, durationMinutes);
-          const importKwh = deltaInputRaw / divisorRawPerKwh;
-          const exportKwh = deltaOutputRaw / divisorRawPerKwh;
+
+          // Sanity-check divisor: different firmwares/reporting may use divisors 10, 100 or 1000.
+          // If computed kWh is implausibly large, try alternate divisors and pick the most plausible.
+          const batteryCapacityKwh = Number(this.getSetting('battery_capacity_kwh')) || null; // optional hint from user
+
+          const computeKwh = (raw: number, divisor: number) => raw / divisor;
+
+          const isImplausible = (kwh: number) => {
+            if (!Number.isFinite(kwh)) return true;
+            if (kwh < 0) return true;
+            if (batteryCapacityKwh && kwh > (batteryCapacityKwh * 2)) return true; // more than twice battery capacity in one flush
+            if (!batteryCapacityKwh && kwh > 20) return true; // default absolute threshold
+            return false;
+          };
+
+          let usedDivisor = divisorRawPerKwh;
+          let importKwh = computeKwh(deltaInputRaw, usedDivisor);
+          let exportKwh = computeKwh(deltaOutputRaw, usedDivisor);
+
+          if ((importKwh > 0 && isImplausible(importKwh)) || (exportKwh > 0 && isImplausible(exportKwh))) {
+            const candidateDivisors = [10, 100, 1000];
+            if (!candidateDivisors.includes(usedDivisor)) candidateDivisors.unshift(usedDivisor);
+
+            if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Implausible energy detected, trying alternate divisors', {
+              initialDivisor: usedDivisor,
+              importKwh,
+              exportKwh,
+              batteryCapacityKwh,
+            });
+
+            let found = false;
+            for (const d of candidateDivisors) {
+              const trialImport = computeKwh(deltaInputRaw, d);
+              const trialExport = computeKwh(deltaOutputRaw, d);
+              if ((trialImport === 0 || !isImplausible(trialImport)) && (trialExport === 0 || !isImplausible(trialExport))) {
+                usedDivisor = d;
+                importKwh = trialImport;
+                exportKwh = trialExport;
+                found = true;
+                if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Selected alternate divisor', d, 'importKwh', importKwh, 'exportKwh', exportKwh);
+                break;
+              }
+            }
+
+            if (!found) {
+              if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] No plausible alternate divisor found; keeping original divisor', usedDivisor);
+            }
+          }
 
           const settings = {
             debug: this.getSetting('statistics_debug'),
@@ -434,24 +562,30 @@ export default class MarstekVenusDevice extends Homey.Device {
           };
 
           if (importKwh > 0) {
+            // Compute time-weighted price across the flushed interval
+            const weightedPrice = this.computeTimeWeightedPrice(startTimestampSec, endTimestampSec, price);
+            if (this.debug && this.getSetting('statistics_debug')) {
+              this.log('[P&L] Using weighted price for charging entry:', weightedPrice, ' (fallback:', price, ')');
+            }
+
             const entry: StatisticsEntry = {
               timestamp: endTimestampSec,
               type: 'charging',
               energyAmount: importKwh, // Positive for charging
               duration,
-              priceAtTime: price,
+              priceAtTime: weightedPrice,
               startEnergyMeter: startInputRaw,
               endEnergyMeter: endInputRaw,
               calculationAudit: {
                 precisionLoss: 0,
                 validationWarnings: [],
-                calculationMethod: 'grid_counters_import',
+                calculationMethod: 'grid_counters_import_time_weighted',
                 isOutlier: false,
-                recoveryActions: [],
+                recoveryActions: (usedDivisor !== divisorRawPerKwh) ? [`divisor_adjusted:${usedDivisor}`] : [],
               },
             };
 
-            if (this.debug) {
+            if (this.debug && this.getSetting('statistics_debug')) {
               const profitSavingsResult = calculateProfitSavings(entry);
               this.log('[P&L] Calculated P&L value for charging:', profitSavingsResult.profitSavings, '€');
             }
@@ -467,29 +601,35 @@ export default class MarstekVenusDevice extends Homey.Device {
                 divisorRawPerKwh,
               },
             });
-
-            await this.logStatisticsEntry(entry);
+            // Defer the device-local persistent logging until after we release the statisticsLock
+            pendingEntries.push(entry);
           }
 
           if (exportKwh > 0) {
+            // Compute time-weighted price across the flushed interval
+            const weightedPrice = this.computeTimeWeightedPrice(startTimestampSec, endTimestampSec, price);
+            if (this.debug && this.getSetting('statistics_debug')) {
+              this.log('[P&L] Using weighted price for discharging entry:', weightedPrice, ' (fallback:', price, ')');
+            }
+
             const entry: StatisticsEntry = {
               timestamp: endTimestampSec,
               type: 'discharging',
               energyAmount: -exportKwh, // Negative for discharging
               duration,
-              priceAtTime: price,
+              priceAtTime: weightedPrice,
               startEnergyMeter: startOutputRaw,
               endEnergyMeter: endOutputRaw,
               calculationAudit: {
                 precisionLoss: 0,
                 validationWarnings: [],
-                calculationMethod: 'grid_counters_export',
+                calculationMethod: 'grid_counters_export_time_weighted',
                 isOutlier: false,
-                recoveryActions: [],
+                recoveryActions: (usedDivisor !== divisorRawPerKwh) ? [`divisor_adjusted:${usedDivisor}`] : [],
               },
             };
 
-            if (this.debug) {
+            if (this.debug && this.getSetting('statistics_debug')) {
               const profitSavingsResult = calculateProfitSavings(entry);
               this.log('[P&L] Calculated P&L value for discharging:', profitSavingsResult.profitSavings, '€');
             }
@@ -505,15 +645,40 @@ export default class MarstekVenusDevice extends Homey.Device {
                 divisorRawPerKwh,
               },
             });
-
-            await this.logStatisticsEntry(entry);
+            // Defer the device-local persistent logging until after we release the statisticsLock
+            pendingEntries.push(entry);
           }
+        }
+
+        
+        // DEBUG: Log final accumulator state
+        if (this.debug && this.getSetting('statistics_debug')) {
+          const finalState = update.state;
+          this.log(`[P&L] Final accumulator state: duration=${(nowSec - finalState.accStartTimestampSec) / 60}min, accInputDelta=${finalState.accInputDeltaRaw}, accOutputDelta=${finalState.accOutputDeltaRaw}`);
         }
 
         await this.setStoreValue(MarstekVenusDevice.GRID_COUNTER_ACCUMULATOR_STORE_KEY, update.state);
       } finally {
         // Release lock
         this.statisticsLock = false;
+      }
+
+      // Process any deferred/pending entries now that the lock is released
+      try {
+        if (pendingEntries.length > 0) {
+          if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Processing deferred statistics entries:', pendingEntries.length);
+          for (const e of pendingEntries) {
+            // This method acquires its own lock internally and persists the statistics store
+            await this.logStatisticsEntry(e);
+          }
+        }
+
+        // After successfully processing and saving statistics entries, update the profit capabilities
+        if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] CRITICAL: About to call updateProfitCapabilities() - this should be visible in logs');
+        await this.updateProfitCapabilities();
+        if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] CRITICAL: updateProfitCapabilities() completed successfully');
+      } catch (err) {
+        this.error('[P&L] Error while processing deferred statistics entries or updating capabilities:', err);
       }
     }
 
@@ -748,6 +913,106 @@ export default class MarstekVenusDevice extends Homey.Device {
     }
 
     /**
+     * Handle measure_battery_profit_daily capability changes.
+     * @param {number} value The new profit value
+     */
+    async onCapabilityProfitDaily(value: number) {
+      if (this.debug && this.getSetting('statistics_debug')) this.log('Profit daily capability updated to:', value);
+      // This is a read-only capability, just log the update
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Profit daily capability listener triggered with value:', value);
+    }
+
+    /**
+     * Handle measure_battery_profit_hourly capability changes.
+     * @param {number} value The new hourly profit value
+     */
+    async onCapabilityProfitHourly(value: number) {
+      if (this.debug && this.getSetting('statistics_debug')) this.log('Profit hourly capability updated to:', value);
+      // This is a read-only capability, just log the update
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Profit hourly capability listener triggered with value:', value);
+    }
+
+    /**
+     * Handle measure_battery_charge_energy_daily capability changes.
+     * @param {number} value The new charge energy value
+     */
+    async onCapabilityChargeEnergyDaily(value: number) {
+      if (this.debug && this.getSetting('statistics_debug')) this.log('Charge energy daily capability updated to:', value);
+      // This is a read-only capability, just log the update
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Charge energy daily capability listener triggered with value:', value);
+    }
+
+    /**
+     * Handle measure_battery_discharge_energy_daily capability changes.
+     * @param {number} value The new discharge energy value
+     */
+    async onCapabilityDischargeEnergyDaily(value: number) {
+      if (this.debug && this.getSetting('statistics_debug')) this.log('Discharge energy daily capability updated to:', value);
+      // This is a read-only capability, just log the update
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Discharge energy daily capability listener triggered with value:', value);
+    }
+
+    /**
+     * Handle measure_battery_savings_daily capability changes.
+     * @param {number} value The new savings value
+     */
+    async onCapabilitySavingsDaily(value: number) {
+      if (this.debug && this.getSetting('statistics_debug')) this.log('Savings daily capability updated to:', value);
+      // This is a read-only capability, just log the update
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Savings daily capability listener triggered with value:', value);
+    }
+
+    /**
+     * Handle measure_battery_cost_daily capability changes.
+     * @param {number} value The new cost value
+     */
+    async onCapabilityCostDaily(value: number) {
+      if (this.debug && this.getSetting('statistics_debug')) this.log('Cost daily capability updated to:', value);
+      // This is a read-only capability, just log the update
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Cost daily capability listener triggered with value:', value);
+    }
+
+    /**
+     * Handle measure_battery_net_profit_daily capability changes.
+     * @param {number} value The new net profit value
+     */
+    async onCapabilityNetProfitDaily(value: number) {
+      if (this.debug && this.getSetting('statistics_debug')) this.log('Net profit daily capability updated to:', value);
+      // This is a read-only capability, just log the update
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Net profit daily capability listener triggered with value:', value);
+    }
+
+    /**
+     * Handle measure_calculation_timestamp capability changes.
+     * @param {number} value The new timestamp value
+     */
+    async onCapabilityCalculationTimestamp(value: number) {
+      if (this.debug && this.getSetting('statistics_debug')) this.log('Calculation timestamp capability updated to:', value);
+      // This is a read-only capability, just log the update
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Calculation timestamp capability listener triggered with value:', value);
+    }
+
+    /**
+     * Handle measure_current_energy_price capability changes.
+     * @param {number} value The new energy price value
+     */
+    async onCapabilityEnergyPrice(value: number) {
+      if (this.debug && this.getSetting('statistics_debug')) this.log('Energy price capability updated to:', value);
+      // This is a read-only capability, just log the update
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Energy price capability listener triggered with value:', value);
+    }
+
+    /**
+     * Handle measure_calculation_method capability changes.
+     * @param {string} value The new calculation method value
+     */
+    async onCapabilityCalculationMethod(value: string) {
+      if (this.debug && this.getSetting('statistics_debug')) this.log('Calculation method capability updated to:', value);
+      // This is a read-only capability, just log the update
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Calculation method capability listener triggered with value:', value);
+    }
+
+    /**
      * Get the current energy price from settings with validation
      * @returns {number} Current energy price in €/kWh
      */
@@ -771,7 +1036,109 @@ export default class MarstekVenusDevice extends Homey.Device {
 
       this.log('Using validated energy price from settings:', price, '€/kWh');
       if (this.debug) this.log('[P&L] Applied price type check: typeof =', typeof price, ', isFinite =', Number.isFinite(price));
+      // Record a price snapshot for time-weighted calculations (fire-and-forget)
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        this.recordPriceSnapshot(price);
+      } catch (e) {
+        // ignore recording errors
+      }
+
       return price;
+    }
+
+    /**
+     * Record a timestamped price snapshot in the device store for later time-weighted calculations.
+     * Keeps history trimmed to the last 72 hours to avoid growth.
+     * This is best-effort and intentionally non-blocking when called from synchronous code.
+     * @param price Price in €/kWh
+     */
+    async recordPriceSnapshot(price: number): Promise<void> {
+      try {
+        const nowSec = Math.floor(Date.now() / 1000);
+        const key = 'price_history';
+        const existing: Array<{ ts: number; price: number }> = this.getStoreValue(key) || [];
+
+        // Only append if price changed or the last snapshot is older than 1 hour
+        const last = existing.length > 0 ? existing[existing.length - 1] : undefined;
+        if (last && last.price === price && (nowSec - last.ts) < 3600) {
+          return; // nothing to do
+        }
+
+        existing.push({ ts: nowSec, price });
+
+        // Trim snapshots older than 72 hours
+        const cutoff = nowSec - (72 * 60 * 60);
+        const trimmed = existing.filter((s) => s.ts >= cutoff);
+
+        // Persist (do not await so callers remain synchronous)
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        this.setStoreValue(key, trimmed);
+      } catch (err) {
+        this.error('Failed to record price snapshot:', err);
+      }
+    }
+
+    /**
+     * Compute a time-weighted average price for an interval [startSec, endSec].
+     * If no price history exists that covers the interval, returns fallbackPrice.
+     * @param startSec start timestamp (seconds)
+     * @param endSec end timestamp (seconds)
+     * @param fallbackPrice fallback if computation not possible
+     */
+    computeTimeWeightedPrice(startSec: number, endSec: number, fallbackPrice: number): number {
+      try {
+        if (!Number.isFinite(startSec) || !Number.isFinite(endSec) || endSec <= startSec) return fallbackPrice;
+
+        const key = 'price_history';
+        const history: Array<{ ts: number; price: number }> = this.getStoreValue(key) || [];
+        if (!history || history.length === 0) return fallbackPrice;
+
+        // Ensure sorted ascending
+        const hist = [...history].sort((a, b) => a.ts - b.ts);
+
+        // Find the price that applies at startSec: last snapshot with ts <= startSec
+        let idx = -1;
+        for (let i = 0; i < hist.length; i++) {
+          if (hist[i].ts <= startSec) idx = i;
+          else break;
+        }
+
+        // If no snapshot before start, use the first one as starting price (best-effort)
+        if (idx === -1) idx = 0;
+
+        let accPriceSeconds = 0;
+        const totalSeconds = endSec - startSec;
+
+        let segmentStart = startSec;
+        for (let i = idx; i < hist.length && segmentStart < endSec; i++) {
+          const segPrice = hist[i].price;
+          const nextTs = (i + 1 < hist.length) ? hist[i + 1].ts : Infinity;
+          const segEnd = Math.min(nextTs, endSec);
+          if (segEnd > segmentStart) {
+            const overlap = segEnd - segmentStart;
+            accPriceSeconds += overlap * segPrice;
+            segmentStart = segEnd;
+          }
+        }
+
+        // If we didn't reach endSec (no later snapshots), use last known price to cover remaining period
+        if (segmentStart < endSec) {
+          const lastPrice = hist[hist.length - 1].price;
+          accPriceSeconds += (endSec - segmentStart) * lastPrice;
+          segmentStart = endSec;
+        }
+
+        if (totalSeconds <= 0) return fallbackPrice;
+
+        const weighted = accPriceSeconds / totalSeconds;
+        if (!Number.isFinite(weighted) || isNaN(weighted)) return fallbackPrice;
+
+        return weighted;
+      } catch (err) {
+        this.error('Failed to compute time-weighted price:', err);
+        return fallbackPrice;
+      }
     }
 
     /**
@@ -795,6 +1162,9 @@ export default class MarstekVenusDevice extends Homey.Device {
         stats = cleanupOldEntries(stats, retentionDays);
         await this.setStoreValue('statistics', stats);
         if (this.debug) this.log('Logged statistics entry:', entry);
+        
+        // Log successful storage of statistics
+        if (this.debug && this.getSetting('statistics_debug')) this.log(`[P&L] Statistics entry saved successfully. Total entries now: ${stats.length}`);
 
         // Trigger flow card for statistics entry logged
         const calculationDetails = {
@@ -841,53 +1211,197 @@ export default class MarstekVenusDevice extends Homey.Device {
      * Update the profit capabilities based on aggregated statistics
      */
     async updateProfitCapabilities() {
+      if (this.debug && this.getSetting('statistics_debug')) {
+        this.log('[P&L] CRITICAL: updateProfitCapabilities() ENTERED - this proves the function is being called');
+        this.log('[P&L] updateProfitCapabilities() called - START');
+      }
+
       const stats: StatisticsEntry[] = this.getStoreValue('statistics') || [];
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Statistics entries count:', stats.length);
+
+      // Log the statistics data for debugging
+      if (this.debug && this.getSetting('statistics_debug') && stats.length > 0) {
+        this.log('[P&L] First few statistics entries:', stats.slice(0, 3).map(entry => ({
+          timestamp: entry.timestamp,
+          type: entry.type,
+          energyAmount: entry.energyAmount,
+          duration: entry.duration,
+          priceAtTime: entry.priceAtTime
+        })));
+      }
+
       if (stats.length === 0) {
-        await this.setCapabilityValue('measure_battery_profit_daily', 0);
-        await this.setCapabilityValue('measure_battery_profit_hourly', 0);
-        await this.setCapabilityValue('measure_battery_charge_energy_daily', 0);
-        await this.setCapabilityValue('measure_battery_discharge_energy_daily', 0);
-        await this.setCapabilityValue('measure_battery_savings_daily', 0);
-        await this.setCapabilityValue('measure_battery_cost_daily', 0);
-        await this.setCapabilityValue('measure_battery_net_profit_daily', 0);
+        if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] No statistics data available, setting all capabilities to 0');
+        await this.setCapabilityValueSafe('measure_battery_profit_daily', 0);
+        await this.setCapabilityValueSafe('measure_battery_profit_hourly', 0);
+        await this.setCapabilityValueSafe('measure_battery_charge_energy_daily', 0);
+        await this.setCapabilityValueSafe('measure_battery_discharge_energy_daily', 0);
+        await this.setCapabilityValueSafe('measure_battery_savings_daily', 0);
+        await this.setCapabilityValueSafe('measure_battery_cost_daily', 0);
+        await this.setCapabilityValueSafe('measure_battery_net_profit_daily', 0);
+        if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] updateProfitCapabilities() completed - END (no data)');
         return;
       }
 
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Processing statistics data...');
       const dailyStats = aggregateDailyStats(stats);
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Daily stats generated, count:', dailyStats.length);
+
       const today = new Date().toISOString().split('T')[0];
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Today\'s date:', today);
+
       const todayStat = dailyStats.find((ds) => ds.date === today);
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Today stat found:', !!todayStat);
 
       const dailyProfit = todayStat ? todayStat.totalProfit : 0;
-      this.log('[P&L] Daily profit:', dailyProfit, '€');
-      await this.setCapabilityValue('measure_battery_profit_daily', dailyProfit);
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Daily profit calculated:', dailyProfit, '€');
+
+      // Log the setCapabilityValue call for daily profit
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Setting measure_battery_profit_daily to:', dailyProfit);
+      await this.setCapabilityValueSafe('measure_battery_profit_daily', dailyProfit);
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] measure_battery_profit_daily set successfully');
 
       // Hourly profit: total daily profit divided by hours elapsed in the day
       const now = new Date();
       const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const hoursElapsed = (now.getTime() - startOfDay.getTime()) / (1000 * 60 * 60);
       const hourlyProfit = (hoursElapsed > 0) ? dailyProfit / hoursElapsed : 0;
-      this.log('[P&L] Hourly profit:', hourlyProfit, '€/h');
-      await this.setCapabilityValue('measure_battery_profit_hourly', hourlyProfit);
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Hourly profit calculated:', hourlyProfit, '€/h');
+
+      // Log the setCapabilityValue call for hourly profit
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Setting measure_battery_profit_hourly to:', hourlyProfit);
+      await this.setCapabilityValueSafe('measure_battery_profit_hourly', hourlyProfit);
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] measure_battery_profit_hourly set successfully');
 
       // Update detailed breakdown capabilities
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Calculating detailed breakdown...');
       const breakdown = calculateDetailedBreakdown(stats);
 
       if (this.debug || this.getSetting('statistics_transparency') || this.getSetting('show_calculation_details')) {
         this.log('[P&L] Detailed breakdown: charge_energy=', breakdown.chargeEnergy, 'kWh, discharge_energy=', breakdown.dischargeEnergy, 'kWh, savings=', breakdown.savings, '€, cost=', breakdown.cost, '€, net_profit=', breakdown.netProfit, '€');
       }
 
-      await this.setCapabilityValue('measure_battery_charge_energy_daily', breakdown.chargeEnergy);
-      await this.setCapabilityValue('measure_battery_discharge_energy_daily', breakdown.dischargeEnergy);
-      await this.setCapabilityValue('measure_battery_savings_daily', breakdown.savings);
-      await this.setCapabilityValue('measure_battery_cost_daily', breakdown.cost);
-      await this.setCapabilityValue('measure_battery_net_profit_daily', breakdown.netProfit);
+      // Log each setCapabilityValue call for detailed breakdown
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Setting measure_battery_charge_energy_daily to:', breakdown.chargeEnergy);
+      await this.setCapabilityValueSafe('measure_battery_charge_energy_daily', breakdown.chargeEnergy);
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] measure_battery_charge_energy_daily set successfully');
+
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Setting measure_battery_discharge_energy_daily to:', breakdown.dischargeEnergy);
+      await this.setCapabilityValueSafe('measure_battery_discharge_energy_daily', breakdown.dischargeEnergy);
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] measure_battery_discharge_energy_daily set successfully');
+
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Setting measure_battery_savings_daily to:', breakdown.savings);
+      await this.setCapabilityValueSafe('measure_battery_savings_daily', breakdown.savings);
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] measure_battery_savings_daily set successfully');
+
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Setting measure_battery_cost_daily to:', breakdown.cost);
+      await this.setCapabilityValueSafe('measure_battery_cost_daily', breakdown.cost);
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] measure_battery_cost_daily set successfully');
+
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Setting measure_battery_net_profit_daily to:', breakdown.netProfit);
+      await this.setCapabilityValueSafe('measure_battery_net_profit_daily', breakdown.netProfit);
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] measure_battery_net_profit_daily set successfully');
 
       // Update real-time calculation display capabilities
       const currentPrice = this.getCurrentEnergyPrice();
-      await this.setCapabilityValue('measure_current_energy_price', currentPrice);
-      await this.setCapabilityValue('measure_calculation_method', 'hybrid');
-      await this.setCapabilityValue('measure_calculation_timestamp', Math.floor(Date.now() / 1000));
-      if (this.debug) this.log('[P&L] Aggregation outputs updated: daily_profit=', dailyProfit, ', charge_energy=', breakdown.chargeEnergy, ', discharge_energy=', breakdown.dischargeEnergy, ', savings=', breakdown.savings, ', cost=', breakdown.cost, ', net_profit=', breakdown.netProfit);
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Setting measure_current_energy_price to:', currentPrice);
+      await this.setCapabilityValueSafe('measure_current_energy_price', currentPrice);
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] measure_current_energy_price set successfully');
+
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Setting measure_calculation_method to: hybrid');
+      await this.setCapabilityValueSafe('measure_calculation_method', 'hybrid');
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] measure_calculation_method set successfully');
+
+      const timestamp = Math.floor(Date.now() / 1000);
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Setting measure_calculation_timestamp to:', timestamp);
+      await this.setCapabilityValueSafe('measure_calculation_timestamp', timestamp);
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] measure_calculation_timestamp set successfully');
+
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Aggregation outputs updated: daily_profit=', dailyProfit, ', charge_energy=', breakdown.chargeEnergy, ', discharge_energy=', breakdown.dischargeEnergy, ', savings=', breakdown.savings, ', cost=', breakdown.cost, ', net_profit=', breakdown.netProfit);
+
+      // Force UI refresh to ensure Homey app displays the updated values
+      await this.forceUIRefresh();
+
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] updateProfitCapabilities() completed - END');
+    }
+
+    /**
+     * Safely set a capability value with proper formatting and error handling
+     * @param capability The capability name
+     * @param value The value to set
+     */
+    async setCapabilityValueSafe(capability: string, value: any): Promise<void> {
+      try {
+        // Ensure value is a valid number for numeric capabilities
+        if (typeof value === 'number' && !Number.isFinite(value)) {
+          this.log(`[P&L] WARNING: Invalid numeric value ${value} for capability ${capability}, setting to 0`);
+          value = 0;
+        }
+
+        // Format the value based on capability type
+        let formattedValue = value;
+        if (typeof value === 'number') {
+          // Round to appropriate decimal places based on capability
+          if (capability.includes('profit') || capability.includes('savings') || capability.includes('cost')) {
+            formattedValue = Math.round(value * 100) / 100; // 2 decimal places for currency
+          } else if (capability.includes('energy')) {
+            formattedValue = Math.round(value * 1000) / 1000; // 3 decimal places for energy
+          } else if (capability.includes('price')) {
+            formattedValue = Math.round(value * 10000) / 10000; // 4 decimal places for price
+          } else {
+            formattedValue = Math.round(value * 10) / 10; // 1 decimal place for others
+          }
+        }
+
+        // Set the capability value
+        await this.setCapabilityValue(capability, formattedValue);
+        
+        // Log the successful setting
+        if (this.debug && this.getSetting('statistics_debug')) {
+          this.log(`[P&L] Successfully set ${capability} to ${formattedValue} (original: ${value})`);
+        }
+      } catch (error) {
+        this.error(`[P&L] Failed to set capability ${capability} to ${value}:`, error);
+      }
+    }
+
+    /**
+     * Force UI refresh for P&L capabilities to ensure Homey app displays updated values
+     */
+    async forceUIRefresh() {
+      if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Forcing UI refresh for P&L capabilities');
+
+      const pnlCapabilities = [
+        'measure_battery_profit_daily',
+        'measure_battery_profit_hourly',
+        'measure_battery_charge_energy_daily',
+        'measure_battery_discharge_energy_daily',
+        'measure_battery_savings_daily',
+        'measure_battery_cost_daily',
+        'measure_battery_net_profit_daily',
+        'measure_calculation_timestamp',
+        'measure_current_energy_price',
+        'measure_calculation_method'
+      ];
+
+      try {
+        // Get current values and re-set them to trigger UI refresh
+        for (const capability of pnlCapabilities) {
+          if (this.hasCapability(capability)) {
+            const currentValue = await this.getCapabilityValue(capability);
+            if (currentValue !== null && currentValue !== undefined) {
+              // Small delay to ensure Homey processes each update
+              await new Promise(resolve => setTimeout(resolve, 10));
+              await this.setCapabilityValue(capability, currentValue);
+              if (this.debug && this.getSetting('statistics_debug')) {
+                this.log(`[P&L] UI refresh: ${capability} re-set to ${currentValue}`);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        this.error('[P&L] Failed to force UI refresh:', error);
+      }
     }
 
     /** Retrieve our current debug setting, based on actual setting and version

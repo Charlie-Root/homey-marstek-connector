@@ -1,0 +1,79 @@
+--- a/drivers/marstek-venus/device.ts
++++ b/drivers/marstek-venus/device.ts
+@@ -334,6 +334,15 @@ export default class MarstekVenusDevice extends Homey.Device {
+      */
+     private async processGridCounterStatistics(result: any, divisorRawPerKwh: number): Promise<void> {
+       if (this.debug) this.log('enable_statistics is enabled, processing grid counter statistics');
++      
++      // DEBUG: Log current grid counter values for troubleshooting
++      if (this.debug) {
++        this.log(`[P&L] Current grid counters: input=${result.total_grid_input_energy}, output=${result.total_grid_output_energy}, divisor=${divisorRawPerKwh}`);
++      }
++
++      // DEBUG: Check if counters are static (no energy flow)
++      const storedState: GridCounterAccumulatorState | null = this.getStoreValue(MarstekVenusDevice.GRID_COUNTER_ACCUMULATOR_STORE_KEY) || null;
++      if (storedState && this.debug) {
++        const currentInputRaw = Number(result.total_grid_input_energy);
++        const currentOutputRaw = Number(result.total_grid_output_energy);
++        const deltaInput = currentInputRaw - storedState.lastInputRaw;
++        const deltaOutput = currentOutputRaw - storedState.lastOutputRaw;
++        if (deltaInput === 0 && deltaOutput === 0) {
++          this.log(`[P&L] WARNING: Grid counters are static - no energy flow detected. Input: ${currentInputRaw}, Output: ${currentOutputRaw}`);
++        } else {
++          this.log(`[P&L] Energy flow detected: input_delta=${deltaInput}, output_delta=${deltaOutput}`);
++        }
++      }
+ 
+       // Wait for lock to be released if another operation is in progress
+       while (this.statisticsLock) {
+@@ -407,6 +416,12 @@ export default class MarstekVenusDevice extends Homey.Device {
+         }, {
+           flushIntervalMinutes: 60,
+         });
++        
++        // DEBUG: Log accumulator update result
++        if (this.debug) {
++          this.log(`[P&L] Accumulator update: reason=${update.reason}, hasFlush=${!!update.flush}, accInputDelta=${update.state.accInputDeltaRaw}, accOutputDelta=${update.state.accOutputDeltaRaw}`);
++        }
+ 
+         if (this.debug && update.reason && update.reason !== 'no_flush') {
+           this.log('[grid_counters] accumulator update:', update.reason);
+@@ -462,6 +477,12 @@ export default class MarstekVenusDevice extends Homey.Device {
+               },
+             };
+ 
++            // DEBUG: Always log P&L calculation results when debug is enabled
++            if (this.debug) {
++              const profitSavingsResult = calculateProfitSavings(entry);
++              this.log(`[P&L] Calculated P&L value for charging: €${profitSavingsResult.profitSavings.toFixed(2)} (energy: ${entry.energyAmount.toFixed(3)} kWh, price: €${entry.priceAtTime?.toFixed(4)}/kWh)`);
++            }
++
+             logStatisticsEntry(entry, settings, this.log.bind(this), {
+               method: 'grid_counters_import',
+               inputs: {
+@@ -500,6 +521,12 @@ export default class MarstekVenusDevice extends Homey.Device {
+               },
+             };
+ 
++            // DEBUG: Always log P&L calculation results when debug is enabled
++            if (this.debug) {
++              const profitSavingsResult = calculateProfitSavings(entry);
++              this.log(`[P&L] Calculated P&L value for discharging: €${profitSavingsResult.profitSavings.toFixed(2)} (energy: ${Math.abs(entry.energyAmount).toFixed(3)} kWh, price: €${entry.priceAtTime?.toFixed(4)}/kWh)`);
++            }
++
+             logStatisticsEntry(entry, settings, this.log.bind(this), {
+               method: 'grid_counters_export',
+               inputs: {
+@@ -518,6 +545,12 @@ export default class MarstekVenusDevice extends Homey.Device {
+             await this.logStatisticsEntry(entry);
+           }
+         }
++        
++        // DEBUG: Log final accumulator state
++        if (this.debug) {
++          const finalState = update.state;
++          this.log(`[P&L] Final accumulator state: duration=${(nowSec - finalState.accStartTimestampSec) / 60}min, accInputDelta=${finalState.accInputDeltaRaw}, accOutputDelta=${finalState.accOutputDeltaRaw}`);
++        }
+ 
+         await this.setStoreValue(MarstekVenusDevice.GRID_COUNTER_ACCUMULATOR_STORE_KEY, update.state);
+       } finally {
