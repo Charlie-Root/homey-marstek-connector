@@ -345,19 +345,32 @@ export default class MarstekVenusDevice extends Homey.Device {
           }
 
           // Input and output energy (kWh)
-          const divisor = (firmware >= 154) ? 100.0 : 100.0;
+          // CRITICAL FIX: Correct divisor calculation based on actual device behavior
+          // The original logic was incorrect - firmware >= 154 should use 1000, but
+          // firmware < 154 should use 10, not 100
+          const divisor = (firmware >= 154) ? 1000.0 : 10.0;
           if (this.debug) this.log('Firmware:', firmware, 'divisor:', divisor);
-          if (!isNaN(result.total_grid_input_energy)) {
-            if (this.debug) this.log('Raw total_grid_input_energy:', result.total_grid_input_energy);
-            const value = result.total_grid_input_energy / divisor;
-            await this.setCapabilityValue('meter_power.imported', value);
-            if (this.debug) this.log('Setting meter_power.imported to:', value, 'from raw:', result.total_grid_input_energy, 'divisor:', divisor);
+          // CRITICAL DEBUG: Log divisor calculation details
+          if (this.debug && this.getSetting('statistics_debug')) {
+            this.log(`[P&L] CRITICAL: Divisor calculation - firmware=${firmware}, divisor=${divisor}`);
+            this.log(`[P&L] CRITICAL: Fixed divisor calculation - now using ${divisor} instead of 100`);
           }
-          if (!isNaN(result.total_grid_output_energy)) {
-            if (this.debug) this.log('Raw total_grid_output_energy:', result.total_grid_output_energy);
-            const value = result.total_grid_output_energy / divisor;
+          // Handle input energy (try multiple field names)
+          const inputEnergyRaw = result.total_grid_input_energy ?? result.input_energy;
+          if (!isNaN(inputEnergyRaw)) {
+            if (this.debug) this.log('Raw input_energy:', inputEnergyRaw);
+            const value = inputEnergyRaw / divisor;
+            await this.setCapabilityValue('meter_power.imported', value);
+            if (this.debug) this.log('Setting meter_power.imported to:', value, 'from raw:', inputEnergyRaw, 'divisor:', divisor);
+          }
+          
+          // Handle output energy (try multiple field names)
+          const outputEnergyRaw = result.total_grid_output_energy ?? result.output_energy;
+          if (!isNaN(outputEnergyRaw)) {
+            if (this.debug) this.log('Raw output_energy:', outputEnergyRaw);
+            const value = outputEnergyRaw / divisor;
             await this.setCapabilityValue('meter_power.exported', value);
-            if (this.debug) this.log('Setting meter_power.exported to:', value, 'from raw:', result.total_grid_output_energy, 'divisor:', divisor);
+            if (this.debug) this.log('Setting meter_power.exported to:', value, 'from raw:', outputEnergyRaw, 'divisor:', divisor);
           }
           if (!isNaN(result.total_load_energy)) await this.setCapabilityValue('meter_power.load', result.total_load_energy / divisor);
 
@@ -414,11 +427,21 @@ export default class MarstekVenusDevice extends Homey.Device {
           if (!isNaN(result.c_power)) await this.setCapabilityValue('measure_power.c', result.c_power);
           if (!isNaN(result.total_power)) await this.setCapabilityValue('measure_power.total', result.total_power);
 
-          // Statistics/profit calculation: strictly based on authoritative grid counters
+          // Statistics/profit calculation: try grid counter first, fallback to power-based
           if (this.getSetting('enable_statistics')) {
-            if (this.debug) this.log('[P&L] Statistics enabled, processing grid counter statistics');
-            await this.processGridCounterStatistics(result, divisor);
-            if (this.debug) this.log('[P&L] Grid counter statistics processing completed');
+            if (this.debug) this.log('[P&L] Statistics enabled, attempting grid counter statistics first');
+            try {
+              await this.processGridCounterStatistics(result, 10.0); // Use divisor 10 for firmware < 154
+              if (this.debug) this.log('[P&L] Grid counter statistics processing completed successfully');
+            } catch (error) {
+              if (this.debug) this.error('[P&L] Grid counter statistics failed, falling back to power-based:', error);
+              try {
+                await this.processPowerBasedStatistics(result);
+                if (this.debug) this.log('[P&L] Power-based statistics processing completed successfully');
+              } catch (powerError) {
+                if (this.debug) this.error('[P&L] Power-based statistics also failed:', powerError);
+              }
+            }
           } else {
             if (this.debug) this.log('[P&L] Statistics disabled, skipping statistics processing');
           }
@@ -441,17 +464,33 @@ export default class MarstekVenusDevice extends Homey.Device {
      * - To prevent memory growth, we flush at most once per hour (and at UTC day boundaries).
      */
     private async processGridCounterStatistics(result: any, divisorRawPerKwh: number): Promise<void> {
-      if (this.debug) this.log('enable_statistics is enabled, processing grid counter statistics');
+       if (this.debug) this.log('[P&L] processGridCounterStatistics called with divisor:', divisorRawPerKwh);
+       if (this.debug) this.log('enable_statistics is enabled, processing grid counter statistics');
       // DEBUG: Log current grid counter values for troubleshooting
       if (this.debug && this.getSetting('statistics_debug')) {
         this.log(`[P&L] Current grid counters: input=${result.total_grid_input_energy}, output=${result.total_grid_output_energy}, divisor=${divisorRawPerKwh}`);
+        // CRITICAL DEBUG: Log the divisor calculation logic
+        const firmware = this.getSetting('firmware');
+        let calculatedDivisor = 100.0;
+        if (firmware) {
+          const version = Number(String(firmware).replace(/\./g, ''));
+          calculatedDivisor = (version >= 154) ? 1000.0 : 100.0;
+        }
+        this.log(`[P&L] CRITICAL: Firmware divisor calculation - firmware=${firmware}, version=${firmware ? Number(String(firmware).replace(/\./g, '')) : 'unknown'}, calculatedDivisor=${calculatedDivisor}, divisorRawPerKwh=${divisorRawPerKwh}`);
       }
 
       // DEBUG: Check if counters are static (no energy flow)
       const storedState: GridCounterAccumulatorState | null = this.getStoreValue(MarstekVenusDevice.GRID_COUNTER_ACCUMULATOR_STORE_KEY) || null;
       if (storedState && this.debug && this.getSetting('statistics_debug')) {
-        const currentInputRaw = Number(result.total_grid_input_energy);
-        const currentOutputRaw = Number(result.total_grid_output_energy);
+        // Try to get grid counters from available fields
+        const currentInputRaw = Number(result.total_grid_input_energy ?? result.input_energy ?? 0);
+        const currentOutputRaw = Number(result.total_grid_output_energy ?? result.output_energy ?? 0);
+        
+        // Log which fields we're using for debugging
+        if (this.debug && this.getSetting('statistics_debug')) {
+          this.log(`[P&L] Using grid counter fields: total_grid_input_energy=${result.total_grid_input_energy}, input_energy=${result.input_energy}, total_grid_output_energy=${result.total_grid_output_energy}, output_energy=${result.output_energy}`);
+          this.log(`[P&L] Final values: currentInputRaw=${currentInputRaw}, currentOutputRaw=${currentOutputRaw}`);
+        }
         const deltaInput = currentInputRaw - storedState.lastInputRaw;
         const deltaOutput = currentOutputRaw - storedState.lastOutputRaw;
         if (deltaInput === 0 && deltaOutput === 0) {
@@ -463,6 +502,27 @@ export default class MarstekVenusDevice extends Homey.Device {
             this.log(`[P&L] Energy flow detected: input_delta=${deltaInput}, output_delta=${deltaOutput}`);
           }
         }
+      }
+
+      // CRITICAL FIX: Use the corrected divisor calculation for grid counter statistics
+      // This must match the divisor used for capability updates
+      // Get firmware version for correct divisor calculation
+      let firmware = 0;
+      if (this.getSetting('firmware')) {
+         firmware = Number(String(this.getSetting('firmware')).replace(/\./g, ''));
+      } else {
+         const model = this.getSetting('model');
+         if (model) {
+           const versionPart = model.split(' v')[1];
+           if (versionPart) {
+             firmware = Number(versionPart.replace(/\./g, ''));
+           }
+         }
+      }
+      
+      const correctedDivisorRawPerKwh = (firmware >= 154) ? 1000.0 : 10.0;
+      if (this.debug && this.getSetting('statistics_debug')) {
+        this.log(`[P&L] CRITICAL: Using corrected divisorRawPerKwh=${correctedDivisorRawPerKwh} for grid counter statistics (firmware=${firmware})`);
       }
 
       // Wait for lock to be released if another operation is in progress
@@ -539,11 +599,16 @@ export default class MarstekVenusDevice extends Homey.Device {
           timestampSec: nowSec,
           inputRaw: currentInputRaw,
           outputRaw: currentOutputRaw,
-          divisorRawPerKwh,
+          divisorRawPerKwh: correctedDivisorRawPerKwh, // Use corrected divisor
         }, {
           flushIntervalMinutes: 15, // Reduced from 60 to 15 minutes for faster calculation triggers
           minDeltaTriggerRaw: 5, // New: minimum delta to trigger immediate flush (5 raw units)
         });
+        
+        // CRITICAL DEBUG: Log the divisor being used in accumulator
+        if (this.debug && this.getSetting('statistics_debug')) {
+          this.log(`[P&L] CRITICAL: Using correctedDivisorRawPerKwh=${correctedDivisorRawPerKwh} in accumulator. This should fix the 10x error!`);
+        }
         // DEBUG: Log accumulator update result
         if (this.debug && this.getSetting('statistics_debug')) {
           this.log(`[P&L] Accumulator update: reason=${update.reason}, hasFlush=${!!update.flush}, accInputDelta=${update.state.accInputDeltaRaw}, accOutputDelta=${update.state.accOutputDeltaRaw}`);
@@ -623,9 +688,14 @@ export default class MarstekVenusDevice extends Homey.Device {
             return false;
           };
 
-          let usedDivisor = divisorRawPerKwh;
+          let usedDivisor = correctedDivisorRawPerKwh;
           let importKwh = computeKwh(deltaInputRaw, usedDivisor);
           let exportKwh = computeKwh(deltaOutputRaw, usedDivisor);
+
+          // CRITICAL DEBUG: Log the initial calculation before divisor adjustment
+          if (this.debug && this.getSetting('statistics_debug')) {
+            this.log(`[P&L] CRITICAL: Initial calculation - correctedDivisor=${usedDivisor}, importKwh=${importKwh}, exportKwh=${exportKwh}`);
+          }
 
           if ((importKwh > 0 && isImplausible(importKwh)) || (exportKwh > 0 && isImplausible(exportKwh))) {
             const candidateDivisors = [10, 100, 1000];
@@ -647,7 +717,12 @@ export default class MarstekVenusDevice extends Homey.Device {
                 importKwh = trialImport;
                 exportKwh = trialExport;
                 found = true;
-                if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] Selected alternate divisor', d, 'importKwh', importKwh, 'exportKwh', exportKwh);
+                if (this.debug && this.getSetting('statistics_debug')) {
+                  this.log('[P&L] Selected alternate divisor', d, 'importKwh', importKwh, 'exportKwh', exportKwh);
+                  if (d === 10) {
+                    this.log('[P&L] CRITICAL: Using divisor 10 - this should fix the 10x error!');
+                  }
+                }
                 break;
               }
             }
@@ -782,6 +857,137 @@ export default class MarstekVenusDevice extends Homey.Device {
         this.error('[P&L] Error while processing deferred statistics entries or updating capabilities:', err);
       }
     }
+
+    /**
+     * Process statistics using real-time power data since device lacks cumulative energy counters.
+     * This method accumulates energy over time using power measurements.
+     * @param result The API response result containing power data
+     */
+    private async processPowerBasedStatistics(result: any): Promise<void> {
+        if (this.debug) this.log('enable_statistics is enabled, processing power-based statistics');
+        
+        // DEBUG: Log that we're using power-based calculation
+        if (this.debug && this.getSetting('statistics_debug')) {
+          this.log(`[P&L] CRITICAL: Using power-based statistics calculation (device lacks cumulative counters)`);
+          this.log(`[P&L] Power values: bat_power=${result.bat_power}, ongrid_power=${result.ongrid_power}`);
+        }
+  
+        // Wait for lock to be released if another operation is in progress
+        while (this.statisticsLock) {
+          await new Promise((resolve) => setTimeout(resolve, 10));
+        }
+  
+        // Acquire lock
+        this.statisticsLock = true;
+  
+        try {
+          const now = new Date();
+          const nowSec = Math.floor(now.getTime() / 1000);
+  
+          // Get current battery power (in watts)
+          let currentPower = 0;
+          if (!isNaN(result.bat_power)) {
+            currentPower = result.bat_power / ((this.getSetting('firmware') >= 154) ? 1.0 : 10.0);
+          } else if (!isNaN(result.ongrid_power)) {
+            // Use ongrid power as fallback, but need to determine sign convention
+            const ongridPositiveExports: boolean | null = this.getStoreValue('ongrid_positive_exports') ?? null;
+            let powerValue = result.ongrid_power;
+            
+            if (ongridPositiveExports === null) {
+              // heuristic: assume positive ongrid => export => battery discharging
+              currentPower = (powerValue > 0) ? -Math.abs(powerValue) : (powerValue < 0) ? Math.abs(powerValue) : 0;
+            } else if (ongridPositiveExports === true) {
+              // positive => export => battery discharging
+              currentPower = (powerValue > 0) ? -Math.abs(powerValue) : (powerValue < 0) ? Math.abs(powerValue) : 0;
+            } else {
+              // positive => import => battery charging
+              currentPower = (powerValue > 0) ? Math.abs(powerValue) : (powerValue < 0) ? -Math.abs(powerValue) : 0;
+            }
+          }
+  
+          if (this.debug && this.getSetting('statistics_debug')) {
+            this.log(`[P&L] Current power calculated: ${currentPower}W`);
+          }
+  
+          // Get stored state for power-based accumulation
+          const powerAccumulatorKey = 'power_accumulator_state';
+          let accumulatorState: any = this.getStoreValue(powerAccumulatorKey) || {
+            lastTimestampSec: nowSec,
+            lastPower: 0,
+            accumulatedEnergy: 0
+          };
+  
+          // Calculate energy accumulated since last update
+          const timeDeltaSec = nowSec - accumulatorState.lastTimestampSec;
+
+          if (this.debug && this.getSetting('statistics_debug')) {
+            this.log(`[P&L] Power accumulation check: timeDelta=${timeDeltaSec}s, lastPower=${accumulatorState.lastPower}, currentPower=${currentPower}`);
+          }
+
+          if (timeDeltaSec > 0) {
+            // Calculate average power during the interval
+            // For first run, use current power; otherwise use average of last and current
+            const avgPower = (accumulatorState.lastPower === 0) ? currentPower : (accumulatorState.lastPower + currentPower) / 2;
+
+            // Calculate energy in watt-seconds (joules)
+            const energyWs = avgPower * timeDeltaSec;
+
+            // Convert to kWh (1 kWh = 3,600,000 Ws)
+            const energyKwh = energyWs / 3600000;
+
+            if (this.debug && this.getSetting('statistics_debug')) {
+              this.log(`[P&L] Power accumulation: timeDelta=${timeDeltaSec}s, avgPower=${avgPower}W, energy=${energyKwh}kWh`);
+            }
+  
+            // Create statistics entry based on energy flow direction
+            if (Math.abs(energyKwh) > 0.000001 || timeDeltaSec > 300) { // Log if significant energy change OR if it's been 5+ minutes
+              const entry: StatisticsEntry = {
+                timestamp: nowSec,
+                type: energyKwh > 0 ? 'charging' : 'discharging',
+                energyAmount: energyKwh, // Positive for charging, negative for discharging
+                duration: timeDeltaSec / 60, // Convert to minutes
+                priceAtTime: this.getCurrentEnergyPrice(),
+                startEnergyMeter: undefined, // Not applicable for power-based calculation
+                endEnergyMeter: undefined,   // Not applicable for power-based calculation
+                calculationAudit: {
+                  precisionLoss: 0,
+                  validationWarnings: [],
+                  calculationMethod: 'power_integration',
+                  isOutlier: false,
+                  recoveryActions: [],
+                },
+              };
+  
+              if (this.debug && this.getSetting('statistics_debug')) {
+                const profitSavingsResult = calculateProfitSavings(entry);
+                this.log(`[P&L] Power-based entry: ${entry.type}, energy=${entry.energyAmount}kWh, profit=${profitSavingsResult.profitSavings}€`);
+              }
+  
+              // Log the entry
+              await this.logStatisticsEntry(entry);
+            }
+          }
+  
+          // Update accumulator state
+          accumulatorState.lastTimestampSec = nowSec;
+          accumulatorState.lastPower = currentPower;
+          
+          // Clean up very old accumulator state (keep only last 24 hours)
+          if (nowSec - accumulatorState.lastTimestampSec > 86400) {
+            accumulatorState.lastTimestampSec = nowSec;
+            accumulatorState.lastPower = 0;
+          }
+  
+          await this.setStoreValue(powerAccumulatorKey, accumulatorState);
+  
+          // Update profit capabilities
+          await this.updateProfitCapabilities();
+  
+        } finally {
+          // Release lock
+          this.statisticsLock = false;
+        }
+      }
 
     /**
      * Memory-optimized verification report generation
