@@ -256,7 +256,14 @@ export default class MarstekVenusDevice extends Homey.Device {
           }
 
           // Power remaining (In kWh)
-          if (!isNaN(result.bat_capacity)) await this.setCapabilityValue('meter_power', result.bat_capacity / ((firmware >= 154) ? 1000.0 : 100.0));
+          if (!isNaN(result.bat_capacity)) {
+            const batDivisor = (firmware >= 154) ? 1000.0 : 1000.0;
+            const batteryKwh = result.bat_capacity / batDivisor;
+            await this.setCapabilityValue('meter_power', batteryKwh);
+            if (this.debug && this.getSetting('statistics_debug')) {
+              this.log(`[P&L] DEBUG: Battery capacity raw=${result.bat_capacity}, divisor=${batDivisor}, calculated kWh=${batteryKwh}`);
+            }
+          }
 
           // Battery state of charge
           if (!isNaN(result.bat_soc)) await this.setCapabilityValue('measure_battery', result.bat_soc);
@@ -348,12 +355,13 @@ export default class MarstekVenusDevice extends Homey.Device {
           // CRITICAL FIX: Correct divisor calculation based on actual device behavior
           // The original logic was incorrect - firmware >= 154 should use 1000, but
           // firmware < 154 should use 10, not 100
-          const divisor = (firmware >= 154) ? 1000.0 : 10.0;
+          const divisor = (firmware >= 154) ? 100.0 : 1000.0;
           if (this.debug) this.log('Firmware:', firmware, 'divisor:', divisor);
           // CRITICAL DEBUG: Log divisor calculation details
           if (this.debug && this.getSetting('statistics_debug')) {
             this.log(`[P&L] CRITICAL: Divisor calculation - firmware=${firmware}, divisor=${divisor}`);
             this.log(`[P&L] CRITICAL: Fixed divisor calculation - now using ${divisor} instead of 100`);
+            this.log(`[P&L] DEBUG: Raw input_energy=${result.total_grid_input_energy ?? result.input_energy}, raw output_energy=${result.total_grid_output_energy ?? result.output_energy}`);
           }
           // Handle input energy (try multiple field names)
           const inputEnergyRaw = result.total_grid_input_energy ?? result.input_energy;
@@ -431,7 +439,7 @@ export default class MarstekVenusDevice extends Homey.Device {
           if (this.getSetting('enable_statistics')) {
             if (this.debug) this.log('[P&L] Statistics enabled, attempting grid counter statistics first');
             try {
-              await this.processGridCounterStatistics(result, 10.0); // Use divisor 10 for firmware < 154
+              await this.processGridCounterStatistics(result, 1000.0); // Use divisor 10 for firmware < 154
               if (this.debug) this.log('[P&L] Grid counter statistics processing completed successfully');
             } catch (error) {
               if (this.debug) this.error('[P&L] Grid counter statistics failed, falling back to power-based:', error);
@@ -519,10 +527,11 @@ export default class MarstekVenusDevice extends Homey.Device {
            }
          }
       }
-      
-      const correctedDivisorRawPerKwh = (firmware >= 154) ? 1000.0 : 10.0;
+
+      const correctedDivisorRawPerKwh = (firmware >= 154) ? 1000.0 : 1000.0;
       if (this.debug && this.getSetting('statistics_debug')) {
         this.log(`[P&L] CRITICAL: Using corrected divisorRawPerKwh=${correctedDivisorRawPerKwh} for grid counter statistics (firmware=${firmware})`);
+        this.log(`[P&L] DEBUG: Firmware=${firmware}, correctedDivisorRawPerKwh=${correctedDivisorRawPerKwh}`);
       }
 
       // Wait for lock to be released if another operation is in progress
@@ -676,6 +685,9 @@ export default class MarstekVenusDevice extends Homey.Device {
           // Sanity-check divisor: different firmwares/reporting may use divisors 10, 100 or 1000.
           // If computed kWh is implausibly large, try alternate divisors and pick the most plausible.
           const batteryCapacityKwh = Number(this.getSetting('battery_capacity_kwh')) || null; // optional hint from user
+          if (this.debug && this.getSetting('statistics_debug')) {
+            this.log(`[P&L] DEBUG: batteryCapacityKwh=${batteryCapacityKwh}`);
+          }
 
           const computeKwh = (raw: number, divisor: number) => raw / divisor;
 
@@ -694,7 +706,7 @@ export default class MarstekVenusDevice extends Homey.Device {
 
           // CRITICAL DEBUG: Log the initial calculation before divisor adjustment
           if (this.debug && this.getSetting('statistics_debug')) {
-            this.log(`[P&L] CRITICAL: Initial calculation - correctedDivisor=${usedDivisor}, importKwh=${importKwh}, exportKwh=${exportKwh}`);
+            this.log(`[P&L] CRITICAL: Initial calculation - correctedDivisor=${usedDivisor}, importKwh=${importKwh}, exportKwh=${exportKwh}, deltaInputRaw=${deltaInputRaw}, deltaOutputRaw=${deltaOutputRaw}`);
           }
 
           if ((importKwh > 0 && isImplausible(importKwh)) || (exportKwh > 0 && isImplausible(exportKwh))) {
@@ -730,6 +742,11 @@ export default class MarstekVenusDevice extends Homey.Device {
             if (!found) {
               if (this.debug && this.getSetting('statistics_debug')) this.log('[P&L] No plausible alternate divisor found; keeping original divisor', usedDivisor);
             }
+          }
+
+          // DEBUG: Log final used divisor and kWh
+          if (this.debug && this.getSetting('statistics_debug')) {
+            this.log(`[P&L] DEBUG: Final usedDivisor=${usedDivisor}, final importKwh=${importKwh}, final exportKwh=${exportKwh}`);
           }
 
           const settings = {
