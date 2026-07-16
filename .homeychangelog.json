@@ -1,4 +1,10 @@
 {
+    "0.10.1": {
+        "en": "Added Bluetooth BLE driver for direct communication with the battery. Retrieval of battery statistics and sending commands to the battery is now possible over Bluetooth. Added flow cards for controlling the battery over Bluetooth."
+    },
+    "0.9.1": {
+        "en": "README in plain text, since markdown rejects the app submit"
+    },
     "0.9.0": {
         "en": "Power can now be negative for passive mode API command."
     },
@@ -6,7 +12,7 @@
         "en": "Power can now be negative for passive mode API command."
     },
     "0.8.12": {
-        "en": "Dependency updates. New Homey SDK. Added flow card for new ‘UPS’ battery mode (with enabled argument). Added flow card for setting LED display status (on/off) through local API."
+        "en": "Dependency updates. New Homey SDK. Added flow card for new 'UPS' battery mode (with enabled argument). Added flow card for setting LED display status (on/off) through local API."
     },
     "0.8.11": {
         "en": "The stored IP address of local API devices are now shown in settings (read only)."
@@ -145,8 +151,5 @@
     },
     "0.1.0": {
         "en": "Initial version (reads basic battery stats)"
-    },
-    "0.8.12": {
-        "en": "Dependency updates. New Homey SDK. Added flow card for new 'UPS' battery mode (with enabled argument). Added flow card for setting LED display status (on/off) through local API."
     }
 }

@@ -1,0 +1,62 @@
+{
+  "id": "marstek_ble_local_api",
+  "title": {
+    "en": "Enable/disable Local API (BLE)",
+    "nl": "Lokale API in-/uitschakelen (BLE)",
+    "da": "Aktivér/deaktivér lokal API (BLE)",
+    "de": "Lokale API aktivieren/deaktivieren (BLE)",
+    "es": "Activar/desactivar API local (BLE)",
+    "fr": "Activer/désactiver l'API locale (BLE)",
+    "it": "Abilita/disabilita API locale (BLE)",
+    "no": "Aktiver/deaktiver lokalt API (BLE)",
+    "sv": "Aktivera/inaktivera lokalt API (BLE)",
+    "pl": "Włącz/wyłącz lokalne API (BLE)",
+    "ru": "Включить/выключить локальный API (BLE)",
+    "ko": "로컬 API 활성화/비활성화 (BLE)",
+    "ar": "تفعيل/تعطيل واجهة API المحلية (BLE)"
+  },
+  "titleFormatted": {
+    "en": "Set Local API (port 30000) enabled [[enable]] (BLE)",
+    "nl": "Stel Lokale API (poort 30000) ingeschakeld [[enable]] (BLE)",
+    "da": "Indstil lokal API (port 30000) aktiveret [[enable]] (BLE)",
+    "de": "Lokale API (Port 30000) aktiviert [[enable]] (BLE)",
+    "es": "Establecer API local (puerto 30000) activada [[enable]] (BLE)",
+    "fr": "Définir l'API locale (port 30000) activée [[enable]] (BLE)",
+    "it": "Imposta API locale (porta 30000) abilitata [[enable]] (BLE)",
+    "no": "Sett lokalt API (port 30000) aktivert [[enable]] (BLE)",
+    "sv": "Ställ in lokalt API (port 30000) aktiverat [[enable]] (BLE)",
+    "pl": "Ustaw lokalne API (port 30000) włączone [[enable]] (BLE)",
+    "ru": "Установить локальный API (порт 30000) включен [[enable]] (BLE)",
+    "ko": "로컬 API (포트 30000) 활성화 [[enable]] (BLE)",
+    "ar": "ضبط واجهة API المحلية (المنفذ 30000) مفعّلة [[enable]] (BLE)"
+  },
+  "hint": {
+    "en": "Enables the local UDP API on port 30000 over Bluetooth, so the 'Marstek Venus (Local API)' driver can then connect over the network.",
+    "nl": "Schakelt de lokale UDP-API in op poort 30000 via Bluetooth, zodat het 'Marstek Venus (Local API)'-stuurprogramma vervolgens via het netwerk kan verbinden.",
+    "da": "Aktiverer det lokale UDP-API på port 30000 via Bluetooth, så 'Marstek Venus (Local API)'-driveren derefter kan oprette forbindelse over netværket.",
+    "de": "Aktiviert die lokale UDP-API auf Port 30000 über Bluetooth, damit der Treiber 'Marstek Venus (Local API)' anschließend über das Netzwerk verbinden kann.",
+    "es": "Activa la API UDP local en el puerto 30000 por Bluetooth, para que el controlador 'Marstek Venus (Local API)' pueda conectarse por la red.",
+    "fr": "Active l'API UDP locale sur le port 30000 via Bluetooth, afin que le pilote 'Marstek Venus (Local API)' puisse ensuite se connecter via le réseau.",
+    "it": "Abilita l'API UDP locale sulla porta 30000 via Bluetooth, così il driver 'Marstek Venus (Local API)' può poi connettersi tramite rete.",
+    "no": "Aktiverer det lokale UDP-API-et på port 30000 via Bluetooth, slik at 'Marstek Venus (Local API)'-driveren deretter kan koble til over nettverket.",
+    "sv": "Aktiverar det lokala UDP-API:t på port 30000 via Bluetooth, så att drivrutinen 'Marstek Venus (Local API)' sedan kan ansluta via nätverket.",
+    "pl": "Włącza lokalne API UDP na porcie 30000 przez Bluetooth, dzięki czemu sterownik 'Marstek Venus (Local API)' może następnie połączyć się przez sieć.",
+    "ru": "Включает локальный UDP API на порту 30000 через Bluetooth, чтобы драйвер 'Marstek Venus (Local API)' затем мог подключиться по сети.",
+    "ko": "블루투스를 통해 포트 30000에서 로컬 UDP API를 활성화하여 'Marstek Venus (Local API)' 드라이버가 네트워크로 연결할 수 있게 합니다.",
+    "ar": "يفعّل واجهة UDP المحلية على المنفذ 30000 عبر البلوتوث، حتى يتمكن برنامج التشغيل 'Marstek Venus (Local API)' من الاتصال عبر الشبكة."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus-ble"
+    },
+    {
+      "name": "enable",
+      "type": "checkbox",
+      "title": {
+        "en": "Enabled", "nl": "Ingeschakeld", "da": "Aktiveret", "de": "Aktiviert", "es": "Activado", "fr": "Activé", "it": "Abilitato", "no": "Aktivert", "sv": "Aktiverat", "pl": "Włączone", "ru": "Включено", "ko": "활성화됨", "ar": "مفعّل"
+      }
+    }
+  ]
+}

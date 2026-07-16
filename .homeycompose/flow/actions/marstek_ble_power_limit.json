@@ -1,0 +1,48 @@
+{
+  "id": "marstek_ble_power_limit",
+  "title": {
+    "en": "Set output power limit (BLE)",
+    "nl": "Stel uitgangsvermogenslimiet in (BLE)",
+    "da": "Indstil udgangseffektgrænse (BLE)",
+    "de": "Ausgangsleistungsgrenze festlegen (BLE)",
+    "es": "Establecer límite de potencia de salida (BLE)",
+    "fr": "Définir la limite de puissance de sortie (BLE)",
+    "it": "Imposta il limite di potenza in uscita (BLE)",
+    "no": "Angi grense for utgangseffekt (BLE)",
+    "sv": "Ställ in gräns för uteffekt (BLE)",
+    "pl": "Ustaw limit mocy wyjściowej (BLE)",
+    "ru": "Установить лимит выходной мощности (BLE)",
+    "ko": "출력 전력 제한 설정 (BLE)",
+    "ar": "ضبط حد طاقة الخرج (BLE)"
+  },
+  "titleFormatted": {
+    "en": "Set output power limit to [[level]] (BLE)",
+    "nl": "Stel uitgangsvermogenslimiet in op [[level]] (BLE)",
+    "da": "Indstil udgangseffektgrænse til [[level]] (BLE)",
+    "de": "Ausgangsleistungsgrenze auf [[level]] festlegen (BLE)",
+    "es": "Establecer límite de potencia de salida en [[level]] (BLE)",
+    "fr": "Définir la limite de puissance de sortie sur [[level]] (BLE)",
+    "it": "Imposta il limite di potenza in uscita su [[level]] (BLE)",
+    "no": "Angi grense for utgangseffekt til [[level]] (BLE)",
+    "sv": "Ställ in gräns för uteffekt till [[level]] (BLE)",
+    "pl": "Ustaw limit mocy wyjściowej na [[level]] (BLE)",
+    "ru": "Установить лимит выходной мощности на [[level]] (BLE)",
+    "ko": "출력 전력 제한을 [[level]]로 설정 (BLE)",
+    "ar": "ضبط حد طاقة الخرج على [[level]] (BLE)"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus-ble"
+    },
+    {
+      "name": "level",
+      "type": "dropdown",
+      "values": [
+        { "id": "800", "label": { "en": "800 W", "nl": "800 W", "da": "800 W", "de": "800 W", "es": "800 W", "fr": "800 W", "it": "800 W", "no": "800 W", "sv": "800 W", "pl": "800 W", "ru": "800 Вт", "ko": "800 W", "ar": "800 واط" } },
+        { "id": "2500", "label": { "en": "2500 W", "nl": "2500 W", "da": "2500 W", "de": "2500 W", "es": "2500 W", "fr": "2500 W", "it": "2500 W", "no": "2500 W", "sv": "2500 W", "pl": "2500 W", "ru": "2500 Вт", "ko": "2500 W", "ar": "2500 واط" } }
+      ]
+    }
+  ]
+}

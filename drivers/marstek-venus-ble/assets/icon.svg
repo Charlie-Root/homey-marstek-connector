@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" height="960" viewBox="0 0 960 960" width="960">
+	<title>Marstek Battery - Outline (Right-Side Perspective)</title>
+	<desc>Stylized outline of a Marstek home battery cabinet with perspective, right side receding.</desc>
+
+	<defs>
+		<style type="text/css">
+			<![CDATA[
+      .outline { fill: none; stroke: #1a1a1a; stroke-width: 40px; stroke-linecap: round; stroke-linejoin: round; }
+      .thin    { fill: none; stroke: #1a1a1a; stroke-width: 20px; stroke-linecap: round; stroke-linejoin: round; }
+      .hair    { fill: none; stroke: #1a1a1a; stroke-width: 10px; stroke-linecap: round; stroke-linejoin: round; }
+    ]]>
+		</style>
+	</defs>
+
+	<polygon points="168.208 81.778 918.492 173.39 918.492 784.135 168.208 875.747" class="outline" style=""></polygon>
+	<polygon points="214.058 137.862 873.306 212.748 871.89 334.898 214.058 305.817" class="thin" style=""></polygon>
+	<line x1="415.437" y1="237.728" x2="722.371" y2="260.631" class="hair" style=""></line>
+	<circle cx="204.488" cy="146.964" r="8.482" class="hair" style="" transform="matrix(1.70519, 0, 0, 1.526865, -21.939233, 3.618294)"></circle>
+	<path d="M 166.299 71.993 L 29.029 88.392 L 29.029 871.116 L 166.299 886.025" class="thin" style=""></path>
+	<polygon points="239.282 36.459 354.146 52.463 351.279 101.691 234.506 88.861" class="outline" style=""></polygon>
+	<polygon points="734.742 97.364 838.964 108.877 832.419 159.429 729.153 143.981" class="outline" style=""></polygon>
+	<circle cx="199.696" cy="584.635" r="20" class="outline" style="" transform="matrix(1.70519, 0, 0, 1.526865, -20.470961, -5.191058)"></circle>
+	<circle cx="494.261" cy="546.107" r="18" class="outline" style="" transform="matrix(1.70519, 0, 0, 1.526865, -20.470961, -5.191058)"></circle>
+	<path d="M 320.049 856.93 L 320.049 887.467" class="thin" style=""></path>
+	<path d="M 822.338 798.103 L 822.338 828.641" class="thin" style=""></path>
+	<circle cx="480.661" cy="169.932" r="8.482" class="hair" style="" transform="matrix(1.70519, 0, 0, 1.526865, -20.470961, 4.352429)"></circle>
+
+</svg>

@@ -1,6 +1,6 @@
 import Homey from 'homey';
 import dgram from 'dgram'; // For UDP binding and sending
-import MarstekVenusDriver from './driver';
+import MarstekVenusLocalApiDriver from './driver';
 
 // Import our loaded config
 import { config } from '../../lib/config';
@@ -31,7 +31,7 @@ const capabilities: Array<CapabilitySetting> = [
  * and exposes polling controls.
  * @extends Homey.Device
  */
-export default class MarstekVenusDevice extends Homey.Device {
+export default class MarstekVenusLocalApiDevice extends Homey.Device {
 
     // Handler bound to the socket listener so it can be registered/unregistered.
     private handler = this.onMessage.bind(this);
@@ -40,7 +40,7 @@ export default class MarstekVenusDevice extends Homey.Device {
     private timeout?: NodeJS.Timeout = undefined;
 
     // Cast pointer to our app
-    private myDriver: MarstekVenusDriver = this.driver as MarstekVenusDriver;
+    private myDriver: MarstekVenusLocalApiDriver = this.driver as MarstekVenusLocalApiDriver;
 
     // Timestamp last received details
     private timestamp?: Date = undefined;
@@ -53,7 +53,7 @@ export default class MarstekVenusDevice extends Homey.Device {
      */
     async onInit() {
         if (this.debug) {
-            this.log('MarstekVenusDevice has been initialized');
+            this.log('MarstekVenusLocalApiDevice has been initialized');
             this.log('Device settings', JSON.stringify(this.getSettings()));
         }
 
@@ -288,18 +288,18 @@ export default class MarstekVenusDevice extends Homey.Device {
     async onDeleted() {
         this.stopPolling();
         this.stopListening();
-        if (this.debug) this.log('MarstekVenusDevice has been deleted');
+        if (this.debug) this.log('MarstekVenusLocalApiDevice has been deleted');
     }
 
     /**
      * Called when the device instance is uninitialised by Homey.
-     * Cleans up background resources similar to {@link MarstekVenusDevice#onDeleted}.
+     * Cleans up background resources similar to {@link MarstekVenusLocalApiDevice#onDeleted}.
      * @returns {Promise<void>} Resolves once cleanup completes.
      */
     async onUninit() {
         this.stopPolling();
         this.stopListening();
-        if (this.debug) this.log('MarstekVenusDevice has been uninitialized');
+        if (this.debug) this.log('MarstekVenusLocalApiDevice has been uninitialized');
     }
 
     /** Retrieve our current debug setting, based on actual setting and version
@@ -312,4 +312,4 @@ export default class MarstekVenusDevice extends Homey.Device {
 }
 
 // Also use module.exports for Homey
-module.exports = MarstekVenusDevice;
+module.exports = MarstekVenusLocalApiDevice;

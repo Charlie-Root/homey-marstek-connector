@@ -1,18 +1,18 @@
 {
   "name": {
-    "en": "Marstek Venus (API)",
-    "nl": "Marstek Venus (API)",
-    "da": "Marstek Venus (API)",
-    "de": "Marstek Venus (API)",
-    "es": "Marstek Venus (API)",
-    "fr": "Marstek Venus (API)",
-    "it": "Marstek Venus (API)",
-    "no": "Marstek Venus (API)",
-    "sv": "Marstek Venus (API)",
-    "pl": "Marstek Venus (API)",
-    "ru": "Марстек Венус (API)",
-    "ko": "마르스텍 비너스 (API)",
-    "ar": "مارستك فينوس (API)"
+    "en": "Marstek Venus (Local API)",
+    "nl": "Marstek Venus (Local API)",
+    "da": "Marstek Venus (Local API)",
+    "de": "Marstek Venus (Local API)",
+    "es": "Marstek Venus (Local API)",
+    "fr": "Marstek Venus (Local API)",
+    "it": "Marstek Venus (Local API)",
+    "no": "Marstek Venus (Local API)",
+    "sv": "Marstek Venus (Local API)",
+    "pl": "Marstek Venus (Local API)",
+    "ru": "Марстек Венус (Local API)",
+    "ko": "마르스텍 비너스 (Local API)",
+    "ar": "مارستك فينوس (Local API)"
   },
   "class": "battery",
   "capabilities": [

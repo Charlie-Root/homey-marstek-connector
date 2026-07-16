@@ -1,6 +1,6 @@
 Marstek Venus Connector
 
-This Homey app connects to a Marstek Venus battery system either through the local network or via the Marstek cloud service and retrieves battery statistics. It allows you to monitor the battery status, charge level, and other relevant information directly from your Homey smart home system. Using flows you can send commands to the battery to change mode (local API only). There is an auto-detect algorithm that tries to find your Marstek Venus batteries.
+This Homey app connects to a Marstek Venus battery system through the local network, over Bluetooth (BLE), or via the Marstek cloud service and retrieves battery statistics. It allows you to monitor the battery status, charge level, and other relevant information directly from your Homey smart home system. Using flows you can send commands to the battery to change mode (local API and Bluetooth). There is an auto-detect algorithm that tries to find your Marstek Venus batteries.
 
 FEATURES
 
@@ -15,11 +15,28 @@ When a device is detected and communication is working, the device will display 
 
 You can also send commands to the battery to change the operating mode to 'Manual', 'AI', 'Passive' or 'Auto'. These commands can be transmitted using Homey flows ('Then...').
 
+BLUETOOTH DRIVER
+
+The Marstek Venus (Bluetooth) driver talks to the battery directly over Bluetooth Low Energy, without any network configuration. It works out of the box (no Wi-Fi or Local API setup needed) and exposes richer telemetry read straight from the battery management system:
+
+- State of Charge and State of Health (%)
+- Battery power (from the BMS), on-grid and off-grid port power, and charging state
+- Pack voltage and current
+- Battery and MOSFET temperature
+- Work mode and a fault (alarm) indicator, plus the raw BMS alarm code (with an "Alarm code changed" flow trigger providing error/warning code tags)
+- Charge and discharge totals (kWh), plus today's charged/discharged energy
+- Output power rating and Local API status (shown in device settings)
+
+It also provides flow action cards to control the battery over Bluetooth: set the work mode (off/on), set the output power limit (800 W / 2500 W), set Depth of Discharge, enable/disable EPS/backup power, restart the battery, and -- handy for bootstrapping the local network driver -- Enable/disable the Local API on port 30000. Note that, unlike the Local API, Bluetooth cannot set a scheduled "Manual" mode (time window + power) -- only the coarse work-mode toggle.
+
+Bluetooth connections are established on demand for each read/command and closed afterwards, because the battery accepts only one Bluetooth connection at a time. Keep the poll interval generous (default 60 s). The battery must be within Bluetooth range of your Homey.
+
 REQUIREMENTS
 
 This app requires Homey and a Marstek Venus battery system.
 
 - When using the local API driver the Homey and battery must be connected to the same network with the local API enabled (see below). Auto-detection of Marstek Venus batteries is supported on the same local network and when IP range is 192.168.x.y; it will search within the last octet (y) from 1 to 254.
+- When using the Bluetooth driver the battery must be within Bluetooth range of your Homey. No network or Local API setup is required. During pairing Homey scans for nearby Marstek batteries; select the one you want to add.
 - When using the cloud driver you need an active Marstek cloud/app account. During pairing Homey will ask for the username and password to authenticate with the Marstek cloud service.
 
 DEVICE PAIRING (CLOUD)
@@ -33,6 +50,10 @@ The Local API is disabled by default, this needs te be enabled on the Marstek Ve
 - Contact Marstek support to have them enable the Local API for you. This can take a few days.
 
 The local API must be enabled for port number 30000 (on each device). Currently no other port numbers are supported.
+
+DEVICE PAIRING (BLUETOOTH)
+
+Choose the "Marstek Venus (Bluetooth)" device during pairing. Homey scans for nearby batteries advertising the Marstek Bluetooth service and lists them; select the battery you want to add. No network configuration is required. Tip: you can use the "Enable/disable Local API (BLE)" flow card afterwards to switch on the local UDP API over Bluetooth, so the "Marstek Venus (Local API)" driver can then discover the battery over the network.
 
 STEP BY STEP INSTRUCTIONS
 
@@ -48,6 +69,7 @@ You can devices from both API and Cloud. See settings of each battery for additi
 
 VERSION HISTORY
 
+- 0.10.1 - Added Bluetooth BLE driver for direct communication with the battery. Retrieval of battery statistics and sending commands to the battery is now possible over Bluetooth. Added flow cards for controlling the battery over Bluetooth.
 - 0.9.0 - [current LIVE release] Updated LIVE version of app; all fixes and improvements from TEST version are now included in the LIVE version.
 - 0.8.13 - Negative power values for passive mode flow card are now allowed. Updated module dependencies to latest versions and cleaned some code.
 - 0.8.12 - Dependency updates. New Homey SDK. Added flow card for new 'UPS' battery mode (with enabled argument). Added flow card for setting LED display status (on/off) through local API.
@@ -74,7 +96,7 @@ VERSION HISTORY
 
 NOTES
 
-- This app uses the 'API over UDP' features as mentioned in the API documentation.
+- This app uses the 'API over UDP' features as mentioned in the Marstek API documentation.
 - The app is developed and tested with a Venus E v2.0 battery system (firmware v153, communication module 202409090159). Let me know if any other models work as well!
 - When the device can't be auto-detected, please check if the Marstek Venus battery is powered on and connected to the same network as Homey.
 - Support for multiple Marstek Venus batteries is implemented, but since I only have one battery to test with, some is uncharted.
@@ -82,6 +104,7 @@ NOTES
 - When upgrading the app, it might be needed to remove already added battery devices first and then adding them again.
 - The Marstek Cloud API is undocumented, so things might change without notice.
 - Battery mode changes have an automatic retry for a maximum of 5 tries with a 15 seconds timeout.
+- The Bluetooth connection, commands and data retrieval is undocumented territory, so things might change without notice.
 
 KNOWN ISSUES
 

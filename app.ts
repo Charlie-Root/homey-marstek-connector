@@ -9,7 +9,7 @@ export default class MarstekBatteryContoller extends Homey.App {
     async onInit() {
         this.log('MarstekBatteryAPI has been initialized');
         config.version = this.homey.manifest.version;
-        config.isTestVersion = false; //!this.homey.manifest.version.endsWith('.0');
+        config.isTestVersion = !this.homey.manifest.version.endsWith('.0');
         this.log(`DEBUG logging set to ${String(config.isTestVersion)} for version ${this.homey.manifest.version} and environment value ${process.env.DEBUG}`);
     }
 

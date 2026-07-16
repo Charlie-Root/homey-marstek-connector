@@ -70,7 +70,7 @@ const factorDefaults: FactorDefaults = {
  * It provides device discovery, background polling, flow card actions and command handling.
  * @extends Homey.Driver
  */
-export default class MarstekVenusDriver extends Homey.Driver {
+export default class MarstekVenusLocalApiDriver extends Homey.Driver {
 
     // Add extra details during debugging
     private debug: boolean = config.isTestVersion;
@@ -104,7 +104,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once initialisation completes.
      */
     async onInit() {
-        if (this.debug) this.log('MarstekVenusDriver has been initialized');
+        if (this.debug) this.log('MarstekVenusLocalApiDriver has been initialized');
         await this.registerFlowListeners();
     }
 
@@ -113,7 +113,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves after cleaning up the shared socket connection.
      */
     async onUninit() {
-        if (this.debug) this.log('MarstekVenusDriver has been uninitialized');
+        if (this.debug) this.log('MarstekVenusLocalApiDriver has been uninitialized');
         // Make sure to destroy the socket instance
         if (this.socket) {
             this.socket.destroy();
@@ -733,4 +733,4 @@ export default class MarstekVenusDriver extends Homey.Driver {
 }
 
 // Also use module.exports for Homey
-module.exports = MarstekVenusDriver;
+module.exports = MarstekVenusLocalApiDriver;

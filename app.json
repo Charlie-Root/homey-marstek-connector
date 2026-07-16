@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.niewold.marstek",
-  "version": "0.9.0",
+  "version": "0.10.1",
   "compatibility": ">=12.5.0",
   "sdk": 3,
   "brandColor": "#555555",
@@ -41,7 +41,9 @@
   "category": [
     "energy"
   ],
-  "permissions": [],
+  "permissions": [
+    "homey:wireless:ble"
+  ],
   "images": {
     "small": "/assets/images/small.jpg",
     "large": "/assets/images/large.jpg",
@@ -54,6 +56,90 @@
   "source": "https://github.com/eniewold/homey-marstek-connector",
   "homeyCommunityTopicId": 143139,
   "flow": {
+    "triggers": [
+      {
+        "id": "marstek_ble_alarm_changed",
+        "title": {
+          "en": "Alarm code changed (BLE)",
+          "nl": "Alarmcode gewijzigd (BLE)",
+          "da": "Alarmkode ændret (BLE)",
+          "de": "Alarmcode geändert (BLE)",
+          "es": "Código de alarma cambiado (BLE)",
+          "fr": "Code d'alarme modifié (BLE)",
+          "it": "Codice allarme cambiato (BLE)",
+          "no": "Alarmkode endret (BLE)",
+          "sv": "Larmkod ändrad (BLE)",
+          "pl": "Kod alarmu zmieniony (BLE)",
+          "ru": "Код тревоги изменился (BLE)",
+          "ko": "알람 코드 변경됨 (BLE)",
+          "ar": "تغيّر رمز الإنذار (BLE)"
+        },
+        "hint": {
+          "en": "Triggers when the battery's BMS error or warning code changes (including when an alarm clears). The codes are raw values from the battery; include them when reporting issues so their meaning can be decoded over time.",
+          "nl": "Wordt geactiveerd wanneer de BMS-fout- of waarschuwingscode van de batterij verandert (ook wanneer een alarm wordt opgeheven). De codes zijn ruwe waarden van de batterij; vermeld ze bij het melden van problemen zodat hun betekenis in de loop van de tijd kan worden ontcijferd.",
+          "da": "Udløses, når batteriets BMS-fejl- eller advarselskode ændres (også når en alarm ophæves). Koderne er rå værdier fra batteriet; medtag dem ved fejlrapportering, så deres betydning kan afkodes over tid.",
+          "de": "Wird ausgelöst, wenn sich der BMS-Fehler- oder Warncode der Batterie ändert (auch wenn ein Alarm erlischt). Die Codes sind Rohwerte der Batterie; geben Sie sie bei Problemmeldungen an, damit ihre Bedeutung mit der Zeit entschlüsselt werden kann.",
+          "es": "Se activa cuando cambia el código de error o advertencia del BMS de la batería (incluso cuando se borra una alarma). Los códigos son valores sin procesar de la batería; inclúyalos al informar problemas para poder descifrar su significado con el tiempo.",
+          "fr": "Se déclenche lorsque le code d'erreur ou d'avertissement du BMS de la batterie change (y compris lorsqu'une alarme disparaît). Les codes sont des valeurs brutes de la batterie ; incluez-les lors du signalement de problèmes afin de pouvoir décoder leur signification au fil du temps.",
+          "it": "Si attiva quando cambia il codice di errore o avviso del BMS della batteria (anche quando un allarme si azzera). I codici sono valori grezzi della batteria; includili nelle segnalazioni di problemi così da poterne decodificare il significato nel tempo.",
+          "no": "Utløses når batteriets BMS-feil- eller advarselskode endres (også når en alarm fjernes). Kodene er råverdier fra batteriet; ta dem med ved feilrapportering slik at betydningen kan dekodes over tid.",
+          "sv": "Utlöses när batteriets BMS-fel- eller varningskod ändras (även när ett larm försvinner). Koderna är råvärden från batteriet; inkludera dem vid felrapportering så att deras betydelse kan avkodas med tiden.",
+          "pl": "Wyzwalane, gdy zmienia się kod błędu lub ostrzeżenia BMS baterii (również gdy alarm znika). Kody to surowe wartości z baterii; dołącz je do zgłoszeń problemów, aby z czasem można było rozszyfrować ich znaczenie.",
+          "ru": "Срабатывает при изменении кода ошибки или предупреждения BMS батареи (в том числе при сбросе тревоги). Коды — это сырые значения от батареи; указывайте их при сообщении о проблемах, чтобы со временем расшифровать их значение.",
+          "ko": "배터리 BMS 오류 또는 경고 코드가 변경될 때(알람이 해제될 때 포함) 트리거됩니다. 코드는 배터리의 원시 값입니다. 문제를 보고할 때 함께 제공하면 시간이 지나면서 의미를 해독할 수 있습니다.",
+          "ar": "يُفعَّل عندما يتغيّر رمز خطأ أو تحذير BMS للبطارية (بما في ذلك عند زوال الإنذار). الرموز قيم خام من البطارية؛ أرفقها عند الإبلاغ عن المشكلات حتى يمكن فك معناها بمرور الوقت."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus-ble"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "error_code",
+            "type": "string",
+            "title": {
+              "en": "Error code",
+              "nl": "Foutcode",
+              "da": "Fejlkode",
+              "de": "Fehlercode",
+              "es": "Código de error",
+              "fr": "Code d'erreur",
+              "it": "Codice errore",
+              "no": "Feilkode",
+              "sv": "Felkod",
+              "pl": "Kod błędu",
+              "ru": "Код ошибки",
+              "ko": "오류 코드",
+              "ar": "رمز الخطأ"
+            },
+            "example": "0x0012"
+          },
+          {
+            "name": "warning_code",
+            "type": "string",
+            "title": {
+              "en": "Warning code",
+              "nl": "Waarschuwingscode",
+              "da": "Advarselskode",
+              "de": "Warncode",
+              "es": "Código de advertencia",
+              "fr": "Code d'avertissement",
+              "it": "Codice avviso",
+              "no": "Advarselskode",
+              "sv": "Varningskod",
+              "pl": "Kod ostrzeżenia",
+              "ru": "Код предупреждения",
+              "ko": "경고 코드",
+              "ar": "رمز التحذير"
+            },
+            "example": "0x00000000"
+          }
+        ]
+      }
+    ],
     "actions": [
       {
         "id": "marstek_ai_mode",
@@ -102,6 +188,435 @@
             "name": "device",
             "type": "device",
             "filter": "driver_id=marstek-venus"
+          }
+        ]
+      },
+      {
+        "id": "marstek_ble_dod",
+        "title": {
+          "en": "Set Depth of Discharge (BLE)",
+          "nl": "Stel ontladingsdiepte in (BLE)",
+          "da": "Indstil afladningsdybde (BLE)",
+          "de": "Entladetiefe festlegen (BLE)",
+          "es": "Establecer profundidad de descarga (BLE)",
+          "fr": "Définir la profondeur de décharge (BLE)",
+          "it": "Imposta la profondità di scarica (BLE)",
+          "no": "Angi utladningsdybde (BLE)",
+          "sv": "Ställ in urladdningsdjup (BLE)",
+          "pl": "Ustaw głębokość rozładowania (BLE)",
+          "ru": "Установить глубину разряда (BLE)",
+          "ko": "방전 심도 설정 (BLE)",
+          "ar": "ضبط عمق التفريغ (BLE)"
+        },
+        "titleFormatted": {
+          "en": "Set Depth of Discharge to [[percent]] % (BLE)",
+          "nl": "Stel ontladingsdiepte in op [[percent]] % (BLE)",
+          "da": "Indstil afladningsdybde til [[percent]] % (BLE)",
+          "de": "Entladetiefe auf [[percent]] % festlegen (BLE)",
+          "es": "Establecer profundidad de descarga en [[percent]] % (BLE)",
+          "fr": "Définir la profondeur de décharge sur [[percent]] % (BLE)",
+          "it": "Imposta la profondità di scarica su [[percent]] % (BLE)",
+          "no": "Angi utladningsdybde til [[percent]] % (BLE)",
+          "sv": "Ställ in urladdningsdjup till [[percent]] % (BLE)",
+          "pl": "Ustaw głębokość rozładowania na [[percent]] % (BLE)",
+          "ru": "Установить глубину разряда на [[percent]] % (BLE)",
+          "ko": "방전 심도를 [[percent]] %로 설정 (BLE)",
+          "ar": "ضبط عمق التفريغ على [[percent]] % (BLE)"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus-ble"
+          },
+          {
+            "name": "percent",
+            "type": "number",
+            "min": 30,
+            "max": 88,
+            "step": 1,
+            "label": {
+              "en": "Depth of Discharge (%)",
+              "nl": "Ontladingsdiepte (%)",
+              "da": "Afladningsdybde (%)",
+              "de": "Entladetiefe (%)",
+              "es": "Profundidad de descarga (%)",
+              "fr": "Profondeur de décharge (%)",
+              "it": "Profondità di scarica (%)",
+              "no": "Utladningsdybde (%)",
+              "sv": "Urladdningsdjup (%)",
+              "pl": "Głębokość rozładowania (%)",
+              "ru": "Глубина разряда (%)",
+              "ko": "방전 심도 (%)",
+              "ar": "عمق التفريغ (%)"
+            }
+          }
+        ]
+      },
+      {
+        "id": "marstek_ble_eps",
+        "title": {
+          "en": "Set EPS / backup power (BLE)",
+          "nl": "Stel EPS / back-upvoeding in (BLE)",
+          "da": "Indstil EPS / backup-strøm (BLE)",
+          "de": "EPS / Notstrom festlegen (BLE)",
+          "es": "Establecer EPS / energía de respaldo (BLE)",
+          "fr": "Définir l'EPS / alimentation de secours (BLE)",
+          "it": "Imposta EPS / alimentazione di backup (BLE)",
+          "no": "Angi EPS / reservestrøm (BLE)",
+          "sv": "Ställ in EPS / reservkraft (BLE)",
+          "pl": "Ustaw EPS / zasilanie awaryjne (BLE)",
+          "ru": "Установить EPS / резервное питание (BLE)",
+          "ko": "EPS / 백업 전원 설정 (BLE)",
+          "ar": "ضبط EPS / الطاقة الاحتياطية (BLE)"
+        },
+        "titleFormatted": {
+          "en": "Set backup power (EPS) enabled [[enable]] (BLE)",
+          "nl": "Stel back-upvoeding (EPS) ingeschakeld [[enable]] (BLE)",
+          "da": "Indstil backup-strøm (EPS) aktiveret [[enable]] (BLE)",
+          "de": "Notstrom (EPS) aktiviert [[enable]] (BLE)",
+          "es": "Establecer energía de respaldo (EPS) activada [[enable]] (BLE)",
+          "fr": "Définir l'alimentation de secours (EPS) activée [[enable]] (BLE)",
+          "it": "Imposta alimentazione di backup (EPS) abilitata [[enable]] (BLE)",
+          "no": "Angi reservestrøm (EPS) aktivert [[enable]] (BLE)",
+          "sv": "Ställ in reservkraft (EPS) aktiverad [[enable]] (BLE)",
+          "pl": "Ustaw zasilanie awaryjne (EPS) włączone [[enable]] (BLE)",
+          "ru": "Установить резервное питание (EPS) включено [[enable]] (BLE)",
+          "ko": "백업 전원(EPS) 활성화 [[enable]] (BLE)",
+          "ar": "ضبط الطاقة الاحتياطية (EPS) مفعّلة [[enable]] (BLE)"
+        },
+        "hint": {
+          "en": "Enables or disables EPS / backup power (Emergency Power Supply), which provides power from the battery during a grid outage.",
+          "nl": "Schakelt EPS / back-upvoeding (noodstroom) in of uit, die tijdens een stroomstoring stroom uit de batterij levert.",
+          "da": "Aktiverer eller deaktiverer EPS / backup-strøm (nødstrøm), som leverer strøm fra batteriet under et strømafbrud.",
+          "de": "Aktiviert oder deaktiviert EPS / Notstrom, der bei einem Netzausfall Strom aus der Batterie liefert.",
+          "es": "Activa o desactiva EPS / energía de respaldo (suministro de emergencia), que proporciona energía de la batería durante un corte de red.",
+          "fr": "Active ou désactive l'EPS / alimentation de secours, qui fournit l'énergie de la batterie lors d'une coupure du réseau.",
+          "it": "Abilita o disabilita EPS / alimentazione di backup (alimentazione di emergenza), che fornisce energia dalla batteria durante un'interruzione di rete.",
+          "no": "Aktiverer eller deaktiverer EPS / reservestrøm (nødstrøm), som gir strøm fra batteriet under et strømbrudd.",
+          "sv": "Aktiverar eller inaktiverar EPS / reservkraft (nödström), som ger ström från batteriet vid ett strömavbrott.",
+          "pl": "Włącza lub wyłącza EPS / zasilanie awaryjne, które dostarcza energię z baterii podczas przerwy w zasilaniu sieciowym.",
+          "ru": "Включает или выключает EPS / резервное питание (аварийное электроснабжение), которое подаёт энергию от батареи при отключении сети.",
+          "ko": "정전 시 배터리에서 전원을 공급하는 EPS / 백업 전원(비상 전원 공급)을 활성화하거나 비활성화합니다.",
+          "ar": "يفعّل أو يعطّل EPS / الطاقة الاحتياطية (مصدر الطاقة الطارئ)، الذي يوفّر الطاقة من البطارية أثناء انقطاع الشبكة."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus-ble"
+          },
+          {
+            "name": "enable",
+            "type": "checkbox",
+            "title": {
+              "en": "Enabled",
+              "nl": "Ingeschakeld",
+              "da": "Aktiveret",
+              "de": "Aktiviert",
+              "es": "Activado",
+              "fr": "Activé",
+              "it": "Abilitato",
+              "no": "Aktivert",
+              "sv": "Aktiverat",
+              "pl": "Włączone",
+              "ru": "Включено",
+              "ko": "활성화됨",
+              "ar": "مفعّل"
+            }
+          }
+        ]
+      },
+      {
+        "id": "marstek_ble_local_api",
+        "title": {
+          "en": "Enable/disable Local API (BLE)",
+          "nl": "Lokale API in-/uitschakelen (BLE)",
+          "da": "Aktivér/deaktivér lokal API (BLE)",
+          "de": "Lokale API aktivieren/deaktivieren (BLE)",
+          "es": "Activar/desactivar API local (BLE)",
+          "fr": "Activer/désactiver l'API locale (BLE)",
+          "it": "Abilita/disabilita API locale (BLE)",
+          "no": "Aktiver/deaktiver lokalt API (BLE)",
+          "sv": "Aktivera/inaktivera lokalt API (BLE)",
+          "pl": "Włącz/wyłącz lokalne API (BLE)",
+          "ru": "Включить/выключить локальный API (BLE)",
+          "ko": "로컬 API 활성화/비활성화 (BLE)",
+          "ar": "تفعيل/تعطيل واجهة API المحلية (BLE)"
+        },
+        "titleFormatted": {
+          "en": "Set Local API (port 30000) enabled [[enable]] (BLE)",
+          "nl": "Stel Lokale API (poort 30000) ingeschakeld [[enable]] (BLE)",
+          "da": "Indstil lokal API (port 30000) aktiveret [[enable]] (BLE)",
+          "de": "Lokale API (Port 30000) aktiviert [[enable]] (BLE)",
+          "es": "Establecer API local (puerto 30000) activada [[enable]] (BLE)",
+          "fr": "Définir l'API locale (port 30000) activée [[enable]] (BLE)",
+          "it": "Imposta API locale (porta 30000) abilitata [[enable]] (BLE)",
+          "no": "Sett lokalt API (port 30000) aktivert [[enable]] (BLE)",
+          "sv": "Ställ in lokalt API (port 30000) aktiverat [[enable]] (BLE)",
+          "pl": "Ustaw lokalne API (port 30000) włączone [[enable]] (BLE)",
+          "ru": "Установить локальный API (порт 30000) включен [[enable]] (BLE)",
+          "ko": "로컬 API (포트 30000) 활성화 [[enable]] (BLE)",
+          "ar": "ضبط واجهة API المحلية (المنفذ 30000) مفعّلة [[enable]] (BLE)"
+        },
+        "hint": {
+          "en": "Enables the local UDP API on port 30000 over Bluetooth, so the 'Marstek Venus (Local API)' driver can then connect over the network.",
+          "nl": "Schakelt de lokale UDP-API in op poort 30000 via Bluetooth, zodat het 'Marstek Venus (Local API)'-stuurprogramma vervolgens via het netwerk kan verbinden.",
+          "da": "Aktiverer det lokale UDP-API på port 30000 via Bluetooth, så 'Marstek Venus (Local API)'-driveren derefter kan oprette forbindelse over netværket.",
+          "de": "Aktiviert die lokale UDP-API auf Port 30000 über Bluetooth, damit der Treiber 'Marstek Venus (Local API)' anschließend über das Netzwerk verbinden kann.",
+          "es": "Activa la API UDP local en el puerto 30000 por Bluetooth, para que el controlador 'Marstek Venus (Local API)' pueda conectarse por la red.",
+          "fr": "Active l'API UDP locale sur le port 30000 via Bluetooth, afin que le pilote 'Marstek Venus (Local API)' puisse ensuite se connecter via le réseau.",
+          "it": "Abilita l'API UDP locale sulla porta 30000 via Bluetooth, così il driver 'Marstek Venus (Local API)' può poi connettersi tramite rete.",
+          "no": "Aktiverer det lokale UDP-API-et på port 30000 via Bluetooth, slik at 'Marstek Venus (Local API)'-driveren deretter kan koble til over nettverket.",
+          "sv": "Aktiverar det lokala UDP-API:t på port 30000 via Bluetooth, så att drivrutinen 'Marstek Venus (Local API)' sedan kan ansluta via nätverket.",
+          "pl": "Włącza lokalne API UDP na porcie 30000 przez Bluetooth, dzięki czemu sterownik 'Marstek Venus (Local API)' może następnie połączyć się przez sieć.",
+          "ru": "Включает локальный UDP API на порту 30000 через Bluetooth, чтобы драйвер 'Marstek Venus (Local API)' затем мог подключиться по сети.",
+          "ko": "블루투스를 통해 포트 30000에서 로컬 UDP API를 활성화하여 'Marstek Venus (Local API)' 드라이버가 네트워크로 연결할 수 있게 합니다.",
+          "ar": "يفعّل واجهة UDP المحلية على المنفذ 30000 عبر البلوتوث، حتى يتمكن برنامج التشغيل 'Marstek Venus (Local API)' من الاتصال عبر الشبكة."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus-ble"
+          },
+          {
+            "name": "enable",
+            "type": "checkbox",
+            "title": {
+              "en": "Enabled",
+              "nl": "Ingeschakeld",
+              "da": "Aktiveret",
+              "de": "Aktiviert",
+              "es": "Activado",
+              "fr": "Activé",
+              "it": "Abilitato",
+              "no": "Aktivert",
+              "sv": "Aktiverat",
+              "pl": "Włączone",
+              "ru": "Включено",
+              "ko": "활성화됨",
+              "ar": "مفعّل"
+            }
+          }
+        ]
+      },
+      {
+        "id": "marstek_ble_power_limit",
+        "title": {
+          "en": "Set output power limit (BLE)",
+          "nl": "Stel uitgangsvermogenslimiet in (BLE)",
+          "da": "Indstil udgangseffektgrænse (BLE)",
+          "de": "Ausgangsleistungsgrenze festlegen (BLE)",
+          "es": "Establecer límite de potencia de salida (BLE)",
+          "fr": "Définir la limite de puissance de sortie (BLE)",
+          "it": "Imposta il limite di potenza in uscita (BLE)",
+          "no": "Angi grense for utgangseffekt (BLE)",
+          "sv": "Ställ in gräns för uteffekt (BLE)",
+          "pl": "Ustaw limit mocy wyjściowej (BLE)",
+          "ru": "Установить лимит выходной мощности (BLE)",
+          "ko": "출력 전력 제한 설정 (BLE)",
+          "ar": "ضبط حد طاقة الخرج (BLE)"
+        },
+        "titleFormatted": {
+          "en": "Set output power limit to [[level]] (BLE)",
+          "nl": "Stel uitgangsvermogenslimiet in op [[level]] (BLE)",
+          "da": "Indstil udgangseffektgrænse til [[level]] (BLE)",
+          "de": "Ausgangsleistungsgrenze auf [[level]] festlegen (BLE)",
+          "es": "Establecer límite de potencia de salida en [[level]] (BLE)",
+          "fr": "Définir la limite de puissance de sortie sur [[level]] (BLE)",
+          "it": "Imposta il limite di potenza in uscita su [[level]] (BLE)",
+          "no": "Angi grense for utgangseffekt til [[level]] (BLE)",
+          "sv": "Ställ in gräns för uteffekt till [[level]] (BLE)",
+          "pl": "Ustaw limit mocy wyjściowej na [[level]] (BLE)",
+          "ru": "Установить лимит выходной мощности на [[level]] (BLE)",
+          "ko": "출력 전력 제한을 [[level]]로 설정 (BLE)",
+          "ar": "ضبط حد طاقة الخرج على [[level]] (BLE)"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus-ble"
+          },
+          {
+            "name": "level",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "800",
+                "label": {
+                  "en": "800 W",
+                  "nl": "800 W",
+                  "da": "800 W",
+                  "de": "800 W",
+                  "es": "800 W",
+                  "fr": "800 W",
+                  "it": "800 W",
+                  "no": "800 W",
+                  "sv": "800 W",
+                  "pl": "800 W",
+                  "ru": "800 Вт",
+                  "ko": "800 W",
+                  "ar": "800 واط"
+                }
+              },
+              {
+                "id": "2500",
+                "label": {
+                  "en": "2500 W",
+                  "nl": "2500 W",
+                  "da": "2500 W",
+                  "de": "2500 W",
+                  "es": "2500 W",
+                  "fr": "2500 W",
+                  "it": "2500 W",
+                  "no": "2500 W",
+                  "sv": "2500 W",
+                  "pl": "2500 W",
+                  "ru": "2500 Вт",
+                  "ko": "2500 W",
+                  "ar": "2500 واط"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "marstek_ble_system_reset",
+        "title": {
+          "en": "Restart the battery (BLE)",
+          "nl": "Batterij herstarten (BLE)",
+          "da": "Genstart batteriet (BLE)",
+          "de": "Batterie neu starten (BLE)",
+          "es": "Reiniciar la batería (BLE)",
+          "fr": "Redémarrer la batterie (BLE)",
+          "it": "Riavvia la batteria (BLE)",
+          "no": "Start batteriet på nytt (BLE)",
+          "sv": "Starta om batteriet (BLE)",
+          "pl": "Uruchom ponownie baterię (BLE)",
+          "ru": "Перезапустить батарею (BLE)",
+          "ko": "배터리 재시작 (BLE)",
+          "ar": "إعادة تشغيل البطارية (BLE)"
+        },
+        "hint": {
+          "en": "⚠️ Disruptive: forces the battery to restart, briefly interrupting power delivery. Use only when needed.",
+          "nl": "⚠️ Verstorend: dwingt de batterij tot herstart en onderbreekt kort de stroomlevering. Gebruik alleen indien nodig.",
+          "da": "⚠️ Forstyrrende: tvinger batteriet til at genstarte og afbryder kortvarigt strømforsyningen. Brug kun ved behov.",
+          "de": "⚠️ Störend: erzwingt einen Neustart der Batterie und unterbricht kurz die Stromlieferung. Nur bei Bedarf verwenden.",
+          "es": "⚠️ Disruptivo: obliga a la batería a reiniciarse, interrumpiendo brevemente el suministro de energía. Úselo solo cuando sea necesario.",
+          "fr": "⚠️ Perturbateur : force le redémarrage de la batterie, interrompant brièvement la fourniture d'énergie. À utiliser uniquement si nécessaire.",
+          "it": "⚠️ Invasivo: forza il riavvio della batteria, interrompendo brevemente l'erogazione di energia. Usare solo se necessario.",
+          "no": "⚠️ Forstyrrende: tvinger batteriet til å starte på nytt og avbryter kort strømleveringen. Bruk kun ved behov.",
+          "sv": "⚠️ Störande: tvingar batteriet att starta om och avbryter kort strömleveransen. Använd endast vid behov.",
+          "pl": "⚠️ Zakłócające: wymusza ponowne uruchomienie baterii, na chwilę przerywając dostawę energii. Używaj tylko w razie potrzeby.",
+          "ru": "⚠️ С прерыванием: принудительно перезапускает батарею, ненадолго прерывая подачу энергии. Используйте только при необходимости.",
+          "ko": "⚠️ 작동 중단: 배터리를 강제로 재시작하여 잠시 전력 공급을 중단합니다. 필요할 때만 사용하세요.",
+          "ar": "⚠️ مُعطِّل: يفرض إعادة تشغيل البطارية مع انقطاع قصير في إمداد الطاقة. استخدمه عند الحاجة فقط."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus-ble"
+          }
+        ]
+      },
+      {
+        "id": "marstek_ble_work_mode",
+        "title": {
+          "en": "Set work mode (BLE)",
+          "nl": "Stel werkmodus in (BLE)",
+          "da": "Indstil arbejdstilstand (BLE)",
+          "de": "Betriebsmodus festlegen (BLE)",
+          "es": "Establecer modo de trabajo (BLE)",
+          "fr": "Définir le mode de fonctionnement (BLE)",
+          "it": "Imposta la modalità di lavoro (BLE)",
+          "no": "Angi arbeidsmodus (BLE)",
+          "sv": "Ställ in arbetsläge (BLE)",
+          "pl": "Ustaw tryb pracy (BLE)",
+          "ru": "Установить режим работы (BLE)",
+          "ko": "작동 모드 설정 (BLE)",
+          "ar": "ضبط وضع التشغيل (BLE)"
+        },
+        "titleFormatted": {
+          "en": "Set work mode to [[state]] (BLE)",
+          "nl": "Stel werkmodus in op [[state]] (BLE)",
+          "da": "Indstil arbejdstilstand til [[state]] (BLE)",
+          "de": "Betriebsmodus auf [[state]] festlegen (BLE)",
+          "es": "Establecer modo de trabajo en [[state]] (BLE)",
+          "fr": "Définir le mode de fonctionnement sur [[state]] (BLE)",
+          "it": "Imposta la modalità di lavoro su [[state]] (BLE)",
+          "no": "Angi arbeidsmodus til [[state]] (BLE)",
+          "sv": "Ställ in arbetsläge till [[state]] (BLE)",
+          "pl": "Ustaw tryb pracy na [[state]] (BLE)",
+          "ru": "Установить режим работы на [[state]] (BLE)",
+          "ko": "작동 모드를 [[state]]로 설정 (BLE)",
+          "ar": "ضبط وضع التشغيل على [[state]] (BLE)"
+        },
+        "hint": {
+          "en": "Turns the battery's work mode off or on. Note: unlike the Local API, Bluetooth cannot set a scheduled 'Manual' mode (time window + power) — only off/on.",
+          "nl": "Zet de werkmodus van de batterij uit of aan. Let op: in tegenstelling tot de lokale API kan Bluetooth geen geplande 'Handmatige' modus (tijdvenster + vermogen) instellen — alleen uit/aan.",
+          "da": "Slår batteriets arbejdstilstand fra eller til. Bemærk: i modsætning til det lokale API kan Bluetooth ikke indstille en planlagt 'Manuel' tilstand (tidsvindue + effekt) — kun fra/til.",
+          "de": "Schaltet den Betriebsmodus der Batterie aus oder ein. Hinweis: Anders als die lokale API kann Bluetooth keinen geplanten 'Manuell'-Modus (Zeitfenster + Leistung) setzen — nur aus/ein.",
+          "es": "Apaga o enciende el modo de trabajo de la batería. Nota: a diferencia de la API local, Bluetooth no puede establecer un modo 'Manual' programado (ventana horaria + potencia), solo apagado/encendido.",
+          "fr": "Active ou désactive le mode de fonctionnement de la batterie. Remarque : contrairement à l'API locale, le Bluetooth ne peut pas définir un mode 'Manuel' programmé (plage horaire + puissance) — seulement activé/désactivé.",
+          "it": "Disattiva o attiva la modalità di lavoro della batteria. Nota: a differenza dell'API locale, il Bluetooth non può impostare una modalità 'Manuale' programmata (fascia oraria + potenza) — solo off/on.",
+          "no": "Slår batteriets arbeidsmodus av eller på. Merk: i motsetning til det lokale API-et kan Bluetooth ikke sette en planlagt 'Manuell' modus (tidsvindu + effekt) — bare av/på.",
+          "sv": "Slår av eller på batteriets arbetsläge. Obs: till skillnad från det lokala API:t kan Bluetooth inte ställa in ett schemalagt 'Manuellt' läge (tidsfönster + effekt) — endast av/på.",
+          "pl": "Wyłącza lub włącza tryb pracy baterii. Uwaga: w przeciwieństwie do lokalnego API, Bluetooth nie może ustawić zaplanowanego trybu 'Ręcznego' (okno czasowe + moc) — tylko wł./wył.",
+          "ru": "Выключает или включает рабочий режим батареи. Примечание: в отличие от локального API, Bluetooth не может задать запланированный режим 'Ручной' (временное окно + мощность) — только вкл./выкл.",
+          "ko": "배터리의 작동 모드를 끄거나 켭니다. 참고: 로컬 API와 달리 블루투스는 예약된 '수동' 모드(시간대 + 전력)를 설정할 수 없으며 켜기/끄기만 가능합니다.",
+          "ar": "يقوم بإيقاف أو تشغيل وضع عمل البطارية. ملاحظة: بخلاف واجهة API المحلية، لا يستطيع البلوتوث ضبط وضع 'يدوي' مجدول (نافذة زمنية + طاقة) — فقط إيقاف/تشغيل."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=marstek-venus-ble"
+          },
+          {
+            "name": "state",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "on",
+                "label": {
+                  "en": "On",
+                  "nl": "Aan",
+                  "da": "Til",
+                  "de": "Ein",
+                  "es": "Encendido",
+                  "fr": "Activé",
+                  "it": "Acceso",
+                  "no": "På",
+                  "sv": "På",
+                  "pl": "Wł.",
+                  "ru": "Вкл.",
+                  "ko": "켜기",
+                  "ar": "تشغيل"
+                }
+              },
+              {
+                "id": "off",
+                "label": {
+                  "en": "Off",
+                  "nl": "Uit",
+                  "da": "Fra",
+                  "de": "Aus",
+                  "es": "Apagado",
+                  "fr": "Désactivé",
+                  "it": "Spento",
+                  "no": "Av",
+                  "sv": "Av",
+                  "pl": "Wył.",
+                  "ru": "Выкл.",
+                  "ko": "끄기",
+                  "ar": "إيقاف"
+                }
+              }
+            ]
           }
         ]
       },
@@ -574,19 +1089,19 @@
   "drivers": [
     {
       "name": {
-        "en": "Marstek Venus (API)",
-        "nl": "Marstek Venus (API)",
-        "da": "Marstek Venus (API)",
-        "de": "Marstek Venus (API)",
-        "es": "Marstek Venus (API)",
-        "fr": "Marstek Venus (API)",
-        "it": "Marstek Venus (API)",
-        "no": "Marstek Venus (API)",
-        "sv": "Marstek Venus (API)",
-        "pl": "Marstek Venus (API)",
-        "ru": "Марстек Венус (API)",
-        "ko": "마르스텍 비너스 (API)",
-        "ar": "مارستك فينوس (API)"
+        "en": "Marstek Venus (Local API)",
+        "nl": "Marstek Venus (Local API)",
+        "da": "Marstek Venus (Local API)",
+        "de": "Marstek Venus (Local API)",
+        "es": "Marstek Venus (Local API)",
+        "fr": "Marstek Venus (Local API)",
+        "it": "Marstek Venus (Local API)",
+        "no": "Marstek Venus (Local API)",
+        "sv": "Marstek Venus (Local API)",
+        "pl": "Marstek Venus (Local API)",
+        "ru": "Марстек Венус (Local API)",
+        "ko": "마르스텍 비너스 (Local API)",
+        "ar": "مارستك فينوس (Local API)"
       },
       "class": "battery",
       "capabilities": [
@@ -1530,6 +2045,462 @@
     },
     {
       "name": {
+        "en": "Marstek Venus (Bluetooth)",
+        "nl": "Marstek Venus (Bluetooth)",
+        "da": "Marstek Venus (Bluetooth)",
+        "de": "Marstek Venus (Bluetooth)",
+        "es": "Marstek Venus (Bluetooth)",
+        "fr": "Marstek Venus (Bluetooth)",
+        "it": "Marstek Venus (Bluetooth)",
+        "no": "Marstek Venus (Bluetooth)",
+        "sv": "Marstek Venus (Bluetooth)",
+        "pl": "Marstek Venus (Bluetooth)",
+        "ru": "Marstek Venus (Bluetooth)",
+        "ko": "마르스텍 비너스 (Bluetooth)",
+        "ar": "مارستك فينوس (Bluetooth)"
+      },
+      "class": "battery",
+      "capabilities": [
+        "battery_charging_state",
+        "measure_battery",
+        "measure_battery_soh",
+        "battery_work_mode",
+        "measure_power",
+        "measure_power_ongrid",
+        "measure_power_offgrid",
+        "measure_voltage",
+        "measure_current",
+        "measure_temperature",
+        "measure_temperature.mosfet",
+        "meter_power.charge",
+        "meter_power.discharge",
+        "meter_power.daily_charge",
+        "meter_power.daily_discharge",
+        "alarm_generic",
+        "battery_alarm_code",
+        "last_message_received"
+      ],
+      "energy": {
+        "homeBattery": true,
+        "meterPowerImportedCapability": "meter_power.charge",
+        "meterPowerExportedCapability": "meter_power.discharge"
+      },
+      "capabilitiesOptions": {
+        "measure_temperature.mosfet": {
+          "title": {
+            "en": "MOSFET temperature",
+            "nl": "MOSFET-temperatuur",
+            "da": "MOSFET-temperatur",
+            "de": "MOSFET-Temperatur",
+            "es": "Temperatura del MOSFET",
+            "fr": "Température MOSFET",
+            "it": "Temperatura MOSFET",
+            "no": "MOSFET-temperatur",
+            "sv": "MOSFET-temperatur",
+            "pl": "Temperatura MOSFET",
+            "ru": "Температура MOSFET",
+            "ko": "MOSFET 온도",
+            "ar": "درجة حرارة MOSFET"
+          }
+        },
+        "meter_power.charge": {
+          "title": {
+            "en": "Total charged",
+            "nl": "Totaal geladen",
+            "da": "Samlet opladet",
+            "de": "Gesamt geladen",
+            "es": "Total cargado",
+            "fr": "Total chargé",
+            "it": "Totale caricato",
+            "no": "Totalt ladet",
+            "sv": "Totalt laddat",
+            "pl": "Łącznie naładowano",
+            "ru": "Всего заряжено",
+            "ko": "총 충전량",
+            "ar": "إجمالي الشحن"
+          }
+        },
+        "meter_power.discharge": {
+          "title": {
+            "en": "Total discharged",
+            "nl": "Totaal ontladen",
+            "da": "Samlet afladet",
+            "de": "Gesamt entladen",
+            "es": "Total descargado",
+            "fr": "Total déchargé",
+            "it": "Totale scaricato",
+            "no": "Totalt utladet",
+            "sv": "Totalt urladdat",
+            "pl": "Łącznie rozładowano",
+            "ru": "Всего разряжено",
+            "ko": "총 방전량",
+            "ar": "إجمالي التفريغ"
+          }
+        },
+        "meter_power.daily_charge": {
+          "title": {
+            "en": "Charged today",
+            "nl": "Vandaag opgeladen",
+            "da": "Opladet i dag",
+            "de": "Heute geladen",
+            "es": "Cargado hoy",
+            "fr": "Chargé aujourd'hui",
+            "it": "Caricato oggi",
+            "no": "Ladet i dag",
+            "sv": "Laddat idag",
+            "pl": "Naładowano dziś",
+            "ru": "Заряжено сегодня",
+            "ko": "오늘 충전량",
+            "ar": "الشحن اليوم"
+          }
+        },
+        "meter_power.daily_discharge": {
+          "title": {
+            "en": "Discharged today",
+            "nl": "Vandaag ontladen",
+            "da": "Afladet i dag",
+            "de": "Heute entladen",
+            "es": "Descargado hoy",
+            "fr": "Déchargé aujourd'hui",
+            "it": "Scaricato oggi",
+            "no": "Utladet i dag",
+            "sv": "Urladdat idag",
+            "pl": "Rozładowano dziś",
+            "ru": "Разряжено сегодня",
+            "ko": "오늘 방전량",
+            "ar": "التفريغ اليوم"
+          }
+        }
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "ble"
+      ],
+      "images": {
+        "small": "/drivers/marstek-venus-ble/assets/images/small.png",
+        "large": "/drivers/marstek-venus-ble/assets/images/large.png",
+        "xlarge": "/drivers/marstek-venus-ble/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          },
+          "options": {
+            "multiple": true
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "marstek-venus-ble",
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Bluetooth polling settings",
+            "nl": "Bluetooth-pollinginstellingen",
+            "da": "Bluetooth-pollingindstillinger",
+            "de": "Bluetooth-Abfrageeinstellungen",
+            "es": "Configuración de sondeo Bluetooth",
+            "fr": "Paramètres d'interrogation Bluetooth",
+            "it": "Impostazioni di polling Bluetooth",
+            "no": "Bluetooth-pollinginnstillinger",
+            "sv": "Bluetooth-pollinginställningar",
+            "pl": "Ustawienia odpytywania Bluetooth",
+            "ru": "Настройки опроса Bluetooth",
+            "ko": "블루투스 폴링 설정",
+            "ar": "إعدادات استطلاع البلوتوث"
+          },
+          "children": [
+            {
+              "id": "poll",
+              "type": "checkbox",
+              "label": {
+                "en": "Enable periodic retrieval",
+                "nl": "Periodieke opvraging inschakelen",
+                "da": "Aktivér periodisk genfinding",
+                "de": "Periodische Abfrage aktivieren",
+                "es": "Activar recuperación periódica",
+                "fr": "Activer la récupération périodique",
+                "it": "Abilita recupero periodico",
+                "no": "Aktiver periodisk innhenting",
+                "sv": "Aktivera periodisk hämtning",
+                "pl": "Włącz okresowe pobieranie",
+                "ru": "Включить периодическое извлечение",
+                "ko": "주기적 검색 활성화",
+                "ar": "تفعيل الاسترجاع الدوري"
+              },
+              "hint": {
+                "en": "Turn this off if you only want to use command flow cards.",
+                "nl": "Zet dit uit als je alleen opdrachtstroomkaarten wilt gebruiken.",
+                "da": "Sluk dette, hvis du kun vil bruge kommandostrømkort.",
+                "de": "Deaktivieren Sie dies, wenn Sie nur Befehls-Flow-Karten verwenden möchten.",
+                "es": "Desactiva esto si solo quieres usar tarjetas de flujo de comandos.",
+                "fr": "Désactivez ceci si vous souhaitez uniquement utiliser les cartes de flux de commande.",
+                "it": "Disattiva questa opzione se vuoi usare solo le schede di flusso dei comandi.",
+                "no": "Slå dette av hvis du bare vil bruke kommandoflytkort.",
+                "sv": "Stäng av detta om du bara vill använda kommandoflödeskort.",
+                "pl": "Wyłącz to, jeśli chcesz używać tylko kart przepływu poleceń.",
+                "ru": "Отключите это, если хотите использовать только карточки потока команд.",
+                "ko": "명령 플로우 카드만 사용하려면 이를 끄십시오.",
+                "ar": "أوقف هذا إذا كنت تريد استخدام بطاقات تدفق الأوامر فقط."
+              },
+              "value": true
+            },
+            {
+              "id": "interval",
+              "type": "number",
+              "label": {
+                "en": "Poll frequency",
+                "nl": "Pollingsfrequentie",
+                "da": "Pollingsfrekvens",
+                "de": "Abfragehäufigkeit",
+                "es": "Frecuencia de sondeo",
+                "fr": "Fréquence d'interrogation",
+                "it": "Frequenza di polling",
+                "no": "Avstemmingsfrekvens",
+                "sv": "Pollfrekvens",
+                "pl": "Częstotliwość odpytywania",
+                "ru": "Частота опроса",
+                "ko": "폴링 빈도",
+                "ar": "تردد الاستطلاع"
+              },
+              "hint": {
+                "en": "How often to connect over Bluetooth and read data. Bluetooth connections are slow, so keep this generous.",
+                "nl": "Hoe vaak er via Bluetooth verbinding wordt gemaakt om gegevens te lezen. Bluetooth-verbindingen zijn traag, houd dit ruim.",
+                "da": "Hvor ofte der oprettes forbindelse via Bluetooth for at læse data. Bluetooth-forbindelser er langsomme, så hold dette rigeligt.",
+                "de": "Wie oft über Bluetooth verbunden und Daten gelesen werden. Bluetooth-Verbindungen sind langsam, wählen Sie diesen Wert großzügig.",
+                "es": "Con qué frecuencia conectarse por Bluetooth y leer datos. Las conexiones Bluetooth son lentas, mantén esto generoso.",
+                "fr": "Fréquence de connexion via Bluetooth pour lire les données. Les connexions Bluetooth sont lentes, gardez cette valeur généreuse.",
+                "it": "Con quale frequenza connettersi via Bluetooth e leggere i dati. Le connessioni Bluetooth sono lente, mantieni questo valore ampio.",
+                "no": "Hvor ofte det kobles til via Bluetooth for å lese data. Bluetooth-tilkoblinger er trege, så hold dette romslig.",
+                "sv": "Hur ofta anslutning sker via Bluetooth för att läsa data. Bluetooth-anslutningar är långsamma, håll detta generöst.",
+                "pl": "Jak często łączyć się przez Bluetooth i odczytywać dane. Połączenia Bluetooth są wolne, więc ustaw z zapasem.",
+                "ru": "Как часто подключаться по Bluetooth для чтения данных. Bluetooth-соединения медленные, задавайте с запасом.",
+                "ko": "블루투스로 연결하여 데이터를 읽는 주기입니다. 블루투스 연결은 느리므로 여유 있게 설정하세요.",
+                "ar": "عدد مرات الاتصال عبر البلوتوث لقراءة البيانات. اتصالات البلوتوث بطيئة، لذا اجعل هذه القيمة كبيرة."
+              },
+              "value": 60,
+              "min": 30,
+              "units": {
+                "en": "seconds",
+                "nl": "seconden",
+                "da": "sekunder",
+                "de": "Sekunden",
+                "es": "segundos",
+                "fr": "secondes",
+                "it": "secondi",
+                "no": "sekunder",
+                "sv": "sekunder",
+                "pl": "sekund",
+                "ru": "секунды",
+                "ko": "초",
+                "ar": "ثوانٍ"
+              }
+            }
+          ]
+        },
+        {
+          "id": "debug",
+          "type": "checkbox",
+          "label": {
+            "en": "Enable more logging (for diagnostics reports)",
+            "nl": "Meer logging inschakelen (voor diagnoserapporten)",
+            "da": "Aktivér mere logning (til diagnose-rapporter)",
+            "de": "Mehr Protokollierung aktivieren (für Diagnoseberichte)",
+            "es": "Activar más registros (para informes de diagnóstico)",
+            "fr": "Activer plus de journalisation (pour les rapports de diagnostic)",
+            "it": "Abilita più registrazioni (per i rapporti diagnostici)",
+            "no": "Aktiver mer logging (for diagnostikkrapporter)",
+            "sv": "Aktivera mer loggning (för diagnostikrapporter)",
+            "pl": "Włącz więcej logowania (dla raportów diagnostycznych)",
+            "ru": "Включить больше логирования (для диагностических отчетов)",
+            "ko": "더 많은 로깅 활성화 (진단 보고서용)",
+            "ar": "تفعيل المزيد من تسجيل الأحداث (لتقارير التشخيص)"
+          },
+          "value": false
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Device details (read only)",
+            "nl": "Apparaatgegevens (alleen-lezen)",
+            "da": "Enhedsdetaljer (kun læsning)",
+            "de": "Gerätedetails (nur lesen)",
+            "es": "Detalles del dispositivo (solo lectura)",
+            "fr": "Détails de l'appareil (lecture seule)",
+            "it": "Dettagli del dispositivo (solo lettura)",
+            "no": "Enhetsdetaljer (kun lesing)",
+            "sv": "Enhetsdetaljer (endast läsning)",
+            "pl": "Szczegóły urządzenia (tylko do odczytu)",
+            "ru": "Детали устройства (только для чтения)",
+            "ko": "장치 세부정보 (읽기 전용)",
+            "ar": "تفاصيل الجهاز (للقراءة فقط)"
+          },
+          "children": [
+            {
+              "id": "model",
+              "type": "label",
+              "label": {
+                "en": "Model name",
+                "nl": "Modelnaam",
+                "da": "Modelnavn",
+                "de": "Modellname",
+                "es": "Nombre del modelo",
+                "fr": "Nom du modèle",
+                "it": "Nome del modello",
+                "no": "Modellnavn",
+                "sv": "Modellnamn",
+                "pl": "Nazwa modelu",
+                "ru": "Наименование модели",
+                "ko": "모델명",
+                "ar": "اسم الطراز"
+              },
+              "value": "(unknown)"
+            },
+            {
+              "id": "serial",
+              "type": "label",
+              "label": {
+                "en": "Serial number",
+                "nl": "Serienummer",
+                "da": "Serienummer",
+                "de": "Seriennummer",
+                "es": "Número de serie",
+                "fr": "Numéro de série",
+                "it": "Numero di serie",
+                "no": "Serienummer",
+                "sv": "Serienummer",
+                "pl": "Numer seryjny",
+                "ru": "Серийный номер",
+                "ko": "일련번호",
+                "ar": "الرقم التسلسلي"
+              },
+              "value": "(unknown)"
+            },
+            {
+              "id": "mac",
+              "type": "label",
+              "label": {
+                "en": "Bluetooth address",
+                "nl": "Bluetooth-adres",
+                "da": "Bluetooth-adresse",
+                "de": "Bluetooth-Adresse",
+                "es": "Dirección Bluetooth",
+                "fr": "Adresse Bluetooth",
+                "it": "Indirizzo Bluetooth",
+                "no": "Bluetooth-adresse",
+                "sv": "Bluetooth-adress",
+                "pl": "Adres Bluetooth",
+                "ru": "Bluetooth-адрес",
+                "ko": "블루투스 주소",
+                "ar": "عنوان البلوتوث"
+              },
+              "value": "(unknown)"
+            },
+            {
+              "id": "firmware",
+              "type": "label",
+              "label": {
+                "en": "Firmware",
+                "nl": "Firmware",
+                "da": "Firmware",
+                "de": "Firmware",
+                "es": "Firmware",
+                "fr": "Firmware",
+                "it": "Firmware",
+                "no": "Firmware",
+                "sv": "Firmware",
+                "pl": "Oprogramowanie układowe",
+                "ru": "Прошивка",
+                "ko": "펌웨어",
+                "ar": "البرامج الثابتة"
+              },
+              "value": "(unknown)"
+            },
+            {
+              "id": "power_rating",
+              "type": "label",
+              "label": {
+                "en": "Output power rating",
+                "nl": "Nominaal uitgangsvermogen",
+                "da": "Nominel udgangseffekt",
+                "de": "Nennausgangsleistung",
+                "es": "Potencia nominal de salida",
+                "fr": "Puissance nominale de sortie",
+                "it": "Potenza nominale di uscita",
+                "no": "Nominell utgangseffekt",
+                "sv": "Nominell uteffekt",
+                "pl": "Znamionowa moc wyjściowa",
+                "ru": "Номинальная выходная мощность",
+                "ko": "정격 출력 전력",
+                "ar": "قدرة الخرج الاسمية"
+              },
+              "hint": {
+                "en": "Current output power limit as reported by the battery (800 W or 2500 W). Can be changed with the 'Set output power limit (BLE)' flow card.",
+                "nl": "Huidige uitgangsvermogenslimiet zoals gemeld door de batterij (800 W of 2500 W). Kan worden gewijzigd met de flowkaart 'Stel uitgangsvermogenslimiet in (BLE)'.",
+                "da": "Nuværende udgangseffektgrænse som rapporteret af batteriet (800 W eller 2500 W). Kan ændres med flowkortet 'Indstil udgangseffektgrænse (BLE)'.",
+                "de": "Aktuelle Ausgangsleistungsgrenze laut Batterie (800 W oder 2500 W). Kann mit der Flow-Karte 'Ausgangsleistungsgrenze festlegen (BLE)' geändert werden.",
+                "es": "Límite actual de potencia de salida según la batería (800 W o 2500 W). Puede cambiarse con la tarjeta de flujo 'Establecer límite de potencia de salida (BLE)'.",
+                "fr": "Limite actuelle de puissance de sortie rapportée par la batterie (800 W ou 2500 W). Modifiable avec la carte de flux 'Définir la limite de puissance de sortie (BLE)'.",
+                "it": "Limite attuale di potenza in uscita riportato dalla batteria (800 W o 2500 W). Modificabile con la scheda di flusso 'Imposta il limite di potenza in uscita (BLE)'.",
+                "no": "Gjeldende grense for utgangseffekt rapportert av batteriet (800 W eller 2500 W). Kan endres med flytkortet 'Angi grense for utgangseffekt (BLE)'.",
+                "sv": "Aktuell gräns för uteffekt enligt batteriet (800 W eller 2500 W). Kan ändras med flödeskortet 'Ställ in gräns för uteffekt (BLE)'.",
+                "pl": "Aktualny limit mocy wyjściowej raportowany przez baterię (800 W lub 2500 W). Można zmienić kartą przepływu 'Ustaw limit mocy wyjściowej (BLE)'.",
+                "ru": "Текущий лимит выходной мощности по данным батареи (800 Вт или 2500 Вт). Можно изменить карточкой потока 'Установить лимит выходной мощности (BLE)'.",
+                "ko": "배터리가 보고한 현재 출력 전력 제한 (800 W 또는 2500 W). '출력 전력 제한 설정 (BLE)' 플로우 카드로 변경할 수 있습니다.",
+                "ar": "حد طاقة الخرج الحالي كما تبلغ عنه البطارية (800 واط أو 2500 واط). يمكن تغييره باستخدام بطاقة التدفق 'ضبط حد طاقة الخرج (BLE)'."
+              },
+              "value": "(unknown)"
+            },
+            {
+              "id": "local_api",
+              "type": "label",
+              "label": {
+                "en": "Local API status",
+                "nl": "Lokale API-status",
+                "da": "Lokal API-status",
+                "de": "Lokaler API-Status",
+                "es": "Estado de la API local",
+                "fr": "État de l'API locale",
+                "it": "Stato API locale",
+                "no": "Lokal API-status",
+                "sv": "Lokal API-status",
+                "pl": "Status lokalnego API",
+                "ru": "Статус локального API",
+                "ko": "로컬 API 상태",
+                "ar": "حالة واجهة API المحلية"
+              },
+              "hint": {
+                "en": "Whether the battery's local UDP API is enabled, as reported by the battery. Can be changed with the 'Enable/disable Local API (BLE)' flow card; when enabled on port 30000 the 'Marstek Venus (Local API)' driver can connect over the network.",
+                "nl": "Of de lokale UDP-API van de batterij is ingeschakeld, zoals gemeld door de batterij. Kan worden gewijzigd met de flowkaart 'Lokale API in-/uitschakelen (BLE)'; indien ingeschakeld op poort 30000 kan het 'Marstek Venus (Local API)'-stuurprogramma via het netwerk verbinden.",
+                "da": "Om batteriets lokale UDP-API er aktiveret, som rapporteret af batteriet. Kan ændres med flowkortet 'Aktivér/deaktivér lokal API (BLE)'; når aktiveret på port 30000 kan 'Marstek Venus (Local API)'-driveren oprette forbindelse via netværket.",
+                "de": "Ob die lokale UDP-API der Batterie aktiviert ist, laut Batterie. Kann mit der Flow-Karte 'Lokale API aktivieren/deaktivieren (BLE)' geändert werden; bei Aktivierung auf Port 30000 kann der Treiber 'Marstek Venus (Local API)' über das Netzwerk verbinden.",
+                "es": "Si la API UDP local de la batería está activada, según la batería. Puede cambiarse con la tarjeta de flujo 'Activar/desactivar API local (BLE)'; cuando está activada en el puerto 30000, el controlador 'Marstek Venus (Local API)' puede conectarse por la red.",
+                "fr": "Indique si l'API UDP locale de la batterie est activée, selon la batterie. Modifiable avec la carte de flux 'Activer/désactiver l'API locale (BLE)' ; lorsqu'elle est activée sur le port 30000, le pilote 'Marstek Venus (Local API)' peut se connecter via le réseau.",
+                "it": "Indica se l'API UDP locale della batteria è abilitata, come riportato dalla batteria. Modificabile con la scheda di flusso 'Abilita/disabilita API locale (BLE)'; quando abilitata sulla porta 30000 il driver 'Marstek Venus (Local API)' può connettersi tramite rete.",
+                "no": "Om batteriets lokale UDP-API er aktivert, som rapportert av batteriet. Kan endres med flytkortet 'Aktiver/deaktiver lokalt API (BLE)'; når aktivert på port 30000 kan 'Marstek Venus (Local API)'-driveren koble til over nettverket.",
+                "sv": "Om batteriets lokala UDP-API är aktiverat, enligt batteriet. Kan ändras med flödeskortet 'Aktivera/inaktivera lokalt API (BLE)'; när det är aktiverat på port 30000 kan drivrutinen 'Marstek Venus (Local API)' ansluta via nätverket.",
+                "pl": "Czy lokalne API UDP baterii jest włączone, według raportu baterii. Można zmienić kartą przepływu 'Włącz/wyłącz lokalne API (BLE)'; gdy włączone na porcie 30000, sterownik 'Marstek Venus (Local API)' może połączyć się przez sieć.",
+                "ru": "Включен ли локальный UDP API батареи, по данным батареи. Можно изменить карточкой потока 'Включить/выключить локальный API (BLE)'; при включении на порту 30000 драйвер 'Marstek Venus (Local API)' может подключиться по сети.",
+                "ko": "배터리가 보고한 로컬 UDP API 활성화 여부입니다. '로컬 API 활성화/비활성화 (BLE)' 플로우 카드로 변경할 수 있으며, 포트 30000에서 활성화되면 'Marstek Venus (Local API)' 드라이버가 네트워크로 연결할 수 있습니다.",
+                "ar": "ما إذا كانت واجهة UDP المحلية للبطارية مفعّلة، كما تبلغ عنه البطارية. يمكن تغييره باستخدام بطاقة التدفق 'تفعيل/تعطيل واجهة API المحلية (BLE)'؛ عند التفعيل على المنفذ 30000 يمكن لبرنامج التشغيل 'Marstek Venus (Local API)' الاتصال عبر الشبكة."
+              },
+              "value": "(unknown)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": {
         "en": "Marstek Venus (Cloud)",
         "nl": "Marstek Venus (Cloud)",
         "da": "Marstek Venus (Cloud)",
@@ -1762,6 +2733,214 @@
     }
   ],
   "capabilities": {
+    "battery_alarm_code": {
+      "type": "string",
+      "title": {
+        "en": "Alarm code",
+        "nl": "Alarmcode",
+        "da": "Alarmkode",
+        "de": "Alarmcode",
+        "es": "Código de alarma",
+        "fr": "Code d'alarme",
+        "it": "Codice allarme",
+        "no": "Alarmkode",
+        "sv": "Larmkod",
+        "pl": "Kod alarmu",
+        "ru": "Код тревоги",
+        "ko": "알람 코드",
+        "ar": "رمز الإنذار"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "insights": false,
+      "icon": "/assets/icon.svg"
+    },
+    "battery_work_mode": {
+      "type": "enum",
+      "title": {
+        "en": "Work mode",
+        "nl": "Werkmodus",
+        "da": "Arbejdstilstand",
+        "de": "Betriebsmodus",
+        "es": "Modo de trabajo",
+        "fr": "Mode de fonctionnement",
+        "it": "Modalità di lavoro",
+        "no": "Arbeidsmodus",
+        "sv": "Arbetsläge",
+        "pl": "Tryb pracy",
+        "ru": "Режим работы",
+        "ko": "작동 모드",
+        "ar": "وضع التشغيل"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "values": [
+        {
+          "id": "auto",
+          "title": {
+            "en": "Auto",
+            "nl": "Automatisch",
+            "da": "Auto",
+            "de": "Auto",
+            "es": "Automático",
+            "fr": "Auto",
+            "it": "Automatico",
+            "no": "Auto",
+            "sv": "Auto",
+            "pl": "Auto",
+            "ru": "Авто",
+            "ko": "자동",
+            "ar": "تلقائي"
+          }
+        },
+        {
+          "id": "standby",
+          "title": {
+            "en": "Standby",
+            "nl": "Stand-by",
+            "da": "Standby",
+            "de": "Standby",
+            "es": "En espera",
+            "fr": "Veille",
+            "it": "Standby",
+            "no": "Standby",
+            "sv": "Standby",
+            "pl": "Czuwanie",
+            "ru": "Ожидание",
+            "ko": "대기",
+            "ar": "وضع الاستعداد"
+          }
+        },
+        {
+          "id": "charging",
+          "title": {
+            "en": "Charging",
+            "nl": "Opladen",
+            "da": "Oplader",
+            "de": "Laden",
+            "es": "Cargando",
+            "fr": "Charge",
+            "it": "In carica",
+            "no": "Lader",
+            "sv": "Laddar",
+            "pl": "Ładowanie",
+            "ru": "Зарядка",
+            "ko": "충전 중",
+            "ar": "جارٍ الشحن"
+          }
+        },
+        {
+          "id": "discharging",
+          "title": {
+            "en": "Discharging",
+            "nl": "Ontladen",
+            "da": "Aflader",
+            "de": "Entladen",
+            "es": "Descargando",
+            "fr": "Décharge",
+            "it": "In scarica",
+            "no": "Utlader",
+            "sv": "Urladdar",
+            "pl": "Rozładowanie",
+            "ru": "Разрядка",
+            "ko": "방전 중",
+            "ar": "جارٍ التفريغ"
+          }
+        },
+        {
+          "id": "ups",
+          "title": {
+            "en": "UPS / Backup",
+            "nl": "UPS / Back-up",
+            "da": "UPS / Backup",
+            "de": "USV / Backup",
+            "es": "SAI / Respaldo",
+            "fr": "Onduleur / Secours",
+            "it": "UPS / Backup",
+            "no": "UPS / Backup",
+            "sv": "UPS / Backup",
+            "pl": "UPS / Zasilanie awaryjne",
+            "ru": "ИБП / Резерв",
+            "ko": "UPS / 백업",
+            "ar": "UPS / احتياطي"
+          }
+        },
+        {
+          "id": "force_charge",
+          "title": {
+            "en": "Force charge",
+            "nl": "Geforceerd opladen",
+            "da": "Tvungen opladning",
+            "de": "Zwangsladung",
+            "es": "Carga forzada",
+            "fr": "Charge forcée",
+            "it": "Carica forzata",
+            "no": "Tvungen lading",
+            "sv": "Tvingad laddning",
+            "pl": "Wymuszone ładowanie",
+            "ru": "Принудительная зарядка",
+            "ko": "강제 충전",
+            "ar": "شحن إجباري"
+          }
+        },
+        {
+          "id": "grid_export",
+          "title": {
+            "en": "Grid export",
+            "nl": "Netteruglevering",
+            "da": "Neteksport",
+            "de": "Netzeinspeisung",
+            "es": "Exportación a red",
+            "fr": "Injection réseau",
+            "it": "Esportazione in rete",
+            "no": "Neteksport",
+            "sv": "Nätexport",
+            "pl": "Eksport do sieci",
+            "ru": "Экспорт в сеть",
+            "ko": "그리드 수출",
+            "ar": "تصدير للشبكة"
+          }
+        },
+        {
+          "id": "schedule",
+          "title": {
+            "en": "Schedule / TOU",
+            "nl": "Schema / TOU",
+            "da": "Tidsplan / TOU",
+            "de": "Zeitplan / TOU",
+            "es": "Horario / TOU",
+            "fr": "Planification / TOU",
+            "it": "Programmazione / TOU",
+            "no": "Tidsplan / TOU",
+            "sv": "Schema / TOU",
+            "pl": "Harmonogram / TOU",
+            "ru": "Расписание / TOU",
+            "ko": "일정 / TOU",
+            "ar": "جدولة / TOU"
+          }
+        },
+        {
+          "id": "unknown",
+          "title": {
+            "en": "Unknown",
+            "nl": "Onbekend",
+            "da": "Ukendt",
+            "de": "Unbekannt",
+            "es": "Desconocido",
+            "fr": "Inconnu",
+            "it": "Sconosciuto",
+            "no": "Ukjent",
+            "sv": "Okänd",
+            "pl": "Nieznany",
+            "ru": "Неизвестно",
+            "ko": "알 수 없음",
+            "ar": "غير معروف"
+          }
+        }
+      ]
+    },
     "last_message_received": {
       "type": "number",
       "title": {
@@ -1784,6 +2963,46 @@
       "uiComponent": "sensor",
       "insights": false,
       "icon": "/assets/clock-outline-badged.svg"
+    },
+    "measure_battery_soh": {
+      "type": "number",
+      "title": {
+        "en": "State of Health",
+        "nl": "Batterijgezondheid",
+        "da": "Batterisundhed",
+        "de": "Batteriezustand",
+        "es": "Estado de salud",
+        "fr": "État de santé",
+        "it": "Stato di salute",
+        "no": "Batterihelse",
+        "sv": "Batterihälsa",
+        "pl": "Kondycja baterii",
+        "ru": "Состояние здоровья",
+        "ko": "배터리 수명 상태",
+        "ar": "حالة صحة البطارية"
+      },
+      "units": {
+        "en": "%",
+        "nl": "%",
+        "da": "%",
+        "de": "%",
+        "es": "%",
+        "fr": "%",
+        "it": "%",
+        "no": "%",
+        "sv": "%",
+        "pl": "%",
+        "ru": "%",
+        "ko": "%",
+        "ar": "٪"
+      },
+      "getable": true,
+      "setable": false,
+      "min": 0,
+      "max": 100,
+      "decimals": 0,
+      "uiComponent": "sensor",
+      "icon": "/assets/icon.svg"
     },
     "measure_power_offgrid": {
       "type": "number",
