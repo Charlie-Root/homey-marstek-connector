@@ -266,8 +266,8 @@ export default class MarstekVenusLocalApiDevice extends Homey.Device {
                     const newCtState = result.ct_state.toString();
                     if (currentCtState !== newCtState) {
                         await this.setCapabilityValue('measure_ct_state', newCtState);
-                        // Trigger flow
-                        await this.homey.flow.getTriggerCard('marstek_ct_state_changed').trigger(this, { state: result.ct_state });
+                        // Trigger device flow (run listener matches the card's state argument)
+                        await this.homey.flow.getDeviceTriggerCard('marstek_ct_state_changed').trigger(this, {}, { state: result.ct_state });
                     }
                 }
                 await this.setValue('measure_power.a', result.a_power);

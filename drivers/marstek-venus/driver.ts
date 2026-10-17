@@ -424,6 +424,10 @@ export default class MarstekVenusLocalApiDriver extends Homey.Driver {
                 enable: boolean,
             }) => this.setModeManualText(device, start_time, power, enable),
         );
+
+        // Device trigger: only run flows whose state argument matches the new CT state
+        this.homey.flow.getDeviceTriggerCard('marstek_ct_state_changed')
+            .registerRunListener(async (args: { state: number }, state: { state: number }) => Number(args.state) === Number(state.state));
     }
 
     /**
