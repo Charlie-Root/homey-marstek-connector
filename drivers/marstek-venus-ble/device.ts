@@ -48,6 +48,9 @@ export default class MarstekVenusBleDevice extends Homey.Device {
     // Timestamp of the last successful read.
     private timestamp?: Date = undefined;
 
+    // Number of poll cycles in a row that failed; reset on success.
+    private failedPolls: number = 0;
+
     // Trigger card fired when the BMS error/warning code changes.
     private alarmChangedTrigger?: Homey.FlowCardTriggerDevice = undefined;
 
@@ -121,19 +124,33 @@ export default class MarstekVenusBleDevice extends Homey.Device {
             await this.applyResult(result);
 
             if (result.runtime || result.bms) {
+                this.failedPolls = 0;
                 this.timestamp = new Date();
                 await this.setCapabilityValue('last_message_received', 0).catch(() => {});
                 if (!this.getAvailable()) await this.setAvailable();
             } else {
-                await this.setUnavailable('Connected over Bluetooth but the battery returned no data.').catch(() => {});
+                await this.pollFailed('Connected over Bluetooth but the battery returned no data.');
             }
         } catch (err) {
-            // Surface the reason in the Homey UI (truncated) instead of only logging it.
-            const message = (err as Error).message || 'Bluetooth communication failed';
-            this.error('Poll failed:', message);
-            await this.setUnavailable(`Bluetooth: ${message}`.slice(0, 200)).catch(() => {});
+            await this.pollFailed(`Bluetooth: ${(err as Error).message || 'communication failed'}`);
         } finally {
             this.polling = false;
+        }
+    }
+
+    /**
+     * Registers a failed poll cycle. Bluetooth regularly misses a single cycle, so the device
+     * is only marked unavailable after several failures in a row (configurable).
+     * @param {string} message Reason for the failure, shown in the Homey UI.
+     * @returns {Promise<void>} Resolves once the availability is updated.
+     */
+    async pollFailed(message: string) {
+        this.failedPolls++;
+        const limit = Math.max(1, Number(this.getSetting('unavailable_after')) || 3);
+        this.error(`Poll failed (${this.failedPolls}/${limit}):`, message);
+        if (this.failedPolls >= limit) {
+            // Surface the reason in the Homey UI (truncated) instead of only logging it.
+            await this.setUnavailable(message.slice(0, 200)).catch(() => {});
         }
     }
 

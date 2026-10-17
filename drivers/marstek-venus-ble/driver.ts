@@ -36,6 +36,14 @@ interface BleContext {
     send: (cmd: number, payload?: number[]) => Promise<void>;
 }
 
+// Time limits for the individual connection steps, so a hung step cannot block the queue.
+const CONNECT_TIMEOUT = 15000;
+const DISCOVER_TIMEOUT = 15000;
+const SUBSCRIBE_TIMEOUT = 10000;
+
+// Waits before each retry of a failed connection attempt (one entry per retry).
+const RETRY_DELAYS = [2000, 5000];
+
 /**
  * Driver for Marstek Venus batteries communicating over Bluetooth Low Energy.
  * Handles BLE discovery during pairing, background polling and flow action cards.
@@ -46,8 +54,11 @@ export default class MarstekVenusBleDriver extends Homey.Driver {
     // Add extra details during debugging
     private debug: boolean = config.isTestVersion;
 
-    // Simple mutex flag; only one BLE connection is active at a time across all devices.
-    private busy: boolean = false;
+    // Queue of BLE operations; the battery accepts one connection at a time, so they run one by one.
+    private queue: Promise<unknown> = Promise.resolve();
+
+    // Last advertisement that led to a successful connection, per peripheral UUID.
+    private advertisements: Map<string, any> = new Map();
 
     /**
      * Called when the driver is initialised. Registers the flow action listeners.
@@ -116,9 +127,9 @@ export default class MarstekVenusBleDriver extends Homey.Driver {
     }
 
     /**
-     * Connects to a peripheral, discovers the FF00 service characteristics, subscribes to
-     * notifications and runs the supplied callback with a command helper. The connection is
-     * always closed afterwards. A driver-wide mutex ensures only one connection at a time.
+     * Runs the supplied callback while connected to a peripheral. Operations are queued so
+     * only one BLE connection is active at a time across all devices. Setting up the
+     * connection is retried with a short backoff; the callback itself runs only once.
      * @param {string} peripheralUuid UUID of the peripheral to connect to.
      * @param {(ctx: BleContext) => Promise<T>} fn Work to perform while connected.
      * @returns {Promise<T>} The callback's result.
@@ -126,20 +137,71 @@ export default class MarstekVenusBleDriver extends Homey.Driver {
     async connectAndRun<T>(peripheralUuid: string, fn: (ctx: BleContext) => Promise<T>): Promise<T> {
         if (!this.homey.ble) throw new Error('Bluetooth is not available on this Homey.');
 
-        // Wait for any in-progress BLE operation to finish (basic mutex, ~30 s cap).
-        for (let waited = 0; this.busy && waited < 30000; waited += 250) {
-            await new Promise<void>((resolve) => this.homey.setTimeout(resolve, 250));
-        }
-        this.busy = true;
+        const run = this.queue.then(() => this.connectWithRetry(peripheralUuid, fn));
+        // Keep the queue going regardless of the outcome of this operation.
+        this.queue = run.catch(() => undefined);
+        return run;
+    }
 
+    /**
+     * Connects (with retries) and runs the callback. Must only be called from the queue.
+     * @param {string} peripheralUuid UUID of the peripheral to connect to.
+     * @param {(ctx: BleContext) => Promise<T>} fn Work to perform while connected.
+     * @returns {Promise<T>} The callback's result.
+     */
+    private async connectWithRetry<T>(peripheralUuid: string, fn: (ctx: BleContext) => Promise<T>): Promise<T> {
+        for (let attempt = 0; ; attempt++) {
+            // Reuse the last known advertisement first; scan again when retrying.
+            const freshScan = attempt > 0 || !this.advertisements.has(peripheralUuid);
+            let connection: { peripheral: any, ctx: BleContext };
+            try {
+                connection = await this.openConnection(peripheralUuid, freshScan);
+            } catch (err) {
+                if (attempt >= RETRY_DELAYS.length) throw err;
+                const delay = RETRY_DELAYS[attempt];
+                if (this.debug) this.log(`BLE connect attempt ${attempt + 1} failed (${(err as Error).message}), retrying in ${delay} ms`);
+                await new Promise<void>((resolve) => this.homey.setTimeout(resolve, delay));
+                continue;
+            }
+
+            try {
+                return await fn(connection.ctx);
+            } finally {
+                await this.closeConnection(connection.peripheral);
+            }
+        }
+    }
+
+    /**
+     * Connects to a peripheral, discovers the FF00 service characteristics and subscribes to
+     * notifications. Each step has a time limit; on failure the connection is closed again.
+     * @param {string} peripheralUuid UUID of the peripheral to connect to.
+     * @param {boolean} freshScan Whether to scan for a new advertisement instead of reusing the last one.
+     * @returns {Promise<{peripheral: any, ctx: BleContext}>} The connected peripheral and a command helper.
+     */
+    private async openConnection(peripheralUuid: string, freshScan: boolean): Promise<{ peripheral: any, ctx: BleContext }> {
+        const advertisement = freshScan
+            ? await this.resolveAdvertisement(peripheralUuid)
+            : this.advertisements.get(peripheralUuid);
+
+        const connecting = advertisement.connect();
         let peripheral: any;
         try {
-            const advertisement = await this.resolveAdvertisement(peripheralUuid);
-            peripheral = await advertisement.connect();
+            peripheral = await this.withTimeout(connecting, CONNECT_TIMEOUT, 'Connecting to the battery');
+        } catch (err) {
+            // A connection that completes after the timeout must still be closed.
+            connecting.then((late: any) => this.closeConnection(late)).catch(() => undefined);
+            throw err;
+        }
 
+        try {
             // discoverAllServicesAndCharacteristics() returns the services; it does not reliably
             // populate peripheral.services, so use the returned array (with a fallback).
-            const discovered = await peripheral.discoverAllServicesAndCharacteristics();
+            const discovered = await this.withTimeout(
+                peripheral.discoverAllServicesAndCharacteristics(),
+                DISCOVER_TIMEOUT,
+                'Discovering Bluetooth services',
+            );
             const services = (Array.isArray(discovered) && discovered.length) ? discovered : (peripheral.services || []);
 
             const service = await this.findService(peripheral, services);
@@ -149,7 +211,7 @@ export default class MarstekVenusBleDriver extends Homey.Driver {
             const reassembler = new FrameReassembler();
             const waiters: Array<{ cmd: number; resolve: (b: Buffer) => void }> = [];
 
-            await notifyChar.subscribeToNotifications((data: Buffer) => {
+            await this.withTimeout(notifyChar.subscribeToNotifications((data: Buffer) => {
                 for (const frame of reassembler.push(Buffer.from(data))) {
                     const parsed = parseFrame(frame);
                     if (!parsed) continue;
@@ -159,7 +221,7 @@ export default class MarstekVenusBleDriver extends Homey.Driver {
                         waiter.resolve(parsed.payload);
                     }
                 }
-            });
+            }), SUBSCRIBE_TIMEOUT, 'Subscribing to battery notifications');
 
             const ctx: BleContext = {
                 send: async (cmd: number, payload: number[] = []) => {
@@ -187,17 +249,46 @@ export default class MarstekVenusBleDriver extends Homey.Driver {
                 }),
             };
 
-            return await fn(ctx);
-        } finally {
-            if (peripheral) {
-                try {
-                    await peripheral.disconnect();
-                } catch (err) {
-                    if (this.debug) this.error('Error while disconnecting:', err);
-                }
-            }
-            this.busy = false;
+            this.advertisements.set(peripheralUuid, advertisement);
+            return { peripheral, ctx };
+        } catch (err) {
+            await this.closeConnection(peripheral);
+            throw err;
         }
+    }
+
+    /**
+     * Disconnects a peripheral, ignoring errors (the connection may already be gone).
+     * @param {any} peripheral Connected BLE peripheral.
+     * @returns {Promise<void>} Resolves once the disconnect attempt finishes.
+     */
+    private async closeConnection(peripheral: any): Promise<void> {
+        if (!peripheral) return;
+        try {
+            await peripheral.disconnect();
+        } catch (err) {
+            if (this.debug) this.error('Error while disconnecting:', err);
+        }
+    }
+
+    /**
+     * Rejects when the promise does not settle within the given time.
+     * @param {Promise<T>} promise Promise to wait for.
+     * @param {number} ms Time limit in milliseconds.
+     * @param {string} step Description of the step, used in the error message.
+     * @returns {Promise<T>} The promise's result.
+     */
+    private withTimeout<T>(promise: Promise<T>, ms: number, step: string): Promise<T> {
+        return new Promise<T>((resolve, reject) => {
+            const timer = this.homey.setTimeout(() => reject(new Error(`${step} timed out after ${ms / 1000} s`)), ms);
+            promise.then((value) => {
+                this.homey.clearTimeout(timer);
+                resolve(value);
+            }, (err) => {
+                this.homey.clearTimeout(timer);
+                reject(err);
+            });
+        });
     }
 
     /**
@@ -274,12 +365,25 @@ export default class MarstekVenusBleDriver extends Homey.Driver {
     }
 
     /**
-     * Performs a full read cycle: connects once and requests Runtime Info, BMS Data and
-     * Device Info. Individual reads that fail are skipped rather than aborting the cycle.
+     * Performs a full read cycle (Runtime Info, BMS Data and Device Info). Individual reads
+     * that fail are skipped; when nothing at all comes back the cycle is repeated once.
      * @param {string} peripheralUuid UUID of the peripheral to read.
      * @returns {Promise<PollResult>} The parsed telemetry that was successfully read.
      */
     async readAll(peripheralUuid: string): Promise<PollResult> {
+        const result = await this.readOnce(peripheralUuid);
+        if (result.runtime || result.bms) return result;
+        if (this.debug) this.log('BLE read returned no data, retrying once with a fresh scan');
+        this.advertisements.delete(peripheralUuid);
+        return this.readOnce(peripheralUuid);
+    }
+
+    /**
+     * Connects once and requests Runtime Info, BMS Data and Device Info.
+     * @param {string} peripheralUuid UUID of the peripheral to read.
+     * @returns {Promise<PollResult>} The parsed telemetry that was successfully read.
+     */
+    private async readOnce(peripheralUuid: string): Promise<PollResult> {
         return this.connectAndRun(peripheralUuid, async (ctx) => {
             const result: PollResult = {};
 

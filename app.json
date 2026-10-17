@@ -7893,6 +7893,58 @@
                 "ko": "초",
                 "ar": "ثوانٍ"
               }
+            },
+            {
+              "id": "unavailable_after",
+              "type": "number",
+              "label": {
+                "en": "Mark unavailable after",
+                "nl": "Onbeschikbaar markeren na",
+                "da": "Markér som utilgængelig efter",
+                "de": "Als nicht verfügbar markieren nach",
+                "es": "Marcar como no disponible tras",
+                "fr": "Marquer comme indisponible après",
+                "it": "Segna come non disponibile dopo",
+                "no": "Merk som utilgjengelig etter",
+                "sv": "Markera som otillgänglig efter",
+                "pl": "Oznacz jako niedostępne po",
+                "ru": "Отмечать как недоступное после",
+                "ko": "사용 불가로 표시하기까지",
+                "ar": "وضع علامة غير متاح بعد"
+              },
+              "hint": {
+                "en": "Number of failed Bluetooth polls in a row before the device is marked unavailable. Single failures are common with Bluetooth; the last values stay visible until then.",
+                "nl": "Aantal mislukte Bluetooth-pollings op rij voordat het apparaat als onbeschikbaar wordt gemarkeerd. Losse mislukkingen zijn normaal bij Bluetooth; tot die tijd blijven de laatste waarden zichtbaar.",
+                "da": "Antal mislykkede Bluetooth-pollinger i træk, før enheden markeres som utilgængelig. Enkelte fejl er almindelige med Bluetooth; de seneste værdier forbliver synlige indtil da.",
+                "de": "Anzahl fehlgeschlagener Bluetooth-Abfragen in Folge, bevor das Gerät als nicht verfügbar markiert wird. Einzelne Fehler sind bei Bluetooth üblich; bis dahin bleiben die letzten Werte sichtbar.",
+                "es": "Número de sondeos Bluetooth fallidos seguidos antes de marcar el dispositivo como no disponible. Los fallos aislados son habituales con Bluetooth; hasta entonces se muestran los últimos valores.",
+                "fr": "Nombre d'interrogations Bluetooth échouées consécutives avant que l'appareil soit marqué indisponible. Les échecs isolés sont courants en Bluetooth ; les dernières valeurs restent visibles d'ici là.",
+                "it": "Numero di polling Bluetooth falliti consecutivi prima che il dispositivo venga segnato come non disponibile. I singoli errori sono comuni con il Bluetooth; fino ad allora restano visibili gli ultimi valori.",
+                "no": "Antall mislykkede Bluetooth-avstemninger på rad før enheten merkes som utilgjengelig. Enkeltfeil er vanlige med Bluetooth; de siste verdiene forblir synlige til da.",
+                "sv": "Antal misslyckade Bluetooth-pollningar i rad innan enheten markeras som otillgänglig. Enstaka fel är vanliga med Bluetooth; de senaste värdena visas fram till dess.",
+                "pl": "Liczba kolejnych nieudanych odpytań Bluetooth, po której urządzenie zostanie oznaczone jako niedostępne. Pojedyncze błędy są typowe dla Bluetooth; do tego czasu widoczne są ostatnie wartości.",
+                "ru": "Количество неудачных опросов Bluetooth подряд, после которого устройство отмечается как недоступное. Единичные сбои типичны для Bluetooth; до этого отображаются последние значения.",
+                "ko": "장치를 사용 불가로 표시하기 전 연속으로 실패한 블루투스 폴링 횟수입니다. 블루투스에서는 단일 실패가 흔하며, 그때까지 마지막 값이 표시됩니다.",
+                "ar": "عدد مرات فشل استطلاع البلوتوث المتتالية قبل وضع علامة غير متاح على الجهاز. الإخفاقات الفردية شائعة مع البلوتوث؛ تظل القيم الأخيرة مرئية حتى ذلك الحين."
+              },
+              "value": 3,
+              "min": 1,
+              "max": 20,
+              "units": {
+                "en": "polls",
+                "nl": "pollings",
+                "da": "pollinger",
+                "de": "Abfragen",
+                "es": "sondeos",
+                "fr": "interrogations",
+                "it": "polling",
+                "no": "avstemninger",
+                "sv": "pollningar",
+                "pl": "odpytań",
+                "ru": "опросов",
+                "ko": "회",
+                "ar": "استطلاعات"
+              }
             }
           ]
         },
