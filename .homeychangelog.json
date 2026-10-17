@@ -1,4 +1,7 @@
 {
+    "0.11.0": {
+        "en": "Added battery statistics: daily charge/discharge energy, cost, savings and profit based on a configurable energy price. Added flow cards for SOC, temperature and solar thresholds, grid import/export, mode changes, CT disconnect, manual mode presets, timed passive mode, emergency mode and notifications. Battery mode can be controlled from the device page; WiFi signal, phase power and CT state are shown. Fixed flow triggers running for all flows regardless of their settings."
+    },
     "0.10.1": {
         "en": "Added Bluetooth BLE driver for direct communication with the battery. Retrieval of battery statistics and sending commands to the battery is now possible over Bluetooth. Added flow cards for controlling the battery over Bluetooth."
     },

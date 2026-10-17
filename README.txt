@@ -69,6 +69,7 @@ You can devices from both API and Cloud. See settings of each battery for additi
 
 VERSION HISTORY
 
+- 0.11.0 - Added battery statistics: daily charge/discharge energy, cost, savings and profit based on a configurable energy price. Added flow cards for SOC, temperature and solar thresholds, grid import/export, mode changes, CT disconnect, manual mode presets, timed passive mode, emergency mode and notifications. Battery mode can be controlled from the device page; WiFi signal, phase power and CT state are shown. Fixed flow triggers running for all flows regardless of their settings.
 - 0.10.1 - Added Bluetooth BLE driver for direct communication with the battery. Retrieval of battery statistics and sending commands to the battery is now possible over Bluetooth. Added flow cards for controlling the battery over Bluetooth.
 - 0.9.0 - [current LIVE release] Updated LIVE version of app; all fixes and improvements from TEST version are now included in the LIVE version.
 - 0.8.13 - Negative power values for passive mode flow card are now allowed. Updated module dependencies to latest versions and cleaned some code.
