@@ -112,7 +112,7 @@ export default class MarstekVenusLocalApiDriver extends Homey.Driver {
             version: this.homey.manifest.version,
             debug: this.debug,
             platform: process.platform,
-            nodeVersion: process.version
+            nodeVersion: process.version,
         });
         await this.registerFlowListeners();
     }
@@ -564,7 +564,7 @@ export default class MarstekVenusLocalApiDriver extends Homey.Driver {
         // Calculate end_time as start_time + 2 hours
         const [hours, minutes] = start_time.split(':').map(Number);
         let endHours = hours + 2;
-        let endMinutes = minutes;
+        const endMinutes = minutes;
         if (endHours >= 24) {
             endHours -= 24;
         }
@@ -584,8 +584,8 @@ export default class MarstekVenusLocalApiDriver extends Homey.Driver {
             mode: 'Manual',
             manual_cfg: {
                 time_num: 0,
-                start_time: "00:01",
-                end_time: "23:59",
+                start_time: '00:01',
+                end_time: '23:59',
                 week_set: 127,
                 power: 0,
                 enable: 0,
@@ -799,7 +799,7 @@ export default class MarstekVenusLocalApiDriver extends Homey.Driver {
             const message = '{"id":31999,"method":"Marstek.GetDevice","params":{"ble_mac":"0"}}';
             const sendMessage = async () => {
                 if (address) {
-                    if (this.debug) this.log('Detection sending to', address + ':' + (port || 30000), ':', message);
+                    if (this.debug) this.log('Detection sending to', `${address}:${port || 30000}`, ':', message);
                     await socket.send(message, address, port);
                 } else {
                     if (this.debug) this.log('Detection broadcasting:', message);

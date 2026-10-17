@@ -244,10 +244,7 @@ export default class MarstekVenusLocalApiDevice extends Homey.Device {
                 await this.setValue('measure_power_pv', result.pv_power);
 
                 // WIFI status
-                if (!isNaN(result.rssi)) {
-                    if (this.debug) this.log('Setting RSSI capability:', result.rssi);
-                    await this.setCapabilityValue('measure_rssi', result.rssi);
-                }
+                await this.setValue('measure_rssi', result.rssi);
                 if (result.ssid) await this.setSettings({ wifi_ssid: result.ssid });
                 if (result.sta_ip) await this.setSettings({ wifi_ip: result.sta_ip });
                 if (result.sta_gate) await this.setSettings({ wifi_gateway: result.sta_gate });
@@ -273,10 +270,10 @@ export default class MarstekVenusLocalApiDevice extends Homey.Device {
                         await this.homey.flow.getTriggerCard('marstek_ct_state_changed').trigger(this, { state: result.ct_state });
                     }
                 }
-                if (!isNaN(result.a_power)) await this.setCapabilityValue('measure_power.a', result.a_power);
-                if (!isNaN(result.b_power)) await this.setCapabilityValue('measure_power.b', result.b_power);
-                if (!isNaN(result.c_power)) await this.setCapabilityValue('measure_power.c', result.c_power);
-                if (!isNaN(result.total_power)) await this.setCapabilityValue('measure_power.total', result.total_power);
+                await this.setValue('measure_power.a', result.a_power);
+                await this.setValue('measure_power.b', result.b_power);
+                await this.setValue('measure_power.c', result.c_power);
+                await this.setValue('measure_power.total', result.total_power);
             }
         } catch (error) {
             this.error('Error processing incoming message:', error);
@@ -374,13 +371,13 @@ export default class MarstekVenusLocalApiDevice extends Homey.Device {
         const messages = [
             '{"id":1,"method":"ES.GetStatus","params":{"id":0}}',
             '{"id":2,"method":"ES.GetMode","params":{"id":0}}',
-            '{"id":3,"method":"EM.GetStatus","params":{"id":0}}'
+            '{"id":3,"method":"EM.GetStatus","params":{"id":0}}',
         ];
 
         for (const msg of messages) {
             try {
                 await socket.broadcast(msg);
-                await new Promise(resolve => setTimeout(resolve, 500)); // delay between requests
+                await new Promise((resolve) => setTimeout(resolve, 500)); // delay between requests
             } catch (err) {
                 this.error('Error sending initial request', err);
             }
@@ -402,14 +399,16 @@ export default class MarstekVenusLocalApiDevice extends Homey.Device {
                 await this.myDriver.setModeManualDisable(this);
                 await this.myDriver.setModeAuto(this);
                 break;
-            case 'force_charge':
+            case 'force_charge': {
                 const chargePower = this.getSetting('force_charge_power') || 2500;
-                await this.myDriver.setModeManual(this, "00:01", "23:59", ["1", "2", "3", "4", "5", "6", "7"], -chargePower, true);
+                await this.myDriver.setModeManual(this, '00:01', '23:59', ['1', '2', '3', '4', '5', '6', '7'], -chargePower, true);
                 break;
-            case 'force_discharge':
+            }
+            case 'force_discharge': {
                 const dischargePower = this.getSetting('force_discharge_power') || 800;
-                await this.myDriver.setModeManual(this, "00:01", "23:59", ["1", "2", "3", "4", "5", "6", "7"], dischargePower, true);
+                await this.myDriver.setModeManual(this, '00:01', '23:59', ['1', '2', '3', '4', '5', '6', '7'], dischargePower, true);
                 break;
+            }
             default:
                 throw new Error(`Unknown mode: ${value}`);
         }

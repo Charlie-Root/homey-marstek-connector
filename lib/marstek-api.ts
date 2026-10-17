@@ -111,7 +111,7 @@ export default class MarstekSocket {
                     address: iface?.address,
                     netmask: iface?.netmask,
                     family: iface?.family,
-                    internal: iface?.internal
+                    internal: iface?.internal,
                 });
 
                 // Log broadcast address calculation
@@ -257,7 +257,7 @@ export default class MarstekSocket {
         // Send using promise
         await new Promise((resolve, reject) => {
             try {
-                this.log('Transmit:', message, 'to', address + ':' + targetPort);
+                this.log('Transmit:', message, 'to', `${address}:${targetPort}`);
                 const buffer = Buffer.from(message);
                 this.socket?.send(buffer, 0, buffer.length, targetPort, address, (err: Error | null, bytes: number) => {
                     if (err) {
