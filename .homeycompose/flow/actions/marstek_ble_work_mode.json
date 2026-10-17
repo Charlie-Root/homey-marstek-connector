@@ -1,0 +1,63 @@
+{
+  "id": "marstek_ble_work_mode",
+  "title": {
+    "en": "Set work mode (BLE)",
+    "nl": "Stel werkmodus in (BLE)",
+    "da": "Indstil arbejdstilstand (BLE)",
+    "de": "Betriebsmodus festlegen (BLE)",
+    "es": "Establecer modo de trabajo (BLE)",
+    "fr": "Définir le mode de fonctionnement (BLE)",
+    "it": "Imposta la modalità di lavoro (BLE)",
+    "no": "Angi arbeidsmodus (BLE)",
+    "sv": "Ställ in arbetsläge (BLE)",
+    "pl": "Ustaw tryb pracy (BLE)",
+    "ru": "Установить режим работы (BLE)",
+    "ko": "작동 모드 설정 (BLE)",
+    "ar": "ضبط وضع التشغيل (BLE)"
+  },
+  "titleFormatted": {
+    "en": "Set work mode to [[state]] (BLE)",
+    "nl": "Stel werkmodus in op [[state]] (BLE)",
+    "da": "Indstil arbejdstilstand til [[state]] (BLE)",
+    "de": "Betriebsmodus auf [[state]] festlegen (BLE)",
+    "es": "Establecer modo de trabajo en [[state]] (BLE)",
+    "fr": "Définir le mode de fonctionnement sur [[state]] (BLE)",
+    "it": "Imposta la modalità di lavoro su [[state]] (BLE)",
+    "no": "Angi arbeidsmodus til [[state]] (BLE)",
+    "sv": "Ställ in arbetsläge till [[state]] (BLE)",
+    "pl": "Ustaw tryb pracy na [[state]] (BLE)",
+    "ru": "Установить режим работы на [[state]] (BLE)",
+    "ko": "작동 모드를 [[state]]로 설정 (BLE)",
+    "ar": "ضبط وضع التشغيل على [[state]] (BLE)"
+  },
+  "hint": {
+    "en": "Turns the battery's work mode off or on. Note: unlike the Local API, Bluetooth cannot set a scheduled 'Manual' mode (time window + power) — only off/on.",
+    "nl": "Zet de werkmodus van de batterij uit of aan. Let op: in tegenstelling tot de lokale API kan Bluetooth geen geplande 'Handmatige' modus (tijdvenster + vermogen) instellen — alleen uit/aan.",
+    "da": "Slår batteriets arbejdstilstand fra eller til. Bemærk: i modsætning til det lokale API kan Bluetooth ikke indstille en planlagt 'Manuel' tilstand (tidsvindue + effekt) — kun fra/til.",
+    "de": "Schaltet den Betriebsmodus der Batterie aus oder ein. Hinweis: Anders als die lokale API kann Bluetooth keinen geplanten 'Manuell'-Modus (Zeitfenster + Leistung) setzen — nur aus/ein.",
+    "es": "Apaga o enciende el modo de trabajo de la batería. Nota: a diferencia de la API local, Bluetooth no puede establecer un modo 'Manual' programado (ventana horaria + potencia), solo apagado/encendido.",
+    "fr": "Active ou désactive le mode de fonctionnement de la batterie. Remarque : contrairement à l'API locale, le Bluetooth ne peut pas définir un mode 'Manuel' programmé (plage horaire + puissance) — seulement activé/désactivé.",
+    "it": "Disattiva o attiva la modalità di lavoro della batteria. Nota: a differenza dell'API locale, il Bluetooth non può impostare una modalità 'Manuale' programmata (fascia oraria + potenza) — solo off/on.",
+    "no": "Slår batteriets arbeidsmodus av eller på. Merk: i motsetning til det lokale API-et kan Bluetooth ikke sette en planlagt 'Manuell' modus (tidsvindu + effekt) — bare av/på.",
+    "sv": "Slår av eller på batteriets arbetsläge. Obs: till skillnad från det lokala API:t kan Bluetooth inte ställa in ett schemalagt 'Manuellt' läge (tidsfönster + effekt) — endast av/på.",
+    "pl": "Wyłącza lub włącza tryb pracy baterii. Uwaga: w przeciwieństwie do lokalnego API, Bluetooth nie może ustawić zaplanowanego trybu 'Ręcznego' (okno czasowe + moc) — tylko wł./wył.",
+    "ru": "Выключает или включает рабочий режим батареи. Примечание: в отличие от локального API, Bluetooth не может задать запланированный режим 'Ручной' (временное окно + мощность) — только вкл./выкл.",
+    "ko": "배터리의 작동 모드를 끄거나 켭니다. 참고: 로컬 API와 달리 블루투스는 예약된 '수동' 모드(시간대 + 전력)를 설정할 수 없으며 켜기/끄기만 가능합니다.",
+    "ar": "يقوم بإيقاف أو تشغيل وضع عمل البطارية. ملاحظة: بخلاف واجهة API المحلية، لا يستطيع البلوتوث ضبط وضع 'يدوي' مجدول (نافذة زمنية + طاقة) — فقط إيقاف/تشغيل."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus-ble"
+    },
+    {
+      "name": "state",
+      "type": "dropdown",
+      "values": [
+        { "id": "on", "label": { "en": "On", "nl": "Aan", "da": "Til", "de": "Ein", "es": "Encendido", "fr": "Activé", "it": "Acceso", "no": "På", "sv": "På", "pl": "Wł.", "ru": "Вкл.", "ko": "켜기", "ar": "تشغيل" } },
+        { "id": "off", "label": { "en": "Off", "nl": "Uit", "da": "Fra", "de": "Aus", "es": "Apagado", "fr": "Désactivé", "it": "Spento", "no": "Av", "sv": "Av", "pl": "Wył.", "ru": "Выкл.", "ko": "끄기", "ar": "إيقاف" } }
+      ]
+    }
+  ]
+}

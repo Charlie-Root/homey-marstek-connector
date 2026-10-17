@@ -1,0 +1,59 @@
+{
+  "id": "marstek_led_control",
+  "title": {
+    "en": "Control device LEDs",
+    "nl": "Bedien apparaat-LEDs",
+    "da": "Styr enhedens LED'er",
+    "de": "Geraete-LEDs steuern",
+    "es": "Controlar LEDs del dispositivo",
+    "fr": "Controler les LED de l'appareil",
+    "it": "Controlla i LED del dispositivo",
+    "no": "Kontroller enhetens LED-er",
+    "sv": "Styr enhetens LED-lampor",
+    "pl": "Steruj diodami LED urzadzenia",
+    "ru": "Upravlenie svetodiodami ustroystva",
+    "ko": "Jangchi LED jeeo",
+    "ar": "Control device LEDs"
+  },
+  "titleFormatted": {
+    "en": "Set device LEDs on [[state]]",
+    "nl": "Zet apparaat-LEDs aan [[state]]",
+    "da": "Saet enhedens LED'er til [[state]]",
+    "de": "Geraete-LEDs auf [[state]] setzen",
+    "es": "Establecer LEDs del dispositivo en [[state]]",
+    "fr": "Definir les LED de l'appareil sur [[state]]",
+    "it": "Imposta i LED del dispositivo su [[state]]",
+    "no": "Sett enhetens LED-er til [[state]]",
+    "sv": "Stall enhetens LED-lampor pa [[state]]",
+    "pl": "Ustaw diody LED urzadzenia na [[state]]",
+    "ru": "Ustanovit svetodiody ustroystva v [[state]]",
+    "ko": "Jangchi LED-reul [[state]]ro seoljeong",
+    "ar": "Set device LEDs on [[state]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus"
+    },
+    {
+      "name": "state",
+      "type": "checkbox",
+      "title": {
+        "en": "On",
+        "nl": "Aan",
+        "da": "Til",
+        "de": "Ein",
+        "es": "Encendido",
+        "fr": "Allume",
+        "it": "Acceso",
+        "no": "Pa",
+        "sv": "Pa",
+        "pl": "Wlacz",
+        "ru": "Vkl",
+        "ko": "Keum",
+        "ar": "On"
+      }
+    }
+  ]
+}

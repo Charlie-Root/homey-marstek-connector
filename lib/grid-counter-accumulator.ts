@@ -73,103 +73,103 @@ const utcDayKey = (timestampSec: number): string => new Date(timestampSec * 1000
  * - Otherwise: accumulates deltas and optionally flushes based on time or delta triggers.
  */
 export function updateGridCounterAccumulator(
-  previousState: GridCounterAccumulatorState | null,
-  sample: GridCounterSample,
-  options?: {
+    previousState: GridCounterAccumulatorState | null,
+    sample: GridCounterSample,
+    options?: {
     flushIntervalMinutes?: number;
     minDeltaTriggerRaw?: number;
   },
 ): GridCounterUpdate {
-  const flushIntervalMinutes = options?.flushIntervalMinutes ?? 15; // Reduced from 60 to 15 minutes
-  const minDeltaTriggerRaw = options?.minDeltaTriggerRaw ?? 10; // New: minimum delta to trigger immediate flush
+    const flushIntervalMinutes = options?.flushIntervalMinutes ?? 15; // Reduced from 60 to 15 minutes
+    const minDeltaTriggerRaw = options?.minDeltaTriggerRaw ?? 10; // New: minimum delta to trigger immediate flush
 
-  const initState = (): GridCounterAccumulatorState => ({
-    divisorRawPerKwh: sample.divisorRawPerKwh,
-    lastTimestampSec: sample.timestampSec,
-    lastInputRaw: sample.inputRaw,
-    lastOutputRaw: sample.outputRaw,
-    accStartTimestampSec: sample.timestampSec,
-    accStartInputRaw: sample.inputRaw,
-    accStartOutputRaw: sample.outputRaw,
-    accInputDeltaRaw: 0,
-    accOutputDeltaRaw: 0,
-  });
+    const initState = (): GridCounterAccumulatorState => ({
+        divisorRawPerKwh: sample.divisorRawPerKwh,
+        lastTimestampSec: sample.timestampSec,
+        lastInputRaw: sample.inputRaw,
+        lastOutputRaw: sample.outputRaw,
+        accStartTimestampSec: sample.timestampSec,
+        accStartInputRaw: sample.inputRaw,
+        accStartOutputRaw: sample.outputRaw,
+        accInputDeltaRaw: 0,
+        accOutputDeltaRaw: 0,
+    });
 
-  if (!previousState) {
-    return { state: initState(), reason: 'initialized' };
-  }
+    if (!previousState) {
+        return { state: initState(), reason: 'initialized' };
+    }
 
-  // Ignore out-of-order samples.
-  if (sample.timestampSec <= previousState.lastTimestampSec) {
-    return { state: previousState, reason: 'out_of_order' };
-  }
+    // Ignore out-of-order samples.
+    if (sample.timestampSec <= previousState.lastTimestampSec) {
+        return { state: previousState, reason: 'out_of_order' };
+    }
 
-  // Divisor change: reset to avoid mixing units.
-  if (previousState.divisorRawPerKwh !== sample.divisorRawPerKwh) {
-    return { state: initState(), reason: 'divisor_changed' };
-  }
+    // Divisor change: reset to avoid mixing units.
+    if (previousState.divisorRawPerKwh !== sample.divisorRawPerKwh) {
+        return { state: initState(), reason: 'divisor_changed' };
+    }
 
-  const deltaInputRaw = sample.inputRaw - previousState.lastInputRaw;
-  const deltaOutputRaw = sample.outputRaw - previousState.lastOutputRaw;
+    const deltaInputRaw = sample.inputRaw - previousState.lastInputRaw;
+    const deltaOutputRaw = sample.outputRaw - previousState.lastOutputRaw;
 
-  // Counter reset detection.
-  if (deltaInputRaw < 0 || deltaOutputRaw < 0) {
-    return { state: initState(), reason: 'counter_reset' };
-  }
+    // Counter reset detection.
+    if (deltaInputRaw < 0 || deltaOutputRaw < 0) {
+        return { state: initState(), reason: 'counter_reset' };
+    }
 
-  const nextState: GridCounterAccumulatorState = {
-    ...previousState,
-    lastTimestampSec: sample.timestampSec,
-    lastInputRaw: sample.inputRaw,
-    lastOutputRaw: sample.outputRaw,
-    accInputDeltaRaw: previousState.accInputDeltaRaw + deltaInputRaw,
-    accOutputDeltaRaw: previousState.accOutputDeltaRaw + deltaOutputRaw,
-  };
+    const nextState: GridCounterAccumulatorState = {
+        ...previousState,
+        lastTimestampSec: sample.timestampSec,
+        lastInputRaw: sample.inputRaw,
+        lastOutputRaw: sample.outputRaw,
+        accInputDeltaRaw: previousState.accInputDeltaRaw + deltaInputRaw,
+        accOutputDeltaRaw: previousState.accOutputDeltaRaw + deltaOutputRaw,
+    };
 
-  const durationMinutes = (sample.timestampSec - nextState.accStartTimestampSec) / 60;
-  const crossedUtcDayBoundary = utcDayKey(sample.timestampSec) !== utcDayKey(nextState.accStartTimestampSec);
-  
-  // Check for minimum delta trigger (immediate flush when meaningful energy flow is detected)
-  const hasMeaningfulDelta = nextState.accInputDeltaRaw >= minDeltaTriggerRaw || nextState.accOutputDeltaRaw >= minDeltaTriggerRaw;
-  
-  // Determine flush conditions
-  const shouldFlush = crossedUtcDayBoundary ||
-                     durationMinutes >= flushIntervalMinutes ||
-                     hasMeaningfulDelta;
+    const durationMinutes = (sample.timestampSec - nextState.accStartTimestampSec) / 60;
+    const crossedUtcDayBoundary = utcDayKey(sample.timestampSec) !== utcDayKey(nextState.accStartTimestampSec);
 
-  if (!shouldFlush) {
-    return { state: nextState, reason: 'no_flush' };
-  }
-  
-  // Determine flush reason for logging
-  let flushReason: GridCounterUpdate['reason'] = 'no_flush';
-  if (crossedUtcDayBoundary) {
-    flushReason = 'utc_day_boundary';
-  } else if (durationMinutes >= flushIntervalMinutes) {
-    flushReason = 'time_interval';
-  } else if (hasMeaningfulDelta) {
-    flushReason = 'delta_trigger';
-  }
+    // Check for minimum delta trigger (immediate flush when meaningful energy flow is detected)
+    const hasMeaningfulDelta = nextState.accInputDeltaRaw >= minDeltaTriggerRaw || nextState.accOutputDeltaRaw >= minDeltaTriggerRaw;
 
-  const flush: GridCounterFlush = {
-    startTimestampSec: nextState.accStartTimestampSec,
-    endTimestampSec: sample.timestampSec,
-    durationMinutes,
-    startInputRaw: nextState.accStartInputRaw,
-    endInputRaw: nextState.accStartInputRaw + nextState.accInputDeltaRaw,
-    deltaInputRaw: nextState.accInputDeltaRaw,
-    startOutputRaw: nextState.accStartOutputRaw,
-    endOutputRaw: nextState.accStartOutputRaw + nextState.accOutputDeltaRaw,
-    deltaOutputRaw: nextState.accOutputDeltaRaw,
-    divisorRawPerKwh: nextState.divisorRawPerKwh,
-  };
+    // Determine flush conditions
+    const shouldFlush = crossedUtcDayBoundary
+                     || durationMinutes >= flushIntervalMinutes
+                     || hasMeaningfulDelta;
 
-  // Reset window for next accumulation.
-  nextState.accStartTimestampSec = sample.timestampSec;
-  nextState.accStartInputRaw = sample.inputRaw;
-  nextState.accStartOutputRaw = sample.outputRaw;
-  nextState.accInputDeltaRaw = 0;
-  nextState.accOutputDeltaRaw = 0;
+    if (!shouldFlush) {
+        return { state: nextState, reason: 'no_flush' };
+    }
 
-  return { state: nextState, flush, reason: flushReason };
+    // Determine flush reason for logging
+    let flushReason: GridCounterUpdate['reason'] = 'no_flush';
+    if (crossedUtcDayBoundary) {
+        flushReason = 'utc_day_boundary';
+    } else if (durationMinutes >= flushIntervalMinutes) {
+        flushReason = 'time_interval';
+    } else if (hasMeaningfulDelta) {
+        flushReason = 'delta_trigger';
+    }
+
+    const flush: GridCounterFlush = {
+        startTimestampSec: nextState.accStartTimestampSec,
+        endTimestampSec: sample.timestampSec,
+        durationMinutes,
+        startInputRaw: nextState.accStartInputRaw,
+        endInputRaw: nextState.accStartInputRaw + nextState.accInputDeltaRaw,
+        deltaInputRaw: nextState.accInputDeltaRaw,
+        startOutputRaw: nextState.accStartOutputRaw,
+        endOutputRaw: nextState.accStartOutputRaw + nextState.accOutputDeltaRaw,
+        deltaOutputRaw: nextState.accOutputDeltaRaw,
+        divisorRawPerKwh: nextState.divisorRawPerKwh,
+    };
+
+    // Reset window for next accumulation.
+    nextState.accStartTimestampSec = sample.timestampSec;
+    nextState.accStartInputRaw = sample.inputRaw;
+    nextState.accStartOutputRaw = sample.outputRaw;
+    nextState.accInputDeltaRaw = 0;
+    nextState.accOutputDeltaRaw = 0;
+
+    return { state: nextState, flush, reason: flushReason };
 }

@@ -1,0 +1,23 @@
+{
+  "type": "string",
+  "title": {
+    "en": "Alarm code",
+    "nl": "Alarmcode",
+    "da": "Alarmkode",
+    "de": "Alarmcode",
+    "es": "Código de alarma",
+    "fr": "Code d'alarme",
+    "it": "Codice allarme",
+    "no": "Alarmkode",
+    "sv": "Larmkod",
+    "pl": "Kod alarmu",
+    "ru": "Код тревоги",
+    "ko": "알람 코드",
+    "ar": "رمز الإنذار"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "insights": false,
+  "icon": "/assets/icon.svg"
+}

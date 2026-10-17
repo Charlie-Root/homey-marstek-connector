@@ -1,0 +1,62 @@
+{
+  "id": "marstek_ble_eps",
+  "title": {
+    "en": "Set EPS / backup power (BLE)",
+    "nl": "Stel EPS / back-upvoeding in (BLE)",
+    "da": "Indstil EPS / backup-strøm (BLE)",
+    "de": "EPS / Notstrom festlegen (BLE)",
+    "es": "Establecer EPS / energía de respaldo (BLE)",
+    "fr": "Définir l'EPS / alimentation de secours (BLE)",
+    "it": "Imposta EPS / alimentazione di backup (BLE)",
+    "no": "Angi EPS / reservestrøm (BLE)",
+    "sv": "Ställ in EPS / reservkraft (BLE)",
+    "pl": "Ustaw EPS / zasilanie awaryjne (BLE)",
+    "ru": "Установить EPS / резервное питание (BLE)",
+    "ko": "EPS / 백업 전원 설정 (BLE)",
+    "ar": "ضبط EPS / الطاقة الاحتياطية (BLE)"
+  },
+  "titleFormatted": {
+    "en": "Set backup power (EPS) enabled [[enable]] (BLE)",
+    "nl": "Stel back-upvoeding (EPS) ingeschakeld [[enable]] (BLE)",
+    "da": "Indstil backup-strøm (EPS) aktiveret [[enable]] (BLE)",
+    "de": "Notstrom (EPS) aktiviert [[enable]] (BLE)",
+    "es": "Establecer energía de respaldo (EPS) activada [[enable]] (BLE)",
+    "fr": "Définir l'alimentation de secours (EPS) activée [[enable]] (BLE)",
+    "it": "Imposta alimentazione di backup (EPS) abilitata [[enable]] (BLE)",
+    "no": "Angi reservestrøm (EPS) aktivert [[enable]] (BLE)",
+    "sv": "Ställ in reservkraft (EPS) aktiverad [[enable]] (BLE)",
+    "pl": "Ustaw zasilanie awaryjne (EPS) włączone [[enable]] (BLE)",
+    "ru": "Установить резервное питание (EPS) включено [[enable]] (BLE)",
+    "ko": "백업 전원(EPS) 활성화 [[enable]] (BLE)",
+    "ar": "ضبط الطاقة الاحتياطية (EPS) مفعّلة [[enable]] (BLE)"
+  },
+  "hint": {
+    "en": "Enables or disables EPS / backup power (Emergency Power Supply), which provides power from the battery during a grid outage.",
+    "nl": "Schakelt EPS / back-upvoeding (noodstroom) in of uit, die tijdens een stroomstoring stroom uit de batterij levert.",
+    "da": "Aktiverer eller deaktiverer EPS / backup-strøm (nødstrøm), som leverer strøm fra batteriet under et strømafbrud.",
+    "de": "Aktiviert oder deaktiviert EPS / Notstrom, der bei einem Netzausfall Strom aus der Batterie liefert.",
+    "es": "Activa o desactiva EPS / energía de respaldo (suministro de emergencia), que proporciona energía de la batería durante un corte de red.",
+    "fr": "Active ou désactive l'EPS / alimentation de secours, qui fournit l'énergie de la batterie lors d'une coupure du réseau.",
+    "it": "Abilita o disabilita EPS / alimentazione di backup (alimentazione di emergenza), che fornisce energia dalla batteria durante un'interruzione di rete.",
+    "no": "Aktiverer eller deaktiverer EPS / reservestrøm (nødstrøm), som gir strøm fra batteriet under et strømbrudd.",
+    "sv": "Aktiverar eller inaktiverar EPS / reservkraft (nödström), som ger ström från batteriet vid ett strömavbrott.",
+    "pl": "Włącza lub wyłącza EPS / zasilanie awaryjne, które dostarcza energię z baterii podczas przerwy w zasilaniu sieciowym.",
+    "ru": "Включает или выключает EPS / резервное питание (аварийное электроснабжение), которое подаёт энергию от батареи при отключении сети.",
+    "ko": "정전 시 배터리에서 전원을 공급하는 EPS / 백업 전원(비상 전원 공급)을 활성화하거나 비활성화합니다.",
+    "ar": "يفعّل أو يعطّل EPS / الطاقة الاحتياطية (مصدر الطاقة الطارئ)، الذي يوفّر الطاقة من البطارية أثناء انقطاع الشبكة."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus-ble"
+    },
+    {
+      "name": "enable",
+      "type": "checkbox",
+      "title": {
+        "en": "Enabled", "nl": "Ingeschakeld", "da": "Aktiveret", "de": "Aktiviert", "es": "Activado", "fr": "Activé", "it": "Abilitato", "no": "Aktivert", "sv": "Aktiverat", "pl": "Włączone", "ru": "Включено", "ko": "활성화됨", "ar": "مفعّل"
+      }
+    }
+  ]
+}

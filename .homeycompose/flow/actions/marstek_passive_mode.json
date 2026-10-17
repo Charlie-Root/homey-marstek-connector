@@ -12,7 +12,8 @@
     "sv": "Ställ in batteriets 'Passiva' läge till Effekt (W) i (S) sekunder",
     "pl": "Ustaw tryb 'Pasywny' baterii na Moc (W) na (S) sekund",
     "ru": "Установите режим 'Пассивный' батареи на мощность (Вт) на (S) секунд",
-    "ko": "배터리 '수동' 모드를 (S)초 동안 전력(W)으로 설정"
+    "ko": "배터리 '수동' 모드를 (S)초 동안 전력(W)으로 설정",
+    "ar": "اضبط وضع البطارية 'السلبي' على الطاقة (W) لمدة (S) ثانية"
   },
   "titleFormatted": {
     "en": "Set battery 'Passive' mode to [[power]] Watt for [[seconds]] seconds",
@@ -26,7 +27,8 @@
     "sv": "Ställ in batteriets 'Passiva' läge till [[power]] Watt i [[seconds]] sekunder",
     "pl": "Ustaw tryb 'Pasywny' baterii na [[power]] Watt na [[seconds]] sekund",
     "ru": "Установите режим 'Пассивный' батареи на [[power]] Ватт на [[seconds]] секунд",
-    "ko": "배터리 '수동' 모드를 [[seconds]]초 동안 [[power]] 와트로 설정"
+    "ko": "배터리 '수동' 모드를 [[seconds]]초 동안 [[power]] 와트로 설정",
+    "ar": "اضبط وضع البطارية 'السلبي' على [[power]] وات لمدة [[seconds]] ثانية"
   },
   "args": [
     {
@@ -49,7 +51,8 @@
         "sv": "Effekt (W)",
         "pl": "Moc (W)",
         "ru": "Мощность (Вт)",
-        "ko": "전력 (W)"
+        "ko": "전력 (W)",
+        "ar": "الطاقة (W)"
       },
       "step": 1
     },
@@ -68,9 +71,10 @@
         "sv": "Sekunder",
         "pl": "Sekundy",
         "ru": "Секунды",
-        "ko": "초"
+        "ko": "초",
+        "ar": "ثواني"
       },
-      "min": 0,
+      "min": 1,
       "step": 60
     }
   ]

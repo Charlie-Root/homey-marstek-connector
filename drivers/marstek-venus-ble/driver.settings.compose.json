@@ -1,0 +1,298 @@
+[
+  {
+    "type": "group",
+    "label": {
+      "en": "Bluetooth polling settings",
+      "nl": "Bluetooth-pollinginstellingen",
+      "da": "Bluetooth-pollingindstillinger",
+      "de": "Bluetooth-Abfrageeinstellungen",
+      "es": "Configuración de sondeo Bluetooth",
+      "fr": "Paramètres d'interrogation Bluetooth",
+      "it": "Impostazioni di polling Bluetooth",
+      "no": "Bluetooth-pollinginnstillinger",
+      "sv": "Bluetooth-pollinginställningar",
+      "pl": "Ustawienia odpytywania Bluetooth",
+      "ru": "Настройки опроса Bluetooth",
+      "ko": "블루투스 폴링 설정",
+      "ar": "إعدادات استطلاع البلوتوث"
+    },
+    "children": [
+      {
+        "id": "poll",
+        "type": "checkbox",
+        "label": {
+          "en": "Enable periodic retrieval",
+          "nl": "Periodieke opvraging inschakelen",
+          "da": "Aktivér periodisk genfinding",
+          "de": "Periodische Abfrage aktivieren",
+          "es": "Activar recuperación periódica",
+          "fr": "Activer la récupération périodique",
+          "it": "Abilita recupero periodico",
+          "no": "Aktiver periodisk innhenting",
+          "sv": "Aktivera periodisk hämtning",
+          "pl": "Włącz okresowe pobieranie",
+          "ru": "Включить периодическое извлечение",
+          "ko": "주기적 검색 활성화",
+          "ar": "تفعيل الاسترجاع الدوري"
+        },
+        "hint": {
+          "en": "Turn this off if you only want to use command flow cards.",
+          "nl": "Zet dit uit als je alleen opdrachtstroomkaarten wilt gebruiken.",
+          "da": "Sluk dette, hvis du kun vil bruge kommandostrømkort.",
+          "de": "Deaktivieren Sie dies, wenn Sie nur Befehls-Flow-Karten verwenden möchten.",
+          "es": "Desactiva esto si solo quieres usar tarjetas de flujo de comandos.",
+          "fr": "Désactivez ceci si vous souhaitez uniquement utiliser les cartes de flux de commande.",
+          "it": "Disattiva questa opzione se vuoi usare solo le schede di flusso dei comandi.",
+          "no": "Slå dette av hvis du bare vil bruke kommandoflytkort.",
+          "sv": "Stäng av detta om du bara vill använda kommandoflödeskort.",
+          "pl": "Wyłącz to, jeśli chcesz używać tylko kart przepływu poleceń.",
+          "ru": "Отключите это, если хотите использовать только карточки потока команд.",
+          "ko": "명령 플로우 카드만 사용하려면 이를 끄십시오.",
+          "ar": "أوقف هذا إذا كنت تريد استخدام بطاقات تدفق الأوامر فقط."
+        },
+        "value": true
+      },
+      {
+        "id": "interval",
+        "type": "number",
+        "label": {
+          "en": "Poll frequency",
+          "nl": "Pollingsfrequentie",
+          "da": "Pollingsfrekvens",
+          "de": "Abfragehäufigkeit",
+          "es": "Frecuencia de sondeo",
+          "fr": "Fréquence d'interrogation",
+          "it": "Frequenza di polling",
+          "no": "Avstemmingsfrekvens",
+          "sv": "Pollfrekvens",
+          "pl": "Częstotliwość odpytywania",
+          "ru": "Частота опроса",
+          "ko": "폴링 빈도",
+          "ar": "تردد الاستطلاع"
+        },
+        "hint": {
+          "en": "How often to connect over Bluetooth and read data. Bluetooth connections are slow, so keep this generous.",
+          "nl": "Hoe vaak er via Bluetooth verbinding wordt gemaakt om gegevens te lezen. Bluetooth-verbindingen zijn traag, houd dit ruim.",
+          "da": "Hvor ofte der oprettes forbindelse via Bluetooth for at læse data. Bluetooth-forbindelser er langsomme, så hold dette rigeligt.",
+          "de": "Wie oft über Bluetooth verbunden und Daten gelesen werden. Bluetooth-Verbindungen sind langsam, wählen Sie diesen Wert großzügig.",
+          "es": "Con qué frecuencia conectarse por Bluetooth y leer datos. Las conexiones Bluetooth son lentas, mantén esto generoso.",
+          "fr": "Fréquence de connexion via Bluetooth pour lire les données. Les connexions Bluetooth sont lentes, gardez cette valeur généreuse.",
+          "it": "Con quale frequenza connettersi via Bluetooth e leggere i dati. Le connessioni Bluetooth sono lente, mantieni questo valore ampio.",
+          "no": "Hvor ofte det kobles til via Bluetooth for å lese data. Bluetooth-tilkoblinger er trege, så hold dette romslig.",
+          "sv": "Hur ofta anslutning sker via Bluetooth för att läsa data. Bluetooth-anslutningar är långsamma, håll detta generöst.",
+          "pl": "Jak często łączyć się przez Bluetooth i odczytywać dane. Połączenia Bluetooth są wolne, więc ustaw z zapasem.",
+          "ru": "Как часто подключаться по Bluetooth для чтения данных. Bluetooth-соединения медленные, задавайте с запасом.",
+          "ko": "블루투스로 연결하여 데이터를 읽는 주기입니다. 블루투스 연결은 느리므로 여유 있게 설정하세요.",
+          "ar": "عدد مرات الاتصال عبر البلوتوث لقراءة البيانات. اتصالات البلوتوث بطيئة، لذا اجعل هذه القيمة كبيرة."
+        },
+        "value": 60,
+        "min": 30,
+        "units": {
+          "en": "seconds",
+          "nl": "seconden",
+          "da": "sekunder",
+          "de": "Sekunden",
+          "es": "segundos",
+          "fr": "secondes",
+          "it": "secondi",
+          "no": "sekunder",
+          "sv": "sekunder",
+          "pl": "sekund",
+          "ru": "секунды",
+          "ko": "초",
+          "ar": "ثوانٍ"
+        }
+      }
+    ]
+  },
+  {
+    "id": "debug",
+    "type": "checkbox",
+    "label": {
+      "en": "Enable more logging (for diagnostics reports)",
+      "nl": "Meer logging inschakelen (voor diagnoserapporten)",
+      "da": "Aktivér mere logning (til diagnose-rapporter)",
+      "de": "Mehr Protokollierung aktivieren (für Diagnoseberichte)",
+      "es": "Activar más registros (para informes de diagnóstico)",
+      "fr": "Activer plus de journalisation (pour les rapports de diagnostic)",
+      "it": "Abilita più registrazioni (per i rapporti diagnostici)",
+      "no": "Aktiver mer logging (for diagnostikkrapporter)",
+      "sv": "Aktivera mer loggning (för diagnostikrapporter)",
+      "pl": "Włącz więcej logowania (dla raportów diagnostycznych)",
+      "ru": "Включить больше логирования (для диагностических отчетов)",
+      "ko": "더 많은 로깅 활성화 (진단 보고서용)",
+      "ar": "تفعيل المزيد من تسجيل الأحداث (لتقارير التشخيص)"
+    },
+    "value": false
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Device details (read only)",
+      "nl": "Apparaatgegevens (alleen-lezen)",
+      "da": "Enhedsdetaljer (kun læsning)",
+      "de": "Gerätedetails (nur lesen)",
+      "es": "Detalles del dispositivo (solo lectura)",
+      "fr": "Détails de l'appareil (lecture seule)",
+      "it": "Dettagli del dispositivo (solo lettura)",
+      "no": "Enhetsdetaljer (kun lesing)",
+      "sv": "Enhetsdetaljer (endast läsning)",
+      "pl": "Szczegóły urządzenia (tylko do odczytu)",
+      "ru": "Детали устройства (только для чтения)",
+      "ko": "장치 세부정보 (읽기 전용)",
+      "ar": "تفاصيل الجهاز (للقراءة فقط)"
+    },
+    "children": [
+      {
+        "id": "model",
+        "type": "label",
+        "label": {
+          "en": "Model name",
+          "nl": "Modelnaam",
+          "da": "Modelnavn",
+          "de": "Modellname",
+          "es": "Nombre del modelo",
+          "fr": "Nom du modèle",
+          "it": "Nome del modello",
+          "no": "Modellnavn",
+          "sv": "Modellnamn",
+          "pl": "Nazwa modelu",
+          "ru": "Наименование модели",
+          "ko": "모델명",
+          "ar": "اسم الطراز"
+        },
+        "value": "(unknown)"
+      },
+      {
+        "id": "serial",
+        "type": "label",
+        "label": {
+          "en": "Serial number",
+          "nl": "Serienummer",
+          "da": "Serienummer",
+          "de": "Seriennummer",
+          "es": "Número de serie",
+          "fr": "Numéro de série",
+          "it": "Numero di serie",
+          "no": "Serienummer",
+          "sv": "Serienummer",
+          "pl": "Numer seryjny",
+          "ru": "Серийный номер",
+          "ko": "일련번호",
+          "ar": "الرقم التسلسلي"
+        },
+        "value": "(unknown)"
+      },
+      {
+        "id": "mac",
+        "type": "label",
+        "label": {
+          "en": "Bluetooth address",
+          "nl": "Bluetooth-adres",
+          "da": "Bluetooth-adresse",
+          "de": "Bluetooth-Adresse",
+          "es": "Dirección Bluetooth",
+          "fr": "Adresse Bluetooth",
+          "it": "Indirizzo Bluetooth",
+          "no": "Bluetooth-adresse",
+          "sv": "Bluetooth-adress",
+          "pl": "Adres Bluetooth",
+          "ru": "Bluetooth-адрес",
+          "ko": "블루투스 주소",
+          "ar": "عنوان البلوتوث"
+        },
+        "value": "(unknown)"
+      },
+      {
+        "id": "firmware",
+        "type": "label",
+        "label": {
+          "en": "Firmware",
+          "nl": "Firmware",
+          "da": "Firmware",
+          "de": "Firmware",
+          "es": "Firmware",
+          "fr": "Firmware",
+          "it": "Firmware",
+          "no": "Firmware",
+          "sv": "Firmware",
+          "pl": "Oprogramowanie układowe",
+          "ru": "Прошивка",
+          "ko": "펌웨어",
+          "ar": "البرامج الثابتة"
+        },
+        "value": "(unknown)"
+      },
+      {
+        "id": "power_rating",
+        "type": "label",
+        "label": {
+          "en": "Output power rating",
+          "nl": "Nominaal uitgangsvermogen",
+          "da": "Nominel udgangseffekt",
+          "de": "Nennausgangsleistung",
+          "es": "Potencia nominal de salida",
+          "fr": "Puissance nominale de sortie",
+          "it": "Potenza nominale di uscita",
+          "no": "Nominell utgangseffekt",
+          "sv": "Nominell uteffekt",
+          "pl": "Znamionowa moc wyjściowa",
+          "ru": "Номинальная выходная мощность",
+          "ko": "정격 출력 전력",
+          "ar": "قدرة الخرج الاسمية"
+        },
+        "hint": {
+          "en": "Current output power limit as reported by the battery (800 W or 2500 W). Can be changed with the 'Set output power limit (BLE)' flow card.",
+          "nl": "Huidige uitgangsvermogenslimiet zoals gemeld door de batterij (800 W of 2500 W). Kan worden gewijzigd met de flowkaart 'Stel uitgangsvermogenslimiet in (BLE)'.",
+          "da": "Nuværende udgangseffektgrænse som rapporteret af batteriet (800 W eller 2500 W). Kan ændres med flowkortet 'Indstil udgangseffektgrænse (BLE)'.",
+          "de": "Aktuelle Ausgangsleistungsgrenze laut Batterie (800 W oder 2500 W). Kann mit der Flow-Karte 'Ausgangsleistungsgrenze festlegen (BLE)' geändert werden.",
+          "es": "Límite actual de potencia de salida según la batería (800 W o 2500 W). Puede cambiarse con la tarjeta de flujo 'Establecer límite de potencia de salida (BLE)'.",
+          "fr": "Limite actuelle de puissance de sortie rapportée par la batterie (800 W ou 2500 W). Modifiable avec la carte de flux 'Définir la limite de puissance de sortie (BLE)'.",
+          "it": "Limite attuale di potenza in uscita riportato dalla batteria (800 W o 2500 W). Modificabile con la scheda di flusso 'Imposta il limite di potenza in uscita (BLE)'.",
+          "no": "Gjeldende grense for utgangseffekt rapportert av batteriet (800 W eller 2500 W). Kan endres med flytkortet 'Angi grense for utgangseffekt (BLE)'.",
+          "sv": "Aktuell gräns för uteffekt enligt batteriet (800 W eller 2500 W). Kan ändras med flödeskortet 'Ställ in gräns för uteffekt (BLE)'.",
+          "pl": "Aktualny limit mocy wyjściowej raportowany przez baterię (800 W lub 2500 W). Można zmienić kartą przepływu 'Ustaw limit mocy wyjściowej (BLE)'.",
+          "ru": "Текущий лимит выходной мощности по данным батареи (800 Вт или 2500 Вт). Можно изменить карточкой потока 'Установить лимит выходной мощности (BLE)'.",
+          "ko": "배터리가 보고한 현재 출력 전력 제한 (800 W 또는 2500 W). '출력 전력 제한 설정 (BLE)' 플로우 카드로 변경할 수 있습니다.",
+          "ar": "حد طاقة الخرج الحالي كما تبلغ عنه البطارية (800 واط أو 2500 واط). يمكن تغييره باستخدام بطاقة التدفق 'ضبط حد طاقة الخرج (BLE)'."
+        },
+        "value": "(unknown)"
+      },
+      {
+        "id": "local_api",
+        "type": "label",
+        "label": {
+          "en": "Local API status",
+          "nl": "Lokale API-status",
+          "da": "Lokal API-status",
+          "de": "Lokaler API-Status",
+          "es": "Estado de la API local",
+          "fr": "État de l'API locale",
+          "it": "Stato API locale",
+          "no": "Lokal API-status",
+          "sv": "Lokal API-status",
+          "pl": "Status lokalnego API",
+          "ru": "Статус локального API",
+          "ko": "로컬 API 상태",
+          "ar": "حالة واجهة API المحلية"
+        },
+        "hint": {
+          "en": "Whether the battery's local UDP API is enabled, as reported by the battery. Can be changed with the 'Enable/disable Local API (BLE)' flow card; when enabled on port 30000 the 'Marstek Venus (Local API)' driver can connect over the network.",
+          "nl": "Of de lokale UDP-API van de batterij is ingeschakeld, zoals gemeld door de batterij. Kan worden gewijzigd met de flowkaart 'Lokale API in-/uitschakelen (BLE)'; indien ingeschakeld op poort 30000 kan het 'Marstek Venus (Local API)'-stuurprogramma via het netwerk verbinden.",
+          "da": "Om batteriets lokale UDP-API er aktiveret, som rapporteret af batteriet. Kan ændres med flowkortet 'Aktivér/deaktivér lokal API (BLE)'; når aktiveret på port 30000 kan 'Marstek Venus (Local API)'-driveren oprette forbindelse via netværket.",
+          "de": "Ob die lokale UDP-API der Batterie aktiviert ist, laut Batterie. Kann mit der Flow-Karte 'Lokale API aktivieren/deaktivieren (BLE)' geändert werden; bei Aktivierung auf Port 30000 kann der Treiber 'Marstek Venus (Local API)' über das Netzwerk verbinden.",
+          "es": "Si la API UDP local de la batería está activada, según la batería. Puede cambiarse con la tarjeta de flujo 'Activar/desactivar API local (BLE)'; cuando está activada en el puerto 30000, el controlador 'Marstek Venus (Local API)' puede conectarse por la red.",
+          "fr": "Indique si l'API UDP locale de la batterie est activée, selon la batterie. Modifiable avec la carte de flux 'Activer/désactiver l'API locale (BLE)' ; lorsqu'elle est activée sur le port 30000, le pilote 'Marstek Venus (Local API)' peut se connecter via le réseau.",
+          "it": "Indica se l'API UDP locale della batteria è abilitata, come riportato dalla batteria. Modificabile con la scheda di flusso 'Abilita/disabilita API locale (BLE)'; quando abilitata sulla porta 30000 il driver 'Marstek Venus (Local API)' può connettersi tramite rete.",
+          "no": "Om batteriets lokale UDP-API er aktivert, som rapportert av batteriet. Kan endres med flytkortet 'Aktiver/deaktiver lokalt API (BLE)'; når aktivert på port 30000 kan 'Marstek Venus (Local API)'-driveren koble til over nettverket.",
+          "sv": "Om batteriets lokala UDP-API är aktiverat, enligt batteriet. Kan ändras med flödeskortet 'Aktivera/inaktivera lokalt API (BLE)'; när det är aktiverat på port 30000 kan drivrutinen 'Marstek Venus (Local API)' ansluta via nätverket.",
+          "pl": "Czy lokalne API UDP baterii jest włączone, według raportu baterii. Można zmienić kartą przepływu 'Włącz/wyłącz lokalne API (BLE)'; gdy włączone na porcie 30000, sterownik 'Marstek Venus (Local API)' może połączyć się przez sieć.",
+          "ru": "Включен ли локальный UDP API батареи, по данным батареи. Можно изменить карточкой потока 'Включить/выключить локальный API (BLE)'; при включении на порту 30000 драйвер 'Marstek Venus (Local API)' может подключиться по сети.",
+          "ko": "배터리가 보고한 로컬 UDP API 활성화 여부입니다. '로컬 API 활성화/비활성화 (BLE)' 플로우 카드로 변경할 수 있으며, 포트 30000에서 활성화되면 'Marstek Venus (Local API)' 드라이버가 네트워크로 연결할 수 있습니다.",
+          "ar": "ما إذا كانت واجهة UDP المحلية للبطارية مفعّلة، كما تبلغ عنه البطارية. يمكن تغييره باستخدام بطاقة التدفق 'تفعيل/تعطيل واجهة API المحلية (BLE)'؛ عند التفعيل على المنفذ 30000 يمكن لبرنامج التشغيل 'Marstek Venus (Local API)' الاتصال عبر الشبكة."
+        },
+        "value": "(unknown)"
+      }
+    ]
+  }
+]

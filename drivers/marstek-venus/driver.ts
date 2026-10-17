@@ -18,12 +18,59 @@ interface MarsteRequest extends MessagePayload {
     id: number; // int16 max
 }
 
+// Factor defaults per device type and firmware version
+type FactorDefaults = Record<string, Record<number, Record<string, number>>>;
+const factorDefaults: FactorDefaults = {
+    default: {
+        0: {
+            factor_bat_capacity: 100,
+            factor_bat_soc: 1,
+            factor_bat_power: 10,
+            factor_bat_temp: 10,
+            factor_total_grid_input_energy: 100,
+            factor_total_grid_output_energy: 100,
+            factor_total_load_energy: 100,
+            factor_ongrid_power: -1,
+            factor_offgrid_power: -1,
+            factor_pv_power: -1,
+        },
+    },
+    VenusE: {
+        0: {
+        },
+        154: {
+            factor_bat_capacity: 1000,
+            factor_bat_power: 1,
+            factor_bat_temp: 1,
+            factor_total_grid_input_energy: 10,
+            factor_total_grid_output_energy: 10,
+            factor_total_load_energy: 10,
+        },
+    },
+    'VenusE 3.0': {
+        0: {
+            factor_bat_capacity: 1000,
+            factor_bat_power: 1,
+            factor_total_grid_input_energy: 1000,
+            factor_total_grid_output_energy: 1000,
+            factor_total_load_energy: 1000,
+        },
+        139: {
+            factor_bat_power: 10,
+            factor_bat_capacity: 100,
+        },
+        144: {
+            factor_bat_capacity: 1000,
+        },
+    },
+};
+
 /**
  * Driver responsible for managing Marstek Venus devices that communicate over UDP.
  * It provides device discovery, background polling, flow card actions and command handling.
  * @extends Homey.Driver
  */
-export default class MarstekVenusDriver extends Homey.Driver {
+export default class MarstekVenusLocalApiDriver extends Homey.Driver {
 
     // Add extra details during debugging
     private debug: boolean = config.isTestVersion;
@@ -33,11 +80,11 @@ export default class MarstekVenusDriver extends Homey.Driver {
 
     // List of messages that should be broadcast to request device status.
     private pollMessages: PollRequest[] = [
-      { payload: { method: 'ES.GetStatus', params: { id: 0 } }, broadcast: false },
-      { payload: { method: 'Bat.GetStatus', params: { id: 0 } }, broadcast: true },
-      { payload: { method: 'Wifi.GetStatus', params: { id: 0 } }, broadcast: false },
-      { payload: { method: 'ES.GetMode', params: { id: 0 } }, broadcast: false },
-      { payload: { method: 'EM.GetStatus', params: { id: 0 } }, broadcast: false },
+        { payload: { method: 'ES.GetStatus', params: { id: 0 } }, broadcast: false },
+        { payload: { method: 'Bat.GetStatus', params: { id: 0 } }, broadcast: true },
+        { payload: { method: 'Wifi.GetStatus', params: { id: 0 } }, broadcast: false },
+        { payload: { method: 'ES.GetMode', params: { id: 0 } }, broadcast: false },
+        { payload: { method: 'EM.GetStatus', params: { id: 0 } }, broadcast: false },
     ];
 
     // Interval handle for the poll loop.
@@ -59,17 +106,17 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once initialisation completes.
      */
     async onInit() {
-      if (this.debug) this.log('MarstekVenusDriver has been initialized');
-      // Log Homey environment details for debugging
-      if (this.debug) {
-        this.log('Homey environment details:', {
-          version: this.homey.manifest.version,
-          debug: this.debug,
-          platform: process.platform,
-          nodeVersion: process.version,
-        });
-      }
-      await this.registerFlowListeners();
+        if (this.debug) this.log('MarstekVenusLocalApiDriver has been initialized');
+        // Log Homey environment details for debugging
+        if (this.debug) {
+            this.log('Homey environment details:', {
+                version: this.homey.manifest.version,
+                debug: this.debug,
+                platform: process.platform,
+                nodeVersion: process.version,
+            });
+        }
+        await this.registerFlowListeners();
     }
 
     /**
@@ -77,12 +124,12 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves after cleaning up the shared socket connection.
      */
     async onUninit() {
-      if (this.debug) this.log('MarstekVenusDriver has been uninitialized');
-      // Make sure to destroy the socket instance
-      if (this.socket) {
-        this.socket.destroy();
-        this.socket = undefined;
-      }
+        if (this.debug) this.log('MarstekVenusLocalApiDriver has been uninitialized');
+        // Make sure to destroy the socket instance
+        if (this.socket) {
+            this.socket.destroy();
+            this.socket = undefined;
+        }
     }
 
     /**
@@ -91,51 +138,51 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once the pairing handlers are registered.
      */
     async onPair(session: Homey.Driver.PairSession): Promise<void> {
-      // List devices template is handled using broadcast resolved device detection
-      session.setHandler('list_devices', async () => this.broadcastDetect(this.deviceAddress, this.devicePort));
+        // List devices template is handled using broadcast resolved device detection
+        session.setHandler('list_devices', async () => this.broadcastDetect(this.deviceAddress, this.devicePort));
 
-      // Received when a view has changed
-      session.setHandler('showView', async (viewId: string) => {
+        // Received when a view has changed
+        session.setHandler('showView', async (viewId: string) => {
         // Apply default values to settings form
-        if (viewId === 'show_settings') {
-          const interval: number = this.homey.settings.get('default_poll_interval') || 60;
-          const enabled: boolean = this.homey.settings.get('default_poll_enabled') || false;
-          await session.emit('initPollSettings', { interval, enabled });
-        }
-      });
+            if (viewId === 'show_settings') {
+                const interval: number = this.homey.settings.get('default_poll_interval') || 60;
+                const enabled: boolean = this.homey.settings.get('default_poll_enabled') || false;
+                await session.emit('initPollSettings', { interval, enabled });
+            }
+        });
 
-      // Event is emitted from HTML form
-      session.setHandler('saveDeviceAddress', async (address: string) => {
-        if (this.debug) this.log('saveDeviceAddress', address);
-        if (typeof address === 'string') {
-          this.deviceAddress = address || undefined;
-        }
-      });
+        // Event is emitted from HTML form
+        session.setHandler('saveDeviceAddress', async (address: string) => {
+            if (this.debug) this.log('saveDeviceAddress', address);
+            if (typeof address === 'string') {
+                this.deviceAddress = address || undefined;
+            }
+        });
 
-      // Event is emitted from HTML form
-      session.setHandler('saveDevicePort', async (port: number) => {
-        if (this.debug) this.log('saveDevicePort', port);
-        if (typeof port === 'number' && !Number.isNaN(port) && port > 0 && port <= 65535) {
-          this.devicePort = port;
-        } else {
-          this.devicePort = undefined;
-        }
-      });
+        // Event is emitted from HTML form
+        session.setHandler('saveDevicePort', async (port: number) => {
+            if (this.debug) this.log('saveDevicePort', port);
+            if (typeof port === 'number' && !Number.isNaN(port) && port > 0 && port <= 65535) {
+                this.devicePort = port;
+            } else {
+                this.devicePort = undefined;
+            }
+        });
 
-      // Event is emitted from HTML form
-      session.setHandler('savePollInterval', async (interval: number) => {
-        if (this.debug) this.log('savePollInterval', interval);
-        if (typeof interval === 'number' && !Number.isNaN(interval)) {
-          this.homey.settings.set('default_poll_interval', interval);
-        }
-      });
+        // Event is emitted from HTML form
+        session.setHandler('savePollInterval', async (interval: number) => {
+            if (this.debug) this.log('savePollInterval', interval);
+            if (typeof interval === 'number' && !Number.isNaN(interval)) {
+                this.homey.settings.set('default_poll_interval', interval);
+            }
+        });
 
-      // Event is emitted from HTML form
-      session.setHandler('savePollEnabled', async (enabled: boolean) => {
-        if (typeof enabled === 'boolean') {
-          this.homey.settings.set('default_poll_enabled', enabled);
-        }
-      });
+        // Event is emitted from HTML form
+        session.setHandler('savePollEnabled', async (enabled: boolean) => {
+            if (typeof enabled === 'boolean') {
+                this.homey.settings.set('default_poll_enabled', enabled);
+            }
+        });
     }
 
     /**
@@ -143,9 +190,9 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {MarstekSocket} the singleton instance of a MarstekSocket class
      */
     public getSocket() {
-      // Create a socket instance, used for communication by all devices
-      if (!this.socket) this.socket = new MarstekSocket(this);
-      return this.socket ?? undefined;
+        // Create a socket instance, used for communication by all devices
+        if (!this.socket) this.socket = new MarstekSocket(this);
+        return this.socket ?? undefined;
     }
 
     /**
@@ -153,66 +200,66 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once all messages have been sent.
      */
     async poll() {
-      const socket = this.getSocket();
-      if (socket) {
-        for (const pollRequest of this.pollMessages) {
-          try {
-            const message: MarsteRequest = {
-              id: this.getUniqueID(),
-              ...pollRequest.payload,
-            };
-            const json = JSON.stringify(message);
-            // if message is broadcast type, only send message as broadcast
-            if (pollRequest.broadcast) {
-              if (this.debug) this.log('Ready to broadcast:', json);
-              await socket.broadcast(json);
-            } else {
-              // if not forced broadcast, send to each device individually (except when device configured for broadcast)
-              const devices = this.getDevices();
-              let alsoBroadcast: boolean = false;
-              for (const device of devices) {
+        const socket = this.getSocket();
+        if (socket) {
+            for (const pollRequest of this.pollMessages) {
                 try {
-                  const broadcastSetting: boolean = !!device.getSetting('broadcast');
-                  if (broadcastSetting) alsoBroadcast = true;
-                  if (!broadcastSetting) {
-                    const src = device.getSetting('src');
-                    if (!src) throw new Error('Device without a "src" setting');
+                    const message: MarsteRequest = {
+                        id: this.getUniqueID(),
+                        ...pollRequest.payload,
+                    };
+                    const json = JSON.stringify(message);
+                    // if message is broadcast type, only send message as broadcast
+                    if (pollRequest.broadcast) {
+                        if (this.debug) this.log('Ready to broadcast:', json);
+                        await socket.broadcast(json);
+                    } else {
+                        // if not forced broadcast, send to each device individually (except when device configured for broadcast)
+                        const devices = this.getDevices();
+                        let alsoBroadcast: boolean = false;
+                        for (const device of devices) {
+                            try {
+                                const broadcastSetting: boolean = !!device.getSetting('broadcast');
+                                if (broadcastSetting) alsoBroadcast = true;
+                                if (!broadcastSetting) {
+                                    const src = device.getSetting('src');
+                                    if (!src) throw new Error('Device without a "src" setting');
 
-                    const index = this.pollDevices.indexOf(src);
-                    if (index < 0) {
-                      if (this.debug) this.log('Device not part of polling array:', src);
-                      continue;
+                                    const index = this.pollDevices.indexOf(src);
+                                    if (index < 0) {
+                                        if (this.debug) this.log('Device not part of polling array:', src);
+                                        continue;
+                                    }
+
+                                    const address = device.getStoreValue('address');
+                                    if (!address) {
+                                        this.error('Device missing IP; next broadcast may fix this.');
+                                        continue;
+                                    }
+
+                                    if (this.debug) this.log('Ready to send:', json, address);
+                                    await socket.send(json, address);
+
+                                    // Wait 100ms between sends to avoid overwhelming
+                                    await new Promise<void>((resolve) => this.homey.setTimeout(resolve, 100));
+                                }
+                            } catch (err) {
+                                this.error('Error sending to device:', err);
+                            }
+                        }
+                        // if at least one device is configured for broadcast, also send broadcast
+                        if (alsoBroadcast) {
+                            if (this.debug) this.log('Also broadcasting:', json);
+                            await socket.broadcast(json);
+                        }
                     }
-
-                    const address = device.getStoreValue('address');
-                    if (!address) {
-                      this.error('Device missing IP; next broadcast may fix this.');
-                      continue;
-                    }
-
-                    if (this.debug) this.log('Ready to send:', json, address);
-                    await socket.send(json, address);
-
-                    // Wait 100ms between sends to avoid overwhelming
-                    await new Promise<void>((resolve) => this.homey.setTimeout(resolve, 100));
-                  }
+                    // Wait 200ms between different message types
+                    await new Promise<void>((resolve) => this.homey.setTimeout(resolve, 200));
                 } catch (err) {
-                  this.error('Error sending to device:', err);
+                    this.error('Error transmitting:', err);
                 }
-              }
-              // if at least one device is configured for broadcast, also send broadcast
-              if (alsoBroadcast) {
-                if (this.debug) this.log('Also broadcasting:', json);
-                await socket.broadcast(json);
-              }
             }
-            // Wait 200ms between different message types
-            await new Promise<void>((resolve) => this.homey.setTimeout(resolve, 200));
-          } catch (err) {
-            this.error('Error transmitting:', err);
-          }
         }
-      }
     }
 
     /**
@@ -220,19 +267,19 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @param {string} device - Unique identifier of the device to poll.
      */
     pollStart(device: string) {
-      this.pollDevices.push(device);
-      if (!this.pollTimeout) {
-        const interval = this.getPollInterval();
-        if (this.debug) this.log('Started background polling with interval', interval);
-        this.pollTimeout = this.homey.setInterval(() => {
-          this.poll().catch((err) => {
-            this.error('Error during polling', err);
-          });
-        }, interval);
-        this.poll().catch((err) => {
-          this.error('Error during polling', err);
-        });
-      }
+        this.pollDevices.push(device);
+        if (!this.pollTimeout) {
+            const interval = this.getPollInterval();
+            if (this.debug) this.log('Started background polling with interval', interval);
+            this.pollTimeout = this.homey.setInterval(() => {
+                this.poll().catch((err) => {
+                    this.error('Error during polling', err);
+                });
+            }, interval);
+            this.poll().catch((err) => {
+                this.error('Error during polling', err);
+            });
+        }
     }
 
     /**
@@ -240,15 +287,15 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @param {string} device - Unique identifier of the device to stop polling for.
      */
     pollStop(device: string) {
-      // Remove the device from the polling devices
-      const index = this.pollDevices.indexOf(device);
-      if (index !== -1) this.pollDevices.splice(index, 1);
-      // When no more devices are left; stop interval polling
-      if (this.pollTimeout && this.pollDevices.length === 0) {
-        this.homey.clearInterval(this.pollTimeout);
-        this.pollTimeout = undefined;
-        if (this.debug) this.log('Stopped background polling');
-      }
+        // Remove the device from the polling devices
+        const index = this.pollDevices.indexOf(device);
+        if (index !== -1) this.pollDevices.splice(index, 1);
+        // When no more devices are left; stop interval polling
+        if (this.pollTimeout && this.pollDevices.length === 0) {
+            this.homey.clearInterval(this.pollTimeout);
+            this.pollTimeout = undefined;
+            if (this.debug) this.log('Stopped background polling');
+        }
     }
 
     /**
@@ -256,12 +303,12 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * Called by devices when setting is changed
      */
     pollIntervalUpdate() {
-      if (this.pollTimeout) {
-        this.homey.clearInterval(this.pollTimeout);
-        const ms = this.getPollInterval();
-        this.pollTimeout = this.homey.setInterval(async () => this.poll(), ms);
-        if (this.debug) this.log('Updated background polling with interval', ms);
-      }
+        if (this.pollTimeout) {
+            this.homey.clearInterval(this.pollTimeout);
+            const ms = this.getPollInterval();
+            this.pollTimeout = this.homey.setInterval(async () => this.poll(), ms);
+            if (this.debug) this.log('Updated background polling with interval', ms);
+        }
     }
 
     /**
@@ -269,33 +316,33 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns
      */
     getPollInterval(): number {
-      const devices = this.getDevices();
-      let interval: number = 60 * 60; // start at hour, find minimum
-      const defaultInterval: number = this.homey.settings.get('default_poll_interval') || interval; // default interval from app settings
-      if (this.debug) this.log('Calculating poll interval from devices, default', defaultInterval, interval);
-      devices.forEach((device) => {
+        const devices = this.getDevices();
+        let interval: number = 60 * 60; // start at hour, find minimum
+        const defaultInterval: number = this.homey.settings.get('default_poll_interval') || interval; // default interval from app settings
+        if (this.debug) this.log('Calculating poll interval from devices, default', defaultInterval, interval);
+        devices.forEach((device) => {
         // if settings is not found, default to 15 since devices used this before setting was introduced
-        const seconds = device.getSetting('interval');
-        if (this.debug) this.log('Adjusting to interval device setting', seconds);
-        if (seconds && seconds < interval) interval = seconds;
-        if (this.debug) this.log('Interval set to', interval);
-        if (!interval || interval < 15) {
-          interval = 600;
-          if (this.debug) this.error('Interval could not be determined, fallback to 10 minutes');
-        }
-      });
-      return (interval * 1000) + Math.round(Math.random() * 100);
+            const seconds = device.getSetting('interval');
+            if (this.debug) this.log('Adjusting to interval device setting', seconds);
+            if (seconds && seconds < interval) interval = seconds;
+            if (this.debug) this.log('Interval set to', interval);
+            if (!interval || interval < 15) {
+                interval = 600;
+                if (this.debug) this.error('Interval could not be determined, fallback to 10 minutes');
+            }
+        });
+        return (interval * 1000) + Math.round(Math.random() * 100);
     }
 
     /** Retrieve a new unique string for json messages
      * @returns {number} unique number
      */
     private getUniqueID(): number {
-      // Increment
-      this.pollId++;
-      // New random value around at 16bits
-      if (this.pollId >= 65535) this.pollId = Math.round(Math.random() * 10000);
-      return this.pollId;
+        // Increment
+        this.pollId++;
+        // New random value around at 16bits
+        if (this.pollId >= 65535) this.pollId = Math.round(Math.random() * 10000);
+        return this.pollId;
     }
 
     /**
@@ -303,33 +350,53 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once the listeners are registered.
      */
     async registerFlowListeners(): Promise<void> {
-      // Inline function to register handlers
-      const register = (id: string, handler: Function) => {
-        try {
-          const card = this.homey.flow.getActionCard(id);
-          card.registerRunListener(async (args: any) => {
-            await handler(args);
-            return true;
-          });
-          if (this.debug) this.log(`Successfully registered flow card: ${id}`);
-        } catch (err) {
-          this.error(`Failed to register flow card ${id}:`, err);
-        }
-      };
+        // Inline function to register handlers
+        const register = (id: string, handler: Function) => {
+            try {
+                const card = this.homey.flow.getActionCard(id);
+                card.registerRunListener(async (args: any) => {
+                    await handler(args);
+                    return true;
+                });
+                if (this.debug) this.log(`Successfully registered flow card: ${id}`);
+            } catch (err) {
+                this.error(`Failed to register flow card ${id}:`, err);
+            }
+        };
 
-      // Explicitly type the argument objects for each flow card
-      register('marstek_auto_mode', async ({ device }: { device: Homey.Device }) => this.setModeAuto(device));
-      register('marstek_ai_mode', async ({ device }: { device: Homey.Device }) => this.setModeAI(device));
-      register(
-        'marstek_manual_mode',
-        async ({
-          device,
-          start_time,
-          end_time,
-          days,
-          power,
-          enable,
-        }: {
+        // Explicitly type the argument objects for each flow card
+        register('marstek_auto_mode', async ({ device }: { device: Homey.Device }) => this.setModeAuto(device));
+        register('marstek_ai_mode', async ({ device }: { device: Homey.Device }) => this.setModeAI(device));
+        register(
+            'marstek_ups_mode',
+            async ({
+                device,
+                enable,
+            }: {
+                device: Homey.Device,
+                enable: boolean,
+            }) => this.setModeUPS(device, enable),
+        );
+        register(
+            'marstek_led_control',
+            async ({
+                device,
+                state,
+            }: {
+                device: Homey.Device,
+                state: boolean,
+            }) => this.setLedState(device, state),
+        );
+        register(
+            'marstek_manual_mode',
+            async ({
+                device,
+                start_time,
+                end_time,
+                days,
+                power,
+                enable,
+            }: {
                 device: Homey.Device,
                 start_time: string,
                 end_time: string,
@@ -337,357 +404,361 @@ export default class MarstekVenusDriver extends Homey.Driver {
                 power: number,
                 enable: boolean,
             }) => this.setModeManual(device, start_time, end_time, days, power, enable),
-      );
-      register(
-        'marstek_passive_mode',
-        async ({
-          device,
-          power,
-          seconds,
-        }: {
+        );
+        register(
+            'marstek_passive_mode',
+            async ({
+                device,
+                power,
+                seconds,
+            }: {
                 device: Homey.Device,
                 power: number | string,
                 seconds: number | string,
             }) => this.setModePassive(device, power, seconds),
-      );
-      register(
-        'marstek_manual_mode_text',
-        async ({
-          device,
-          start_time,
-          power,
-          enable,
-        }: {
+        );
+        register(
+            'marstek_manual_mode_text',
+            async ({
+                device,
+                start_time,
+                power,
+                enable,
+            }: {
                 device: Homey.Device,
                 start_time: string,
                 power: number,
                 enable: boolean,
             }) => this.setModeManualText(device, start_time, power, enable),
-      );
-      register(
-        'venus_set_energy_price',
-        async ({
-          device,
-          price,
-        }: {
+        );
+        register(
+            'venus_set_energy_price',
+            async ({
+                device,
+                price,
+            }: {
                 device: Homey.Device,
                 price: number,
             }) => this.setEnergyPrice(device, price),
-      );
-      register(
-        'verify_calculation',
-        async ({
-          device,
-          timePeriod,
-          includeDetails,
-        }: {
+        );
+        register(
+            'verify_calculation',
+            async ({
+                device,
+                timePeriod,
+                includeDetails,
+            }: {
                 device: Homey.Device,
                 timePeriod: string,
                 includeDetails: boolean,
             }) => (device as any).verifyCalculation(timePeriod, includeDetails),
-      );
-      register(
-        'marstek_send_notification',
-        async ({
-          device,
-          message,
-        }: {
+        );
+        register(
+            'marstek_send_notification',
+            async ({
+                device,
+                message,
+            }: {
                 device: Homey.Device,
                 message?: string,
             }) => this.sendBatteryNotification(device, message),
-      );
-      register(
-        'marstek_set_manual_mode_preset',
-        async ({
-          device,
-          start_time,
-          end_time,
-          days,
-          power,
-          enable,
-        }: {
+        );
+        register(
+            'marstek_set_manual_mode_preset',
+            async ({
+                device,
+                start_time,
+                end_time,
+                days,
+                power,
+                enable,
+            }: {
                 device: Homey.Device,
                 start_time: string,
                 end_time: string,
-                days: string[],
+                days: string,
                 power: number,
                 enable: string,
-            }) => this.setModeManual(device, start_time, end_time, days, power, enable === 'true'),
-      );
-      register(
-        'marstek_set_passive_mode_timed',
-        async ({
-          device,
-          power,
-          seconds,
-        }: {
+            }) => {
+                // Preset card uses Sunday=0..Saturday=6; convert to setModeManual day ids (Monday=7..Sunday=1)
+                const day = parseInt(days, 10);
+                const dayId = String(day === 0 ? 1 : 8 - day);
+                return this.setModeManual(device, start_time, end_time, [dayId], power, enable === 'true');
+            },
+        );
+        register(
+            'marstek_set_passive_mode_timed',
+            async ({
+                device,
+                power,
+                seconds,
+            }: {
                 device: Homey.Device,
                 power: number,
                 seconds: number,
             }) => this.setModePassive(device, power, seconds),
-      );
-      register(
-        'marstek_emergency_mode',
-        async ({
-          device,
-        }: {
+        );
+        register(
+            'marstek_emergency_mode',
+            async ({
+                device,
+            }: {
                 device: Homey.Device,
             }) => this.setModeEmergency(device),
-      );
-      register(
-        'marstek_reset_statistics_by_type',
-        async ({
-          device,
-          type,
-        }: {
+        );
+        register(
+            'marstek_reset_statistics_by_type',
+            async ({
+                device,
+                type,
+            }: {
                 device: Homey.Device,
                 type: string,
             }) => this.resetStatisticsByType(device, type),
-      );
-      register(
-        'marstek_adjust_energy_price',
-        async ({
-          device,
-          price,
-        }: {
+        );
+        register(
+            'marstek_adjust_energy_price',
+            async ({
+                device,
+                price,
+            }: {
                 device: Homey.Device,
                 price: number,
             }) => this.setEnergyPrice(device, price),
-      );
+        );
 
-      // Register trigger cards
-      const registerTrigger = (id: string) => {
-        try {
-          this.homey.flow.getTriggerCard(id);
-          if (this.debug) this.log(`Successfully registered trigger card: ${id}`);
-        } catch (err) {
-          this.error(`Failed to register trigger card ${id}:`, err);
-        }
-      };
+        // Register trigger cards
+        const registerTrigger = (id: string) => {
+            try {
+                this.homey.flow.getTriggerCard(id);
+                if (this.debug) this.log(`Successfully registered trigger card: ${id}`);
+            } catch (err) {
+                this.error(`Failed to register trigger card ${id}:`, err);
+            }
+        };
 
-      // Register condition cards
-      const registerCondition = (id: string, handler: Function) => {
-        try {
-          const card = this.homey.flow.getConditionCard(id);
-          card.registerRunListener(async (args: any) => {
-            return await handler(args);
-          });
-          if (this.debug) this.log(`Successfully registered condition card: ${id}`);
-        } catch (err) {
-          this.error(`Failed to register condition card ${id}:`, err);
-        }
-      };
+        // Register condition cards
+        const registerCondition = (id: string, handler: Function) => {
+            try {
+                const card = this.homey.flow.getConditionCard(id);
+                card.registerRunListener(async (args: any) => handler(args));
+                if (this.debug) this.log(`Successfully registered condition card: ${id}`);
+            } catch (err) {
+                this.error(`Failed to register condition card ${id}:`, err);
+            }
+        };
 
-      registerCondition('marstek_battery_soc_condition', async ({
-        device,
-        comparison,
-        threshold,
-        threshold2,
-      }: {
+        registerCondition('marstek_battery_soc_condition', async ({
+            device,
+            comparison,
+            threshold,
+            threshold2,
+        }: {
         device: Homey.Device;
         comparison: string;
         threshold: number;
         threshold2?: number;
       }) => {
-        const currentSoc = await device.getCapabilityValue('measure_battery');
-        if (currentSoc === null || currentSoc === undefined) return false;
+            const currentSoc = await device.getCapabilityValue('measure_battery');
+            if (currentSoc === null || currentSoc === undefined) return false;
 
-        switch (comparison) {
-          case 'above':
-            return currentSoc > threshold;
-          case 'below':
-            return currentSoc < threshold;
-          case 'between':
-            return currentSoc >= threshold && currentSoc <= (threshold2 || threshold);
-          default:
-            return false;
-        }
-      });
+            switch (comparison) {
+                case 'above':
+                    return currentSoc > threshold;
+                case 'below':
+                    return currentSoc < threshold;
+                case 'between':
+                    return currentSoc >= threshold && currentSoc <= (threshold2 || threshold);
+                default:
+                    return false;
+            }
+        });
 
-      registerCondition('marstek_battery_charging_condition', async ({
-        device,
-        state,
-      }: {
+        registerCondition('marstek_battery_charging_condition', async ({
+            device,
+            state,
+        }: {
         device: Homey.Device;
         state: string;
       }) => {
-        const chargingState = await device.getCapabilityValue('battery_charging_state');
-        if (chargingState === null || chargingState === undefined) return false;
+            const chargingState = await device.getCapabilityValue('battery_charging_state');
+            if (chargingState === null || chargingState === undefined) return false;
 
-        return chargingState === state;
-      });
+            return chargingState === state;
+        });
 
-      registerCondition('marstek_grid_connected_condition', async ({
-        device,
-      }: {
+        registerCondition('marstek_grid_connected_condition', async ({
+            device,
+        }: {
         device: Homey.Device;
       }) => {
-        const ctState = await device.getCapabilityValue('measure_ct_state');
-        if (ctState === null || ctState === undefined) return false;
+            const ctState = await device.getCapabilityValue('measure_ct_state');
+            if (ctState === null || ctState === undefined) return false;
 
-        // CT state: 0 = not connected, 1 = connected
-        return ctState === '1';
-      });
+            // CT state: 0 = not connected, 1 = connected
+            return ctState === '1';
+        });
 
-      registerCondition('marstek_grid_power_condition', async ({
-        device,
-        comparison,
-        threshold,
-        threshold2,
-      }: {
+        registerCondition('marstek_grid_power_condition', async ({
+            device,
+            comparison,
+            threshold,
+            threshold2,
+        }: {
         device: Homey.Device;
         comparison: string;
         threshold: number;
         threshold2?: number;
       }) => {
-        const gridPower = await device.getCapabilityValue('measure_power_ongrid');
-        if (gridPower === null || gridPower === undefined) return false;
+            const gridPower = await device.getCapabilityValue('measure_power_ongrid');
+            if (gridPower === null || gridPower === undefined) return false;
 
-        switch (comparison) {
-          case 'above':
-            return gridPower > threshold;
-          case 'below':
-            return gridPower < threshold;
-          case 'between':
-            return gridPower >= threshold && gridPower <= (threshold2 || threshold);
-          default:
-            return false;
-        }
-      });
+            switch (comparison) {
+                case 'above':
+                    return gridPower > threshold;
+                case 'below':
+                    return gridPower < threshold;
+                case 'between':
+                    return gridPower >= threshold && gridPower <= (threshold2 || threshold);
+                default:
+                    return false;
+            }
+        });
 
-      registerCondition('marstek_solar_generating_condition', async ({
-        device,
-        comparison,
-        threshold,
-      }: {
+        registerCondition('marstek_solar_generating_condition', async ({
+            device,
+            comparison,
+            threshold,
+        }: {
         device: Homey.Device;
         comparison: string;
         threshold: number;
       }) => {
-        const pvPower = await device.getCapabilityValue('measure_power_pv');
-        if (pvPower === null || pvPower === undefined) return false;
+            const pvPower = await device.getCapabilityValue('measure_power_pv');
+            if (pvPower === null || pvPower === undefined) return false;
 
-        switch (comparison) {
-          case 'above':
-            return pvPower > threshold;
-          case 'below':
-            return pvPower < threshold;
-          default:
-            return false;
-        }
-      });
+            switch (comparison) {
+                case 'above':
+                    return pvPower > threshold;
+                case 'below':
+                    return pvPower < threshold;
+                default:
+                    return false;
+            }
+        });
 
-      registerCondition('marstek_time_of_day_condition', async ({
-        comparison,
-        time,
-        time2,
-      }: {
+        registerCondition('marstek_time_of_day_condition', async ({
+            comparison,
+            time,
+            time2,
+        }: {
         comparison: string;
         time: string;
         time2?: string;
       }) => {
-        const now = new Date();
-        const currentTime = now.getHours() * 60 + now.getMinutes(); // minutes since midnight
+            const now = new Date();
+            const currentTime = now.getHours() * 60 + now.getMinutes(); // minutes since midnight
 
-        // Parse time string (HH:MM) to minutes
-        const parseTime = (timeStr: string): number => {
-          const [hours, minutes] = timeStr.split(':').map(Number);
-          return hours * 60 + minutes;
-        };
+            // Parse time string (HH:MM) to minutes
+            const parseTime = (timeStr: string): number => {
+                const [hours, minutes] = timeStr.split(':').map(Number);
+                return hours * 60 + minutes;
+            };
 
-        const targetTime = parseTime(time);
+            const targetTime = parseTime(time);
 
-        switch (comparison) {
-          case 'before':
-            return currentTime < targetTime;
-          case 'after':
-            return currentTime > targetTime;
-          case 'between':
-            if (!time2) return false;
-            const targetTime2 = parseTime(time2);
-            return currentTime >= targetTime && currentTime <= targetTime2;
-          default:
-            return false;
-        }
-      });
+            switch (comparison) {
+                case 'before':
+                    return currentTime < targetTime;
+                case 'after':
+                    return currentTime > targetTime;
+                case 'between': {
+                    if (!time2) return false;
+                    const targetTime2 = parseTime(time2);
+                    return currentTime >= targetTime && currentTime <= targetTime2;
+                }
+                default:
+                    return false;
+            }
+        });
 
-      // Register trigger cards
-      registerTrigger('marstek_mode_changed');
+        // Register trigger cards
+        registerTrigger('marstek_mode_changed');
 
-      // Register condition cards
-      registerCondition('marstek_mode_condition', async ({
-        device,
-        mode,
-      }: {
+        // Register condition cards
+        registerCondition('marstek_mode_condition', async ({
+            device,
+            mode,
+        }: {
         device: Homey.Device;
         mode: string;
       }) => {
-        const currentMode = await device.getCapabilityValue('battery_mode');
-        if (currentMode === null || currentMode === undefined) return false;
-        return currentMode === mode;
-      });
+            const currentMode = await device.getCapabilityValue('battery_mode');
+            if (currentMode === null || currentMode === undefined) return false;
+            return currentMode === mode;
+        });
 
-      registerCondition('marstek_temperature_condition', async ({
-        device,
-        threshold,
-        direction,
-      }: {
+        registerCondition('marstek_temperature_condition', async ({
+            device,
+            threshold,
+            direction,
+        }: {
         device: Homey.Device;
         threshold: number;
         direction: string;
       }) => {
-        const temperature = await device.getCapabilityValue('measure_temperature');
-        if (temperature === null || temperature === undefined) return false;
+            const temperature = await device.getCapabilityValue('measure_temperature');
+            if (temperature === null || temperature === undefined) return false;
 
-        if (direction === 'above') {
-          return temperature > threshold;
-        } else if (direction === 'below') {
-          return temperature < threshold;
-        }
-        return false;
-      });
+            if (direction === 'above') {
+                return temperature > threshold;
+            } if (direction === 'below') {
+                return temperature < threshold;
+            }
+            return false;
+        });
 
-      registerCondition('marstek_grid_import_condition', async ({
-        device,
-      }: {
+        registerCondition('marstek_grid_import_condition', async ({
+            device,
+        }: {
         device: Homey.Device;
       }) => {
-        const gridPower = await device.getCapabilityValue('measure_power_ongrid');
-        if (gridPower === null || gridPower === undefined) return false;
+            const gridPower = await device.getCapabilityValue('measure_power_ongrid');
+            if (gridPower === null || gridPower === undefined) return false;
 
-        return gridPower > 0;
-      });
+            return gridPower > 0;
+        });
 
-      registerCondition('marstek_grid_export_condition', async ({
-        device,
-      }: {
+        registerCondition('marstek_grid_export_condition', async ({
+            device,
+        }: {
         device: Homey.Device;
       }) => {
-        const gridPower = await device.getCapabilityValue('measure_power_ongrid');
-        if (gridPower === null || gridPower === undefined) return false;
+            const gridPower = await device.getCapabilityValue('measure_power_ongrid');
+            if (gridPower === null || gridPower === undefined) return false;
 
-        return gridPower < 0;
-      });
+            return gridPower < 0;
+        });
 
-      registerCondition('marstek_rssi_condition', async ({
-        device,
-        threshold,
-        direction,
-      }: {
+        registerCondition('marstek_rssi_condition', async ({
+            device,
+            threshold,
+            direction,
+        }: {
         device: Homey.Device;
         threshold: number;
         direction: string;
       }) => {
-        const rssi = await device.getCapabilityValue('measure_rssi');
-        if (rssi === null || rssi === undefined) return false;
+            const rssi = await device.getCapabilityValue('measure_rssi');
+            if (rssi === null || rssi === undefined) return false;
 
-        if (direction === 'above') {
-          return rssi > threshold;
-        } else if (direction === 'below') {
-          return rssi < threshold;
-        }
-        return false;
-      });
+            if (direction === 'above') {
+                return rssi > threshold;
+            } if (direction === 'below') {
+                return rssi < threshold;
+            }
+            return false;
+        });
     }
 
     /**
@@ -696,13 +767,13 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once the command succeeds.
      */
     async setModeAuto(device: Homey.Device) {
-      const config = {
-        mode: 'Auto',
-        auto_cfg: {
-          enable: 1,
-        },
-      };
-      await this.setModeConfiguration(device, config);
+        const config = {
+            mode: 'Auto',
+            auto_cfg: {
+                enable: 1,
+            },
+        };
+        await this.setModeConfiguration(device, config);
     }
 
     /**
@@ -711,13 +782,13 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once the command succeeds.
      */
     async setModeAI(device: Homey.Device) {
-      const config = {
-        mode: 'AI',
-        ai_cfg: {
-          enable: 1,
-        },
-      };
-      await this.setModeConfiguration(device, config);
+        const config = {
+            mode: 'AI',
+            ai_cfg: {
+                enable: 1,
+            },
+        };
+        await this.setModeConfiguration(device, config);
     }
 
     /**
@@ -751,24 +822,24 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once the command succeeds.
      */
     async setModeManual(device: Homey.Device, start_time: string, end_time: string, days: string[], power: number, enable: boolean) {
-      const bitArray = [...'00000000'];
-      days.forEach((day: string) => {
-        bitArray[7 - parseInt(day)] = '1';
-      });
-      const bitString = bitArray.join('');
-      const bitValue = parseInt(bitString, 2);
-      const config = {
-        mode: 'Manual',
-        manual_cfg: {
-          time_num: 0,
-          start_time,
-          end_time,
-          week_set: bitValue,
-          power,
-          enable: enable ? 1 : 0,
-        },
-      };
-      await this.setModeConfiguration(device, config);
+        const bitArray = [...'00000000'];
+        days.forEach((day: string) => {
+            bitArray[parseInt(day, 10)] = '1';
+        });
+        const bitString = bitArray.join('');
+        const bitValue = parseInt(bitString, 2);
+        const config = {
+            mode: 'Manual',
+            manual_cfg: {
+                time_num: 0,
+                start_time,
+                end_time,
+                week_set: bitValue,
+                power,
+                enable: enable ? 1 : 0,
+            },
+        };
+        await this.setModeConfiguration(device, config);
     }
 
     /**
@@ -795,25 +866,25 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once the command succeeds.
      */
     async setModePassive(device: Homey.Device, power: number|string, seconds: number|string) {
-      const numericPower = Number(power);
-      const numericSeconds = Number(seconds);
+        const numericPower = Number(power);
+        const numericSeconds = Number(seconds);
 
-      if (Number.isNaN(numericPower) || Number.isNaN(numericSeconds)) {
-        throw new Error('Power and seconds must be numbers');
-      }
-      if (numericPower < 0 || numericSeconds < 0) {
-        throw new Error('Power and seconds must be zero or greater');
-      }
+        if (Number.isNaN(numericPower) || Number.isNaN(numericSeconds)) {
+            throw new Error('Power and seconds must be numbers');
+        }
+        if (numericSeconds < 1) {
+            throw new Error('Seconds must be one or greater');
+        }
 
-      const config = {
-        mode: 'Passive',
-        passive_cfg: {
-          power: numericPower,
-          cd_time: numericSeconds,
-        },
-      };
+        const config = {
+            mode: 'Passive',
+            passive_cfg: {
+                power: numericPower,
+                cd_time: numericSeconds,
+            },
+        };
 
-      await this.setModeConfiguration(device, config);
+        await this.setModeConfiguration(device, config);
     }
 
     /**
@@ -825,17 +896,17 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once the command succeeds.
      */
     async setModeManualText(device: Homey.Device, start_time: string, power: number, enable: boolean) {
-      // Calculate end_time as start_time + 2 hours
-      const [hours, minutes] = start_time.split(':').map(Number);
-      let endHours = hours + 2;
-      const endMinutes = minutes;
-      if (endHours >= 24) {
-        endHours -= 24;
-      }
-      const end_time = `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
-      // Days are always all days
-      const dayArray = ['0', '1', '2', '3', '4', '5', '6'];
-      await this.setModeManual(device, start_time, end_time, dayArray, power, enable);
+        // Calculate end_time as start_time + 2 hours
+        const [hours, minutes] = start_time.split(':').map(Number);
+        let endHours = hours + 2;
+        const endMinutes = minutes;
+        if (endHours >= 24) {
+            endHours -= 24;
+        }
+        const end_time = `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+        // Days are always all days
+        const dayArray = ['1', '2', '3', '4', '5', '6', '7'];
+        await this.setModeManual(device, start_time, end_time, dayArray, power, enable);
     }
 
     /**
@@ -844,18 +915,18 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once the command succeeds.
      */
     async setModeManualDisable(device: Homey.Device) {
-      const config = {
-        mode: 'Manual',
-        manual_cfg: {
-          time_num: 0,
-          start_time: '00:01',
-          end_time: '23:59',
-          week_set: 127,
-          power: 0,
-          enable: 0,
-        },
-      };
-      await this.setModeConfiguration(device, config);
+        const config = {
+            mode: 'Manual',
+            manual_cfg: {
+                time_num: 0,
+                start_time: '00:01',
+                end_time: '23:59',
+                week_set: 127,
+                power: 0,
+                enable: 0,
+            },
+        };
+        await this.setModeConfiguration(device, config);
     }
 
     /**
@@ -864,13 +935,29 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once the command succeeds.
      */
     async setModeEmergency(device: Homey.Device) {
-      const config = {
-        mode: 'Emergency',
-        emergency_cfg: {
-          enable: 1,
-        },
-      };
-      await this.setModeConfiguration(device, config);
+        const config = {
+            mode: 'Emergency',
+            emergency_cfg: {
+                enable: 1,
+            },
+        };
+        await this.setModeConfiguration(device, config);
+    }
+
+    /**
+     * Configures the device for UPS mode.
+     * @param {Homey.device} device - Target device instance.
+     * @param {boolean} enable Whether UPS mode should be enabled.
+     * @returns {Promise<void>} Resolves once the command succeeds.
+     */
+    async setModeUPS(device: Homey.Device, enable: boolean) {
+        const config = {
+            mode: 'UPS',
+            ups_cfg: {
+                enable: enable ? 1 : 0,
+            },
+        };
+        await this.setModeConfiguration(device, config);
     }
 
     /**
@@ -880,10 +967,31 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once the setting is updated.
      */
     async setEnergyPrice(device: Homey.Device, price: number) {
-      if (typeof price !== 'number' || Number.isNaN(price) || price < 0) {
-        throw new Error('Price must be a non-negative number');
-      }
-      await device.setSettings({ price_per_kwh: price });
+        if (typeof price !== 'number' || Number.isNaN(price) || price < 0) {
+            throw new Error('Price must be a non-negative number');
+        }
+        await device.setSettings({ price_per_kwh: price });
+    }
+
+    /**
+     * Controls the device LEDs using the local API.
+     * @param {Homey.device} device Target device instance.
+     * @param {boolean} state Whether the LEDs should be switched on.
+     * @returns {Promise<void>} Resolves once the command succeeds.
+     */
+    async setLedState(device: Homey.Device, state: boolean) {
+        const result = await this.sendCommand(
+            device,
+            'Led.Ctrl',
+            {
+                id: 0,
+                state: state ? 1 : 0,
+            },
+        );
+
+        if (result && typeof result === 'object' && 'set_result' in result && !result.set_result) {
+            throw new Error('Device rejected the requested LED change');
+        }
     }
 
     /**
@@ -894,37 +1002,37 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @throws {Error} When the device rejects the configuration or all retries fail.
      */
     async setModeConfiguration(device: Homey.Device, config: object) {
-      const maxRetries = 5;
-      let attempt = 0;
-      let lastError;
+        const maxRetries = 5;
+        let attempt = 0;
+        let lastError;
 
-      while (attempt < maxRetries) {
-        try {
-          // Send command
-          const result = await this.sendCommand(
-            device,
-            'ES.SetMode',
-            {
-              id: 0,
-              config,
-            },
-          );
-          // Only resolve when exact expected result is found { result: { id: 0, set_result: true }}
-          if (result && typeof result === 'object' && 'set_result' in result && !result.set_result) {
-            throw new Error('Device rejected the requested mode change');
-          }
-          // Success
-          return;
-        } catch (err) {
-          lastError = err;
-          attempt++;
-          if (attempt < maxRetries) {
-            if (this.debug) this.log(`Retrying setModeConfiguration (attempt ${attempt + 1}/${maxRetries}) due to error:`, (err as Error).message || err);
-          }
+        while (attempt < maxRetries) {
+            try {
+                // Send command
+                const result = await this.sendCommand(
+                    device,
+                    'ES.SetMode',
+                    {
+                        id: 0,
+                        config,
+                    },
+                );
+                // Only resolve when exact expected result is found { result: { id: 0, set_result: true }}
+                if (result && typeof result === 'object' && 'set_result' in result && !result.set_result) {
+                    throw new Error('Device rejected the requested mode change');
+                }
+                // Success
+                return;
+            } catch (err) {
+                lastError = err;
+                attempt++;
+                if (attempt < maxRetries) {
+                    if (this.debug) this.log(`Retrying setModeConfiguration (attempt ${attempt + 1}/${maxRetries}) due to error:`, (err as Error).message || err);
+                }
+            }
         }
-      }
-      // If all retries failed, throw the last error
-      throw lastError;
+        // If all retries failed, throw the last error
+        throw lastError;
     }
 
     /**
@@ -937,49 +1045,67 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @throws {Error} When the socket or device address are missing, or the operation times out.
      */
     async sendCommand(device: Homey.Device, method: string, params = {}, timeout = 10000) {
-      const socket = this.getSocket();
-      const address = device.getStoreValue('address');
-      if (!socket) throw new Error('Socket connection is not available.');
-      if (!address) throw new Error('Device IP address it not available. Re-pair device or wait for first response from battery.');
+        const socket = this.getSocket();
+        const address = device.getStoreValue('address');
+        if (!socket) throw new Error('Socket connection is not available.');
+        if (!address) throw new Error('Device IP address it not available. Re-pair device or wait for first response from battery.');
 
-      // Create payload with unique id
-      const unique: number = this.getUniqueID();
-      const payload = {
-        id: unique, // seems to be limited to 16bits integer
-        method,
-        params,
-      };
-
-      return new Promise((resolve, reject) => {
-        const timer = this.homey.setTimeout(() => {
-          this.error('Timeout while waiting for mode change response');
-          cleanup();
-          reject(new Error('Timed out waiting for device response'));
-        }, timeout);
-
-        const cleanup = () => {
-          socket.off(handler);
-          this.homey.clearTimeout(timer);
+        // Create payload with unique id
+        const unique: number = this.getUniqueID();
+        const payload = {
+            id: unique, // seems to be limited to 16bits integer
+            method,
+            params,
         };
 
-        const handler = (json: any, remote: dgram.RemoteInfo) => {
-          if (json.id === unique) {
-            cleanup();
-            if (json?.result) {
-              resolve(json.result ?? null);
-            } else {
-              reject(new Error('Received json response is not as expected'));
-            }
-          }
-        };
+        return new Promise((resolve, reject) => {
+            let timer: NodeJS.Timeout;
+            const handler = (json: any, remote: dgram.RemoteInfo) => {
+                if (json.id === unique) {
+                    socket.off(handler);
+                    this.homey.clearTimeout(timer);
+                    if (json?.result) {
+                        resolve(json.result ?? null);
+                    } else {
+                        reject(new Error('Received json response is not as expected'));
+                    }
+                }
+            };
 
-        socket.on(handler);
+            timer = this.homey.setTimeout(() => {
+                this.error('Timeout while waiting for mode change response');
+                socket.off(handler);
+                reject(new Error('Timed out waiting for device response'));
+            }, timeout);
 
-        socket.send(JSON.stringify(payload), address).catch((err: Error) => {
-          cleanup();
-          reject(err);
+            socket.on(handler);
+
+            socket.send(JSON.stringify(payload), address).catch((err: Error) => {
+                socket.off(handler);
+                this.homey.clearTimeout(timer);
+                reject(err);
+            });
         });
-      });
+    }
+
+    // Helper function to select and combine factor properties based on model and version
+    retrieveFactorDefaults(model: string, version: number) {
+        const baseDefaults = factorDefaults['default'][0];
+        const modelVersions = factorDefaults[model];
+        if (!modelVersions) return baseDefaults;
+        // find highest version of modelVersions that is less than or equal to version number
+        const versionDefaults = {
+            ...baseDefaults,
+            ...modelVersions[0],
+        };
+        // Keep applying factors up to the device version
+        for (const verStr of Object.keys(modelVersions)) {
+            const ver = parseInt(verStr, 10);
+            if (ver > 0 && ver <= version) {
+                Object.assign(versionDefaults, modelVersions[ver]);
+            }
+        }
+        return versionDefaults;
     }
 
     /**
@@ -989,50 +1115,50 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once the statistics are reset.
      */
     async resetStatisticsByType(device: Homey.Device, type: string): Promise<void> {
-      try {
-        // Get the device instance to access its methods
-        const deviceInstance = device as any; // Cast to access internal methods
-
-        // Wait for lock to be released if another operation is in progress
-        while (deviceInstance.statisticsLock) {
-          await new Promise((resolve) => setTimeout(resolve, 10));
-        }
-
-        // Acquire lock
-        deviceInstance.statisticsLock = true;
-
         try {
-          let stats: any[] = deviceInstance.getStoreValue('statistics') || [];
+        // Get the device instance to access its methods
+            const deviceInstance = device as any; // Cast to access internal methods
 
-          if (type === 'all') {
-            // Reset all statistics
-            stats = [];
-            // Clear the grid counter accumulator store
-            await deviceInstance.setStoreValue('statistics', []);
-            await deviceInstance.setStoreValue(deviceInstance.constructor.GRID_COUNTER_ACCUMULATOR_STORE_KEY, null);
-          } else {
-            // Filter out entries of the specified type
-            stats = stats.filter((entry: any) => entry.type !== type);
-            // Update the store with filtered statistics
-            await deviceInstance.setStoreValue('statistics', stats);
-          }
+            // Wait for lock to be released if another operation is in progress
+            while (deviceInstance.statisticsLock) {
+                await new Promise((resolve) => setTimeout(resolve, 10));
+            }
 
-          // Update profit capabilities after reset
-          await deviceInstance.updateProfitCapabilities();
+            // Acquire lock
+            deviceInstance.statisticsLock = true;
 
-          if (this.debug) {
-            this.log(`Statistics reset by type '${type}' completed successfully for device:`, device.getName());
-          }
+            try {
+                let stats: any[] = deviceInstance.getStoreValue('statistics') || [];
 
-        } finally {
-          // Release lock
-          deviceInstance.statisticsLock = false;
+                if (type === 'all') {
+                    // Reset all statistics
+                    stats = [];
+                    // Clear the grid counter accumulator store
+                    await deviceInstance.setStoreValue('statistics', []);
+                    await deviceInstance.setStoreValue(deviceInstance.constructor.GRID_COUNTER_ACCUMULATOR_STORE_KEY, null);
+                } else {
+                    // Filter out entries of the specified type
+                    stats = stats.filter((entry: any) => entry.type !== type);
+                    // Update the store with filtered statistics
+                    await deviceInstance.setStoreValue('statistics', stats);
+                }
+
+                // Update profit capabilities after reset
+                await deviceInstance.updateProfitCapabilities();
+
+                if (this.debug) {
+                    this.log(`Statistics reset by type '${type}' completed successfully for device:`, device.getName());
+                }
+
+            } finally {
+                // Release lock
+                deviceInstance.statisticsLock = false;
+            }
+
+        } catch (error) {
+            this.error('Failed to reset statistics by type:', error);
+            throw error;
         }
-
-      } catch (error) {
-        this.error('Failed to reset statistics by type:', error);
-        throw error;
-      }
     }
 
     /**
@@ -1042,64 +1168,64 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once the notification is sent.
      */
     async sendBatteryNotification(device: Homey.Device, message?: string): Promise<void> {
-      try {
+        try {
         // Gather current battery data
-        const soc = await device.getCapabilityValue('measure_battery');
-        const temperature = await device.getCapabilityValue('measure_temperature');
-        const power = await device.getCapabilityValue('measure_power');
-        const chargingState = await device.getCapabilityValue('battery_charging_state');
-        const ctState = await device.getCapabilityValue('measure_ct_state');
-        const gridPower = await device.getCapabilityValue('measure_power_ongrid');
-        const pvPower = await device.getCapabilityValue('measure_power_pv');
+            const soc = await device.getCapabilityValue('measure_battery');
+            const temperature = await device.getCapabilityValue('measure_temperature');
+            const power = await device.getCapabilityValue('measure_power');
+            const chargingState = await device.getCapabilityValue('battery_charging_state');
+            const ctState = await device.getCapabilityValue('measure_ct_state');
+            const gridPower = await device.getCapabilityValue('measure_power_ongrid');
+            const pvPower = await device.getCapabilityValue('measure_power_pv');
 
-        // Build notification message
-        let notificationText = 'Battery Status Update:\n';
+            // Build notification message
+            let notificationText = 'Battery Status Update:\n';
 
-        if (soc !== null && soc !== undefined) {
-          notificationText += `• SOC: ${soc}%\n`;
+            if (soc !== null && soc !== undefined) {
+                notificationText += `• SOC: ${soc}%\n`;
+            }
+
+            if (temperature !== null && temperature !== undefined) {
+                notificationText += `• Temperature: ${temperature}°C\n`;
+            }
+
+            if (power !== null && power !== undefined) {
+                notificationText += `• Power: ${power}W\n`;
+            }
+
+            if (chargingState !== null && chargingState !== undefined) {
+                notificationText += `• Charging State: ${chargingState}\n`;
+            }
+
+            if (ctState !== null && ctState !== undefined) {
+                notificationText += `• CT State: ${ctState === '1' ? 'Connected' : 'Disconnected'}\n`;
+            }
+
+            if (gridPower !== null && gridPower !== undefined) {
+                notificationText += `• Grid Power: ${gridPower}W\n`;
+            }
+
+            if (pvPower !== null && pvPower !== undefined) {
+                notificationText += `• PV Power: ${pvPower}W\n`;
+            }
+
+            // Add custom message if provided
+            if (message && message.trim()) {
+                notificationText += `\n${message.trim()}`;
+            }
+
+            // Send the notification
+            await this.homey.notifications.createNotification({
+                excerpt: notificationText.length > 100 ? `${notificationText.substring(0, 97)}...` : notificationText,
+            });
+
+            if (this.debug) {
+                this.log('Battery notification sent for device:', device.getName());
+            }
+        } catch (error) {
+            this.error('Failed to send battery notification:', error);
+            throw error;
         }
-
-        if (temperature !== null && temperature !== undefined) {
-          notificationText += `• Temperature: ${temperature}°C\n`;
-        }
-
-        if (power !== null && power !== undefined) {
-          notificationText += `• Power: ${power}W\n`;
-        }
-
-        if (chargingState !== null && chargingState !== undefined) {
-          notificationText += `• Charging State: ${chargingState}\n`;
-        }
-
-        if (ctState !== null && ctState !== undefined) {
-          notificationText += `• CT State: ${ctState === '1' ? 'Connected' : 'Disconnected'}\n`;
-        }
-
-        if (gridPower !== null && gridPower !== undefined) {
-          notificationText += `• Grid Power: ${gridPower}W\n`;
-        }
-
-        if (pvPower !== null && pvPower !== undefined) {
-          notificationText += `• PV Power: ${pvPower}W\n`;
-        }
-
-        // Add custom message if provided
-        if (message && message.trim()) {
-          notificationText += `\n${message.trim()}`;
-        }
-
-        // Send the notification
-        await this.homey.notifications.createNotification({
-          excerpt: notificationText.length > 100 ? `${notificationText.substring(0, 97)}...` : notificationText,
-        });
-
-        if (this.debug) {
-          this.log('Battery notification sent for device:', device.getName());
-        }
-      } catch (error) {
-        this.error('Failed to send battery notification:', error);
-        throw error;
-      }
     }
 
     /**
@@ -1110,69 +1236,77 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<Array<{name: string, data: {id: string}, settings: object, store: object}>>} Resolves with the discovered devices.
      */
     async broadcastDetect(address?: string, port?: number): Promise<Array<any>> {
-      const devices: Array<any> = [];
-      const socket = this.getSocket();
-      return new Promise((resolve, reject) => {
+        const devices: Array<any> = [];
+        const socket = this.getSocket();
+        return new Promise((resolve, reject) => {
 
-        // Handler for messages received
-        const handler = (json: any, remote: dgram.RemoteInfo) => {
-          // Always log received data during detection
-          if (this.debug) this.log(`Received for ${json.src}:`, JSON.stringify(json), JSON.stringify(remote));
-          // Only further check messages that have the correct properties
-          if (json && json.src && json.result && json.result.device) {
-            // Detect if device is alread in array
-            const unique = json.src;
-            if (!devices.find((element) => element.data.id === unique)) {
-              devices.push({
-                name: unique,
-                data: {
-                  id: unique,
-                },
-                settings: {
-                  poll: !!this.homey.settings.get('default_poll_enabled'),
-                  interval: this.homey.settings.get('default_poll_interval') || 60,
-                  src: unique,
-                  model: `${json.result.device} v${json.result.ver}`,
-                  firmware: String(json.result.ver), // firmware number, make sure to cast to string due to label (read-only) configuration
-                },
-                store: {
-                  address: remote.address, // Store initial IP address
-                },
-              });
-            }
-          }
-        };
-        socket.on(handler);
+            // Handler for messages received
+            const handler = (json: any, remote: dgram.RemoteInfo) => {
+                // Always log received data during detection
+                if (this.debug) this.log(`Received for ${json.src}:`, JSON.stringify(json), JSON.stringify(remote));
+                // Only further check messages that have the correct properties
+                if (json && json.src && json.result && json.result.device) {
+                    // Detect if device is alread in array
+                    const unique = json.src;
+                    if (!devices.find((element) => element.data.id === unique)) {
 
-        // Message to detect batteries as documented in the API
-        const message = '{"id":"Homey-Detect","method":"Marstek.GetDevice","params":{"ble_mac":"0"}}';
-        const sendMessage = async () => {
-          if (address) {
-            if (this.debug) this.log('Detection sending to', `${address}:${port || 30000}`, ':', message);
-            await socket.send(message, address, port);
-          } else {
-            if (this.debug) this.log('Detection broadcasting:', message);
-            await socket.broadcast(message, port);
-          }
-        };
-        sendMessage().then(() => {
-          // Start sending/broadcasting message
-          const interval = this.homey.setInterval(sendMessage, 2000);
-          // Stop after 9 seconds (Homey waits 10 seconds before timeout)
-          this.homey.setTimeout(() => {
-            this.homey.clearInterval(interval);
-            socket.off(handler);
-            resolve(devices);
-          }, 9000);
-        }).catch((reason: Error) => {
-          this.error('Error sending/broadcasting message:', reason);
-          socket.off(handler);
-          reject(reason);
+                        // Find factor defaults for this model and version
+                        const factorDefaults = this.retrieveFactorDefaults(json.result.device, json.result.ver);
+                        if (this.debug) this.log('Device default factors:', JSON.stringify(factorDefaults));
+
+                        // Add device to array
+                        devices.push({
+                            name: unique,
+                            data: {
+                                id: unique,
+                            },
+                            settings: {
+                                poll: !!this.homey.settings.get('default_poll_enabled'),
+                                interval: this.homey.settings.get('default_poll_interval') || 60,
+                                broadcast: true,
+                                src: unique,
+                                model: `${json.result.device} v${json.result.ver}`,
+                                firmware: String(json.result.ver),      // firmware number, make sure to cast to string due to label (read-only) configuration
+                                ...factorDefaults,                      // apply factor defaults
+                            },
+                            store: {
+                                address: remote.address, // Store initial IP address
+                            },
+                        });
+                    }
+                }
+            };
+            socket.on(handler);
+
+            // Message to detect batteries as documented in the API
+            const message = '{"id":31999,"method":"Marstek.GetDevice","params":{"ble_mac":"0"}}';
+            const sendMessage = async () => {
+                if (address) {
+                    if (this.debug) this.log('Detection sending to', `${address}:${port || 30000}`, ':', message);
+                    await socket.send(message, address, port);
+                } else {
+                    if (this.debug) this.log('Detection broadcasting:', message);
+                    await socket.broadcast(message, port);
+                }
+            };
+            sendMessage().then(() => {
+                // Start sending/broadcasting message
+                const interval = this.homey.setInterval(sendMessage, 2000);
+                // Stop after 9 seconds (Homey waits 10 seconds before timeout)
+                this.homey.setTimeout(() => {
+                    this.homey.clearInterval(interval);
+                    socket.off(handler);
+                    resolve(devices);
+                }, 9000);
+            }).catch((reason: Error) => {
+                this.error('Error sending/broadcasting message:', reason);
+                socket.off(handler);
+                reject(reason);
+            });
         });
-      });
     }
 
 }
 
 // Also use module.exports for Homey
-module.exports = MarstekVenusDriver;
+module.exports = MarstekVenusLocalApiDriver;

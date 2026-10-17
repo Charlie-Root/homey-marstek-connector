@@ -1,0 +1,40 @@
+{
+  "type": "number",
+  "title": {
+    "en": "State of Health",
+    "nl": "Batterijgezondheid",
+    "da": "Batterisundhed",
+    "de": "Batteriezustand",
+    "es": "Estado de salud",
+    "fr": "État de santé",
+    "it": "Stato di salute",
+    "no": "Batterihelse",
+    "sv": "Batterihälsa",
+    "pl": "Kondycja baterii",
+    "ru": "Состояние здоровья",
+    "ko": "배터리 수명 상태",
+    "ar": "حالة صحة البطارية"
+  },
+  "units": {
+    "en": "%",
+    "nl": "%",
+    "da": "%",
+    "de": "%",
+    "es": "%",
+    "fr": "%",
+    "it": "%",
+    "no": "%",
+    "sv": "%",
+    "pl": "%",
+    "ru": "%",
+    "ko": "%",
+    "ar": "٪"
+  },
+  "getable": true,
+  "setable": false,
+  "min": 0,
+  "max": 100,
+  "decimals": 0,
+  "uiComponent": "sensor",
+  "icon": "/assets/icon.svg"
+}

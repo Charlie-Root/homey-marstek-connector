@@ -12,7 +12,8 @@
     "sv": "Nätström",
     "pl": "Energia z sieci",
     "ru": "Сетевое питание",
-    "ko": "온그리드 전력"
+    "ko": "온그리드 전력",
+    "ar": "الطاقة على الشبكة"
   },
   "units": {
     "en": "W",
@@ -26,7 +27,8 @@
     "sv": "W",
     "pl": "W",
     "ru": "Вт",
-    "ko": "W"
+    "ko": "W",
+    "ar": "واط"
   },
   "getable": true,
   "setable": false,

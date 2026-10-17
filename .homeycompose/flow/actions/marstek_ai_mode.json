@@ -2,7 +2,7 @@
   "id": "marstek_ai_mode",
   "title": {
     "en": "Set battery mode to 'AI'",
-    "nl": "Stel batterijweergave in op 'AI'",
+    "nl": "Stel batterijmodus in op 'AI'",
     "da": "Indstil batteritilstand til 'AI'",
     "de": "Stellen Sie den Batteriemodus auf 'AI' ein",
     "es": "Configura el modo de batería a 'AI'",
@@ -12,7 +12,8 @@
     "sv": "Ställ in batteriläget till 'AI'",
     "pl": "Ustaw tryb baterii na 'AI'",
     "ru": "Установить режим батареи на 'AI'",
-    "ko": "'AI'로 배터리 모드를 설정합니다"
+    "ko": "'AI'로 배터리 모드를 설정합니다",
+    "ar": "اضبط وضع البطارية على 'AI'"
   },
   "args": [
     {

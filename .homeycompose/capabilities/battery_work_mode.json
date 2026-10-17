@@ -1,0 +1,77 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Work mode",
+    "nl": "Werkmodus",
+    "da": "Arbejdstilstand",
+    "de": "Betriebsmodus",
+    "es": "Modo de trabajo",
+    "fr": "Mode de fonctionnement",
+    "it": "Modalità di lavoro",
+    "no": "Arbeidsmodus",
+    "sv": "Arbetsläge",
+    "pl": "Tryb pracy",
+    "ru": "Режим работы",
+    "ko": "작동 모드",
+    "ar": "وضع التشغيل"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "values": [
+    {
+      "id": "auto",
+      "title": {
+        "en": "Auto", "nl": "Automatisch", "da": "Auto", "de": "Auto", "es": "Automático", "fr": "Auto", "it": "Automatico", "no": "Auto", "sv": "Auto", "pl": "Auto", "ru": "Авто", "ko": "자동", "ar": "تلقائي"
+      }
+    },
+    {
+      "id": "standby",
+      "title": {
+        "en": "Standby", "nl": "Stand-by", "da": "Standby", "de": "Standby", "es": "En espera", "fr": "Veille", "it": "Standby", "no": "Standby", "sv": "Standby", "pl": "Czuwanie", "ru": "Ожидание", "ko": "대기", "ar": "وضع الاستعداد"
+      }
+    },
+    {
+      "id": "charging",
+      "title": {
+        "en": "Charging", "nl": "Opladen", "da": "Oplader", "de": "Laden", "es": "Cargando", "fr": "Charge", "it": "In carica", "no": "Lader", "sv": "Laddar", "pl": "Ładowanie", "ru": "Зарядка", "ko": "충전 중", "ar": "جارٍ الشحن"
+      }
+    },
+    {
+      "id": "discharging",
+      "title": {
+        "en": "Discharging", "nl": "Ontladen", "da": "Aflader", "de": "Entladen", "es": "Descargando", "fr": "Décharge", "it": "In scarica", "no": "Utlader", "sv": "Urladdar", "pl": "Rozładowanie", "ru": "Разрядка", "ko": "방전 중", "ar": "جارٍ التفريغ"
+      }
+    },
+    {
+      "id": "ups",
+      "title": {
+        "en": "UPS / Backup", "nl": "UPS / Back-up", "da": "UPS / Backup", "de": "USV / Backup", "es": "SAI / Respaldo", "fr": "Onduleur / Secours", "it": "UPS / Backup", "no": "UPS / Backup", "sv": "UPS / Backup", "pl": "UPS / Zasilanie awaryjne", "ru": "ИБП / Резерв", "ko": "UPS / 백업", "ar": "UPS / احتياطي"
+      }
+    },
+    {
+      "id": "force_charge",
+      "title": {
+        "en": "Force charge", "nl": "Geforceerd opladen", "da": "Tvungen opladning", "de": "Zwangsladung", "es": "Carga forzada", "fr": "Charge forcée", "it": "Carica forzata", "no": "Tvungen lading", "sv": "Tvingad laddning", "pl": "Wymuszone ładowanie", "ru": "Принудительная зарядка", "ko": "강제 충전", "ar": "شحن إجباري"
+      }
+    },
+    {
+      "id": "grid_export",
+      "title": {
+        "en": "Grid export", "nl": "Netteruglevering", "da": "Neteksport", "de": "Netzeinspeisung", "es": "Exportación a red", "fr": "Injection réseau", "it": "Esportazione in rete", "no": "Neteksport", "sv": "Nätexport", "pl": "Eksport do sieci", "ru": "Экспорт в сеть", "ko": "그리드 수출", "ar": "تصدير للشبكة"
+      }
+    },
+    {
+      "id": "schedule",
+      "title": {
+        "en": "Schedule / TOU", "nl": "Schema / TOU", "da": "Tidsplan / TOU", "de": "Zeitplan / TOU", "es": "Horario / TOU", "fr": "Planification / TOU", "it": "Programmazione / TOU", "no": "Tidsplan / TOU", "sv": "Schema / TOU", "pl": "Harmonogram / TOU", "ru": "Расписание / TOU", "ko": "일정 / TOU", "ar": "جدولة / TOU"
+      }
+    },
+    {
+      "id": "unknown",
+      "title": {
+        "en": "Unknown", "nl": "Onbekend", "da": "Ukendt", "de": "Unbekannt", "es": "Desconocido", "fr": "Inconnu", "it": "Sconosciuto", "no": "Ukjent", "sv": "Okänd", "pl": "Nieznany", "ru": "Неизвестно", "ko": "알 수 없음", "ar": "غير معروف"
+      }
+    }
+  ]
+}

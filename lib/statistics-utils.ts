@@ -11,12 +11,12 @@
  */
 
 import {
-  financialCalculator,
-  validateEnergyAmount,
-  validateEnergyPrice,
-  validateTimestamp,
-  bankersRounding,
-  FINANCIAL_CONSTANTS,
+    financialCalculator,
+    validateEnergyAmount,
+    validateEnergyPrice,
+    validateTimestamp,
+    bankersRounding,
+    FINANCIAL_CONSTANTS,
 } from './financial-calculator';
 
 export interface StatisticsEntry {
@@ -76,11 +76,11 @@ export interface StatisticsMemoryConfig {
  * Default statistics memory configuration
  */
 export const DEFAULT_STATISTICS_MEMORY_CONFIG: StatisticsMemoryConfig = {
-  maxEntries: 10000, // Maximum 10,000 entries per device
-  maxMemoryUsageMB: 50, // 50MB maximum memory usage
-  enableProactiveCleanup: true, // Enable proactive cleanup
-  cleanupThreshold: 0.8, // Trigger cleanup at 80% capacity
-  retentionDays: 30, // 30 days retention
+    maxEntries: 10000, // Maximum 10,000 entries per device
+    maxMemoryUsageMB: 50, // 50MB maximum memory usage
+    enableProactiveCleanup: true, // Enable proactive cleanup
+    cleanupThreshold: 0.8, // Trigger cleanup at 80% capacity
+    retentionDays: 30, // 30 days retention
 };
 
 /**
@@ -120,99 +120,99 @@ export interface StatisticsMemoryReport {
  * @returns Energy amount in kWh with audit information
  */
 export function calculateEnergyAmount(
-  type: 'charging' | 'discharging',
-  startMeter?: number,
-  endMeter?: number,
-  divisor?: number,
-  power?: number,
-  timeIntervalHours?: number,
-  historicalValues: number[] = [],
+    type: 'charging' | 'discharging',
+    startMeter?: number,
+    endMeter?: number,
+    divisor?: number,
+    power?: number,
+    timeIntervalHours?: number,
+    historicalValues: number[] = [],
 ): { energyAmount: number; audit: any; warnings: string[] } {
-  const warnings: string[] = [];
-  const recoveryActions: string[] = [];
+    const warnings: string[] = [];
+    const recoveryActions: string[] = [];
 
-  try {
+    try {
     // Use FinancialCalculator for safe calculation
-    const result = financialCalculator.calculateEnergyAmount(
-      type,
-      startMeter,
-      endMeter,
-      divisor,
-      power,
-      timeIntervalHours,
-    );
+        const result = financialCalculator.calculateEnergyAmount(
+            type,
+            startMeter,
+            endMeter,
+            divisor,
+            power,
+            timeIntervalHours,
+        );
 
-    let { energyAmount } = result;
+        let { energyAmount } = result;
 
-    // Apply sign based on type
-    const signedEnergyAmount = type === 'charging' ? Math.abs(energyAmount) : -Math.abs(energyAmount);
+        // Apply sign based on type
+        const signedEnergyAmount = type === 'charging' ? Math.abs(energyAmount) : -Math.abs(energyAmount);
 
-    // Outlier detection for abnormal readings
-    if (historicalValues.length > 0 && Math.abs(signedEnergyAmount) > 0) {
-      const outlierResult = financialCalculator.detectOutlier(
-        Math.abs(signedEnergyAmount),
-        historicalValues,
-      );
+        // Outlier detection for abnormal readings
+        if (historicalValues.length > 0 && Math.abs(signedEnergyAmount) > 0) {
+            const outlierResult = financialCalculator.detectOutlier(
+                Math.abs(signedEnergyAmount),
+                historicalValues,
+            );
 
-      if (outlierResult.isOutlier) {
-        warnings.push(`Potential outlier detected: ${Math.abs(signedEnergyAmount).toFixed(3)} kWh (z-score: ${outlierResult.zScore.toFixed(2)})`);
+            if (outlierResult.isOutlier) {
+                warnings.push(`Potential outlier detected: ${Math.abs(signedEnergyAmount).toFixed(3)} kWh (z-score: ${outlierResult.zScore.toFixed(2)})`);
 
-        // Recovery action: cap to reasonable value
-        const cappedValue = Math.min(Math.abs(signedEnergyAmount), FINANCIAL_CONSTANTS.MAX_ENERGY_AMOUNT * 0.1);
-        energyAmount = type === 'charging' ? cappedValue : -cappedValue;
-        recoveryActions.push(`Capped outlier value to ${cappedValue.toFixed(3)} kWh`);
-      }
+                // Recovery action: cap to reasonable value
+                const cappedValue = Math.min(Math.abs(signedEnergyAmount), FINANCIAL_CONSTANTS.MAX_ENERGY_AMOUNT * 0.1);
+                energyAmount = type === 'charging' ? cappedValue : -cappedValue;
+                recoveryActions.push(`Capped outlier value to ${cappedValue.toFixed(3)} kWh`);
+            }
+        }
+
+        // Additional safety checks for extreme values
+        if (Math.abs(energyAmount) > FINANCIAL_CONSTANTS.MAX_ENERGY_AMOUNT) {
+            warnings.push(`Energy amount exceeds maximum reasonable value: ${Math.abs(energyAmount).toFixed(3)} kWh`);
+            const safeValue = Math.sign(energyAmount) * FINANCIAL_CONSTANTS.MAX_ENERGY_AMOUNT * 0.1;
+            energyAmount = safeValue;
+            recoveryActions.push(`Reduced to safe maximum: ${safeValue.toFixed(3)} kWh`);
+        }
+
+        // Validate timestamp if provided in context (would be added by caller)
+        // This validation is typically done at a higher level
+
+        const audit = {
+            ...result.audit,
+            recoveryActions,
+            finalEnergyAmount: energyAmount,
+            warnings: [...warnings, ...(result.audit.validation.warnings || [])],
+        };
+
+        return {
+            energyAmount,
+            audit,
+            warnings,
+        };
+
+    } catch (error) {
+        warnings.push(`Calculation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+
+        // Recovery: return zero with error indication
+        const audit = {
+            inputValues: {
+                type, startMeter, endMeter, divisor, power, timeIntervalHours,
+            },
+            intermediateSteps: [],
+            finalResult: 0,
+            precisionLoss: 0,
+            validation: {
+                isValid: false,
+                error: `Safe calculation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            },
+            recoveryActions: ['Returned zero as safe fallback'],
+            warnings,
+        };
+
+        return {
+            energyAmount: 0,
+            audit,
+            warnings,
+        };
     }
-
-    // Additional safety checks for extreme values
-    if (Math.abs(energyAmount) > FINANCIAL_CONSTANTS.MAX_ENERGY_AMOUNT) {
-      warnings.push(`Energy amount exceeds maximum reasonable value: ${Math.abs(energyAmount).toFixed(3)} kWh`);
-      const safeValue = Math.sign(energyAmount) * FINANCIAL_CONSTANTS.MAX_ENERGY_AMOUNT * 0.1;
-      energyAmount = safeValue;
-      recoveryActions.push(`Reduced to safe maximum: ${safeValue.toFixed(3)} kWh`);
-    }
-
-    // Validate timestamp if provided in context (would be added by caller)
-    // This validation is typically done at a higher level
-
-    const audit = {
-      ...result.audit,
-      recoveryActions,
-      finalEnergyAmount: energyAmount,
-      warnings: [...warnings, ...(result.audit.validation.warnings || [])],
-    };
-
-    return {
-      energyAmount,
-      audit,
-      warnings,
-    };
-
-  } catch (error) {
-    warnings.push(`Calculation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-
-    // Recovery: return zero with error indication
-    const audit = {
-      inputValues: {
-        type, startMeter, endMeter, divisor, power, timeIntervalHours,
-      },
-      intermediateSteps: [],
-      finalResult: 0,
-      precisionLoss: 0,
-      validation: {
-        isValid: false,
-        error: `Safe calculation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      },
-      recoveryActions: ['Returned zero as safe fallback'],
-      warnings,
-    };
-
-    return {
-      energyAmount: 0,
-      audit,
-      warnings,
-    };
-  }
 }
 
 /**
@@ -231,89 +231,89 @@ export function calculateEnergyAmount(
  * @returns Profit/savings in currency with audit information
  */
 export function calculateProfitSavings(entry: StatisticsEntry): { profitSavings: number; audit: any; warnings: string[] } {
-  const warnings: string[] = [];
-  const recoveryActions: string[] = [];
+    const warnings: string[] = [];
+    const recoveryActions: string[] = [];
 
-  try {
-    if (entry.priceAtTime == null) {
-      warnings.push('No price data available for calculation');
-      return {
-        profitSavings: 0,
-        audit: {
-          inputValues: entry,
-          intermediateSteps: [],
-          finalResult: 0,
-          precisionLoss: 0,
-          validation: { isValid: true, warnings: ['No price data'] },
-          recoveryActions: ['Returned zero due to missing price'],
-          warnings,
-        },
-        warnings,
-      };
+    try {
+        if (entry.priceAtTime == null) {
+            warnings.push('No price data available for calculation');
+            return {
+                profitSavings: 0,
+                audit: {
+                    inputValues: entry,
+                    intermediateSteps: [],
+                    finalResult: 0,
+                    precisionLoss: 0,
+                    validation: { isValid: true, warnings: ['No price data'] },
+                    recoveryActions: ['Returned zero due to missing price'],
+                    warnings,
+                },
+                warnings,
+            };
+        }
+
+        // Use FinancialCalculator for safe calculation
+        const result = financialCalculator.calculateProfitSavings(
+            entry.energyAmount,
+            entry.priceAtTime,
+            entry.type,
+        );
+
+        let { profitSavings } = result;
+
+        // Additional safety checks for financial values
+        if (Math.abs(profitSavings) > 10000) { // €10,000 threshold
+            warnings.push(`Unusually high financial value: €${profitSavings.toFixed(2)}`);
+            const safeValue = Math.sign(profitSavings) * 10000;
+            profitSavings = safeValue;
+            recoveryActions.push(`Capped to reasonable maximum: €${safeValue.toFixed(2)}`);
+        }
+
+        // Validate timestamp if available
+        if (entry.timestamp) {
+            const timestampValidation = validateTimestamp(entry.timestamp);
+            if (!timestampValidation.isValid) {
+                warnings.push(`Invalid timestamp: ${timestampValidation.error}`);
+                recoveryActions.push('Proceeding with calculation despite invalid timestamp');
+            }
+        }
+
+        const audit = {
+            ...result.audit,
+            recoveryActions,
+            finalProfitSavings: profitSavings,
+            warnings: [...warnings, ...(result.audit.validation.warnings || [])],
+        };
+
+        return {
+            profitSavings,
+            audit,
+            warnings,
+        };
+
+    } catch (error) {
+        warnings.push(`Profit/savings calculation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+
+        // Recovery: return zero with error indication
+        const audit = {
+            inputValues: entry,
+            intermediateSteps: [],
+            finalResult: 0,
+            precisionLoss: 0,
+            validation: {
+                isValid: false,
+                error: `Safe profit/savings calculation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            },
+            recoveryActions: ['Returned zero as safe fallback'],
+            warnings,
+        };
+
+        return {
+            profitSavings: 0,
+            audit,
+            warnings,
+        };
     }
-
-    // Use FinancialCalculator for safe calculation
-    const result = financialCalculator.calculateProfitSavings(
-      entry.energyAmount,
-      entry.priceAtTime,
-      entry.type,
-    );
-
-    let { profitSavings } = result;
-
-    // Additional safety checks for financial values
-    if (Math.abs(profitSavings) > 10000) { // €10,000 threshold
-      warnings.push(`Unusually high financial value: €${profitSavings.toFixed(2)}`);
-      const safeValue = Math.sign(profitSavings) * 10000;
-      profitSavings = safeValue;
-      recoveryActions.push(`Capped to reasonable maximum: €${safeValue.toFixed(2)}`);
-    }
-
-    // Validate timestamp if available
-    if (entry.timestamp) {
-      const timestampValidation = validateTimestamp(entry.timestamp);
-      if (!timestampValidation.isValid) {
-        warnings.push(`Invalid timestamp: ${timestampValidation.error}`);
-        recoveryActions.push('Proceeding with calculation despite invalid timestamp');
-      }
-    }
-
-    const audit = {
-      ...result.audit,
-      recoveryActions,
-      finalProfitSavings: profitSavings,
-      warnings: [...warnings, ...(result.audit.validation.warnings || [])],
-    };
-
-    return {
-      profitSavings,
-      audit,
-      warnings,
-    };
-
-  } catch (error) {
-    warnings.push(`Profit/savings calculation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-
-    // Recovery: return zero with error indication
-    const audit = {
-      inputValues: entry,
-      intermediateSteps: [],
-      finalResult: 0,
-      precisionLoss: 0,
-      validation: {
-        isValid: false,
-        error: `Safe profit/savings calculation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      },
-      recoveryActions: ['Returned zero as safe fallback'],
-      warnings,
-    };
-
-    return {
-      profitSavings: 0,
-      audit,
-      warnings,
-    };
-  }
 }
 
 /**
@@ -322,7 +322,7 @@ export function calculateProfitSavings(entry: StatisticsEntry): { profitSavings:
  * @returns Array of DailyStats with audit information
  */
 export function aggregateDailyStats(entries: StatisticsEntry[]): DailyStats[] {
-  return aggregateDailyStatsOptimized(entries);
+    return aggregateDailyStatsOptimized(entries);
 }
 
 /**
@@ -333,22 +333,22 @@ export function aggregateDailyStats(entries: StatisticsEntry[]): DailyStats[] {
  * @returns Optimized array of historical energy values
  */
 export function getHistoricalValuesOptimized(
-  historicalStats: StatisticsEntry[],
-  maxEntries: number = 10,
+    historicalStats: StatisticsEntry[],
+    maxEntries: number = 10,
 ): number[] {
-  const values: number[] = [];
-  const startIndex = Math.max(0, historicalStats.length - maxEntries);
+    const values: number[] = [];
+    const startIndex = Math.max(0, historicalStats.length - maxEntries);
 
-  // Single-pass processing to avoid multiple array allocations
-  for (let i = startIndex; i < historicalStats.length; i++) {
-    const entry = historicalStats[i];
-    const absValue = Math.abs(entry.energyAmount);
-    if (absValue > 0) {
-      values.push(absValue);
+    // Single-pass processing to avoid multiple array allocations
+    for (let i = startIndex; i < historicalStats.length; i++) {
+        const entry = historicalStats[i];
+        const absValue = Math.abs(entry.energyAmount);
+        if (absValue > 0) {
+            values.push(absValue);
+        }
     }
-  }
 
-  return values;
+    return values;
 }
 
 /**
@@ -359,73 +359,73 @@ export function getHistoricalValuesOptimized(
  * @returns Array of DailyStats with audit information
  */
 export function aggregateDailyStatsOptimized(
-  entries: StatisticsEntry[],
-  memoryConfig?: Partial<StatisticsMemoryConfig>,
+    entries: StatisticsEntry[],
+    memoryConfig?: Partial<StatisticsMemoryConfig>,
 ): DailyStats[] {
-  // Pre-allocate with estimated size to reduce array resizing
-  const dailyMap = new Map<string, DailyStats>();
+    // Pre-allocate with estimated size to reduce array resizing
+    const dailyMap = new Map<string, DailyStats>();
 
-  // Single-pass processing for better memory efficiency
-  for (let i = 0; i < entries.length; i++) {
-    const entry = entries[i];
-    const date = new Date(entry.timestamp * 1000).toISOString().split('T')[0];
+    // Single-pass processing for better memory efficiency
+    for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i];
+        const date = new Date(entry.timestamp * 1000).toISOString().split('T')[0];
 
-    let day = dailyMap.get(date);
-    if (!day) {
-      day = {
-        date,
-        totalChargeEnergy: 0,
-        totalDischargeEnergy: 0,
-        totalProfit: 0,
-        totalSavings: 0,
-        events: [], // Will be populated separately to avoid memory bloat
-        auditInfo: {
-          validationFailures: 0,
-          precisionLosses: 0,
-          outliers: 0,
-          recoveryActions: 0,
-        },
-      };
-      dailyMap.set(date, day);
-    }
+        let day = dailyMap.get(date);
+        if (!day) {
+            day = {
+                date,
+                totalChargeEnergy: 0,
+                totalDischargeEnergy: 0,
+                totalProfit: 0,
+                totalSavings: 0,
+                events: [], // Will be populated separately to avoid memory bloat
+                auditInfo: {
+                    validationFailures: 0,
+                    precisionLosses: 0,
+                    outliers: 0,
+                    recoveryActions: 0,
+                },
+            };
+            dailyMap.set(date, day);
+        }
 
-    // Direct accumulation without intermediate calculations
-    if (entry.type === 'charging') {
-      day.totalChargeEnergy += Math.abs(entry.energyAmount);
-    } else {
-      day.totalDischargeEnergy += Math.abs(entry.energyAmount);
-    }
+        // Direct accumulation without intermediate calculations
+        if (entry.type === 'charging') {
+            day.totalChargeEnergy += Math.abs(entry.energyAmount);
+        } else {
+            day.totalDischargeEnergy += Math.abs(entry.energyAmount);
+        }
 
-    const profitSavingsResult = calculateProfitSavings(entry);
-    const { profitSavings } = profitSavingsResult;
+        const profitSavingsResult = calculateProfitSavings(entry);
+        const { profitSavings } = profitSavingsResult;
 
-    if (entry.type === 'discharging') {
-      day.totalSavings += profitSavings;
-    }
-    day.totalProfit += profitSavings;
+        if (entry.type === 'discharging') {
+            day.totalSavings += profitSavings;
+        }
+        day.totalProfit += profitSavings;
 
-    // Track audit information
-    if (!profitSavingsResult.audit.validation.isValid) {
+        // Track audit information
+        if (!profitSavingsResult.audit.validation.isValid) {
       day.auditInfo!.validationFailures++;
-    }
+        }
 
-    if (profitSavingsResult.audit.precisionLoss > FINANCIAL_CONSTANTS.PRECISION_THRESHOLD) {
+        if (profitSavingsResult.audit.precisionLoss > FINANCIAL_CONSTANTS.PRECISION_THRESHOLD) {
       day.auditInfo!.precisionLosses++;
-    }
+        }
 
-    if (profitSavingsResult.audit.isOutlier) {
+        if (profitSavingsResult.audit.isOutlier) {
       day.auditInfo!.outliers++;
-    }
+        }
 
-    if (profitSavingsResult.audit.recoveryActions) {
+        if (profitSavingsResult.audit.recoveryActions) {
       day.auditInfo!.recoveryActions += profitSavingsResult.audit.recoveryActions.length;
+        }
     }
-  }
 
-  // Convert to sorted array efficiently
-  const result = Array.from(dailyMap.values()).sort((a, b) => a.date.localeCompare(b.date));
-  
-  return result;
+    // Convert to sorted array efficiently
+    const result = Array.from(dailyMap.values()).sort((a, b) => a.date.localeCompare(b.date));
+
+    return result;
 }
 
 /**
@@ -435,8 +435,8 @@ export function aggregateDailyStatsOptimized(
  * @returns Comprehensive statistics summary
  */
 export function getStatisticsSummaryOptimized(
-  entries: StatisticsEntry[],
-  memoryConfig?: Partial<StatisticsMemoryConfig>,
+    entries: StatisticsEntry[],
+    memoryConfig?: Partial<StatisticsMemoryConfig>,
 ): {
   summary: {
     totalEvents: number;
@@ -455,72 +455,72 @@ export function getStatisticsSummaryOptimized(
     memoryReport: StatisticsMemoryReport;
   };
 } {
-  // Use optimized aggregation
-  const dailyStats = aggregateDailyStatsOptimized(entries, memoryConfig);
-  const validation = validateAndCleanEntries(entries);
+    // Use optimized aggregation
+    const dailyStats = aggregateDailyStatsOptimized(entries, memoryConfig);
+    const validation = validateAndCleanEntries(entries);
 
-  // Initialize accumulators
-  let totalChargeEnergy = 0;
-  let totalDischargeEnergy = 0;
-  let totalProfit = 0;
-  let totalSavings = 0;
-  let totalPrice = 0;
-  let priceCount = 0;
-  let validationFailures = 0;
-  let precisionLosses = 0;
-  let outliers = 0;
-  let recoveryActions = 0;
+    // Initialize accumulators
+    let totalChargeEnergy = 0;
+    let totalDischargeEnergy = 0;
+    let totalProfit = 0;
+    let totalSavings = 0;
+    let totalPrice = 0;
+    let priceCount = 0;
+    let validationFailures = 0;
+    let precisionLosses = 0;
+    let outliers = 0;
+    let recoveryActions = 0;
 
-  // Single-pass accumulation
-  for (let i = 0; i < dailyStats.length; i++) {
-    const day = dailyStats[i];
-    totalChargeEnergy += day.totalChargeEnergy;
-    totalDischargeEnergy += day.totalDischargeEnergy;
-    totalProfit += day.totalProfit;
-    totalSavings += day.totalSavings;
+    // Single-pass accumulation
+    for (let i = 0; i < dailyStats.length; i++) {
+        const day = dailyStats[i];
+        totalChargeEnergy += day.totalChargeEnergy;
+        totalDischargeEnergy += day.totalDischargeEnergy;
+        totalProfit += day.totalProfit;
+        totalSavings += day.totalSavings;
 
-    // Aggregate audit information
-    if (day.auditInfo) {
-      validationFailures += day.auditInfo.validationFailures;
-      precisionLosses += day.auditInfo.precisionLosses;
-      outliers += day.auditInfo.outliers;
-      recoveryActions += day.auditInfo.recoveryActions;
+        // Aggregate audit information
+        if (day.auditInfo) {
+            validationFailures += day.auditInfo.validationFailures;
+            precisionLosses += day.auditInfo.precisionLosses;
+            outliers += day.auditInfo.outliers;
+            recoveryActions += day.auditInfo.recoveryActions;
+        }
     }
-  }
 
-  // Calculate average price efficiently
-  for (let i = 0; i < validation.cleanedEntries.length; i++) {
-    const entry = validation.cleanedEntries[i];
-    if (entry.priceAtTime) {
-      totalPrice += entry.priceAtTime;
-      priceCount++;
+    // Calculate average price efficiently
+    for (let i = 0; i < validation.cleanedEntries.length; i++) {
+        const entry = validation.cleanedEntries[i];
+        if (entry.priceAtTime) {
+            totalPrice += entry.priceAtTime;
+            priceCount++;
+        }
     }
-  }
 
-  const averagePrice = priceCount > 0 ? totalPrice / priceCount : 0;
-  const financialCalculatorStats = financialCalculator.getAuditStatistics();
+    const averagePrice = priceCount > 0 ? totalPrice / priceCount : 0;
+    const financialCalculatorStats = financialCalculator.getAuditStatistics();
 
-  // Generate memory report
-  const memoryReport = generateStatisticsMemoryReport(entries);
+    // Generate memory report
+    const memoryReport = generateStatisticsMemoryReport(entries);
 
-  return {
-    summary: {
-      totalEvents: validation.cleanedEntries.length,
-      totalChargeEnergy: bankersRounding(totalChargeEnergy, FINANCIAL_CONSTANTS.ENERGY_AMOUNT_DECIMALS),
-      totalDischargeEnergy: bankersRounding(totalDischargeEnergy, FINANCIAL_CONSTANTS.ENERGY_AMOUNT_DECIMALS),
-      totalProfit: bankersRounding(totalProfit, FINANCIAL_CONSTANTS.CURRENCY_DECIMALS),
-      totalSavings: bankersRounding(totalSavings, FINANCIAL_CONSTANTS.CURRENCY_DECIMALS),
-      averagePrice: bankersRounding(averagePrice, FINANCIAL_CONSTANTS.ENERGY_PRICE_DECIMALS),
-    },
-    audit: {
-      validationFailures,
-      precisionLosses,
-      outliers,
-      recoveryActions,
-      financialCalculatorStats,
-      memoryReport,
-    },
-  };
+    return {
+        summary: {
+            totalEvents: validation.cleanedEntries.length,
+            totalChargeEnergy: bankersRounding(totalChargeEnergy, FINANCIAL_CONSTANTS.ENERGY_AMOUNT_DECIMALS),
+            totalDischargeEnergy: bankersRounding(totalDischargeEnergy, FINANCIAL_CONSTANTS.ENERGY_AMOUNT_DECIMALS),
+            totalProfit: bankersRounding(totalProfit, FINANCIAL_CONSTANTS.CURRENCY_DECIMALS),
+            totalSavings: bankersRounding(totalSavings, FINANCIAL_CONSTANTS.CURRENCY_DECIMALS),
+            averagePrice: bankersRounding(averagePrice, FINANCIAL_CONSTANTS.ENERGY_PRICE_DECIMALS),
+        },
+        audit: {
+            validationFailures,
+            precisionLosses,
+            outliers,
+            recoveryActions,
+            financialCalculatorStats,
+            memoryReport,
+        },
+    };
 }
 
 /**
@@ -529,24 +529,24 @@ export function getStatisticsSummaryOptimized(
  * @returns Memory usage report
  */
 export function generateStatisticsMemoryReport(entries: StatisticsEntry[]): StatisticsMemoryReport {
-  const currentMemoryBytes = entries.length * 1200; // ~1.2KB per entry estimate
-  const currentMemoryMB = currentMemoryBytes / (1024 * 1024);
+    const currentMemoryBytes = entries.length * 1200; // ~1.2KB per entry estimate
+    const currentMemoryMB = currentMemoryBytes / (1024 * 1024);
 
-  const timestamps = entries.map((e) => e.timestamp).sort((a, b) => a - b);
-  const oldestEntry = timestamps.length > 0 ? timestamps[0] : undefined;
-  const newestEntry = timestamps.length > 0 ? timestamps[timestamps.length - 1] : undefined;
+    const timestamps = entries.map((e) => e.timestamp).sort((a, b) => a - b);
+    const oldestEntry = timestamps.length > 0 ? timestamps[0] : undefined;
+    const newestEntry = timestamps.length > 0 ? timestamps[timestamps.length - 1] : undefined;
 
-  return {
-    totalEntries: entries.length,
-    estimatedMemoryBytes: currentMemoryBytes,
-    estimatedMemoryMB: currentMemoryMB,
-    oldestEntryTimestamp: oldestEntry,
-    newestEntryTimestamp: newestEntry,
-    cleanupPerformed: false,
-    entriesRemoved: 0,
-    retentionDays: 30,
-    isNearLimit: entries.length > 8000, // 80% of default max
-  };
+    return {
+        totalEntries: entries.length,
+        estimatedMemoryBytes: currentMemoryBytes,
+        estimatedMemoryMB: currentMemoryMB,
+        oldestEntryTimestamp: oldestEntry,
+        newestEntryTimestamp: newestEntry,
+        cleanupPerformed: false,
+        entriesRemoved: 0,
+        retentionDays: 30,
+        isNearLimit: entries.length > 8000, // 80% of default max
+    };
 }
 
 /**
@@ -555,76 +555,76 @@ export function generateStatisticsMemoryReport(entries: StatisticsEntry[]): Stat
  * @returns Object with detailed breakdown metrics
  */
 export function calculateDetailedBreakdown(entries: StatisticsEntry[]) {
-  const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split('T')[0];
 
-  // Filter entries for today
-  const todayEntries = entries.filter(entry => {
-    const entryDate = new Date(entry.timestamp * 1000).toISOString().split('T')[0];
-    return entryDate === today;
-  });
+    // Filter entries for today
+    const todayEntries = entries.filter((entry) => {
+        const entryDate = new Date(entry.timestamp * 1000).toISOString().split('T')[0];
+        return entryDate === today;
+    });
 
-  console.log(`[BREAKDOWN] Today's date: ${today}, Total entries: ${entries.length}, Today's entries: ${todayEntries.length}`);
+    console.log(`[BREAKDOWN] Today's date: ${today}, Total entries: ${entries.length}, Today's entries: ${todayEntries.length}`);
 
-  // Calculate detailed breakdown from today's entries
-  let chargeEnergy = 0;
-  let dischargeEnergy = 0;
-  let savings = 0;
-  let cost = 0;
+    // Calculate detailed breakdown from today's entries
+    let chargeEnergy = 0;
+    let dischargeEnergy = 0;
+    let savings = 0;
+    let cost = 0;
 
-  for (const entry of todayEntries) {
-    if (entry.type === 'charging') {
-      chargeEnergy += Math.abs(entry.energyAmount);
-      if (entry.priceAtTime) {
-        cost += Math.abs(entry.energyAmount) * entry.priceAtTime;
-      }
-    } else if (entry.type === 'discharging') {
-      dischargeEnergy += Math.abs(entry.energyAmount);
-      if (entry.priceAtTime) {
-        savings += Math.abs(entry.energyAmount) * entry.priceAtTime;
-      }
+    for (const entry of todayEntries) {
+        if (entry.type === 'charging') {
+            chargeEnergy += Math.abs(entry.energyAmount);
+            if (entry.priceAtTime) {
+                cost += Math.abs(entry.energyAmount) * entry.priceAtTime;
+            }
+        } else if (entry.type === 'discharging') {
+            dischargeEnergy += Math.abs(entry.energyAmount);
+            if (entry.priceAtTime) {
+                savings += Math.abs(entry.energyAmount) * entry.priceAtTime;
+            }
+        }
     }
-  }
 
-  let netProfit = savings - cost;
+    let netProfit = savings - cost;
 
-  console.log(`[BREAKDOWN] Results: chargeEnergy=${chargeEnergy.toFixed(3)} kWh, dischargeEnergy=${dischargeEnergy.toFixed(3)} kWh, savings=€${savings.toFixed(2)}, cost=€${cost.toFixed(2)}, netProfit=€${netProfit.toFixed(2)}`);
-  // Heuristic correction for historical scaling bug (some devices reported raw counters
-  // that were off by a factor of 10). This is conservative and only applied to the
-  // displayed breakdown (does not modify stored entries). Conditions:
-  // - No explicit battery capacity hint provided
-  // - Today's chargeEnergy is implausibly large (>10 kWh) but dividing by 10 yields
-  //   a plausible value (<10 kWh)
-  // - Majority of today's entries are "large" (abs energy > 1 kWh), indicating
-  //   a unit mismatch rather than many tiny events
-  try {
-    const batteryCapacityKwh = undefined; // caller may pass a hint in future
-    const totalEntries = todayEntries.length;
-    const largeEntries = todayEntries.filter(e => Math.abs(e.energyAmount) > 1).length;
-    if (!batteryCapacityKwh && totalEntries > 0) {
-      const plausibleAfterDiv10 = (chargeEnergy / 10) < 10;
-      const shouldScaleBy10 = chargeEnergy > 10 && plausibleAfterDiv10 && (largeEntries / totalEntries) > 0.6;
-      if (shouldScaleBy10) {
-        console.log('[BREAKDOWN] Detected likely 10x inflation in today\'s entries - applying /10 correction for display');
-        chargeEnergy = chargeEnergy / 10;
-        dischargeEnergy = dischargeEnergy / 10;
-        savings = savings / 10;
-        cost = cost / 10;
-        // Recompute netProfit
-        netProfit = savings - cost;
-      }
-    }
-  } catch (err) {
+    console.log(`[BREAKDOWN] Results: chargeEnergy=${chargeEnergy.toFixed(3)} kWh, dischargeEnergy=${dischargeEnergy.toFixed(3)} kWh, savings=€${savings.toFixed(2)}, cost=€${cost.toFixed(2)}, netProfit=€${netProfit.toFixed(2)}`);
+    // Heuristic correction for historical scaling bug (some devices reported raw counters
+    // that were off by a factor of 10). This is conservative and only applied to the
+    // displayed breakdown (does not modify stored entries). Conditions:
+    // - No explicit battery capacity hint provided
+    // - Today's chargeEnergy is implausibly large (>10 kWh) but dividing by 10 yields
+    //   a plausible value (<10 kWh)
+    // - Majority of today's entries are "large" (abs energy > 1 kWh), indicating
+    //   a unit mismatch rather than many tiny events
+    try {
+        const batteryCapacityKwh = undefined; // caller may pass a hint in future
+        const totalEntries = todayEntries.length;
+        const largeEntries = todayEntries.filter((e) => Math.abs(e.energyAmount) > 1).length;
+        if (!batteryCapacityKwh && totalEntries > 0) {
+            const plausibleAfterDiv10 = (chargeEnergy / 10) < 10;
+            const shouldScaleBy10 = chargeEnergy > 10 && plausibleAfterDiv10 && (largeEntries / totalEntries) > 0.6;
+            if (shouldScaleBy10) {
+                console.log('[BREAKDOWN] Detected likely 10x inflation in today\'s entries - applying /10 correction for display');
+                chargeEnergy /= 10;
+                dischargeEnergy /= 10;
+                savings /= 10;
+                cost /= 10;
+                // Recompute netProfit
+                netProfit = savings - cost;
+            }
+        }
+    } catch (err) {
     // Never throw from breakdown helper; log and continue with original numbers
-    console.log('[BREAKDOWN] Scaling heuristic failed:', err);
-  }
+        console.log('[BREAKDOWN] Scaling heuristic failed:', err);
+    }
 
-  return {
-    chargeEnergy,
-    dischargeEnergy,
-    savings,
-    cost,
-    netProfit,
-  };
+    return {
+        chargeEnergy,
+        dischargeEnergy,
+        savings,
+        cost,
+        netProfit,
+    };
 }
 
 /**
@@ -648,79 +648,79 @@ export function cleanupOldEntries(
 
 // Implementation
 export function cleanupOldEntries(
-  entries: StatisticsEntry[],
-  retentionDays: number,
-  maxEntries?: number,
-  memoryConfig?: Partial<StatisticsMemoryConfig>,
+    entries: StatisticsEntry[],
+    retentionDays: number,
+    maxEntries?: number,
+    memoryConfig?: Partial<StatisticsMemoryConfig>,
 ): StatisticsEntry[] | { cleanedEntries: StatisticsEntry[]; cleanupReport: StatisticsMemoryReport } {
-  // Backward compatibility: if only 2 arguments, return legacy format
-  if (arguments.length === 2) {
-    const cutoff = Date.now() / 1000 - (retentionDays * 24 * 60 * 60);
-    return entries.filter((entry) => entry.timestamp >= cutoff);
-  }
-
-  // New enhanced version with 3+ arguments
-  const _config = { ...DEFAULT_STATISTICS_MEMORY_CONFIG, ...memoryConfig };
-  const now = Date.now() / 1000;
-  const cutoff = now - (retentionDays * 24 * 60 * 60);
-
-  // Calculate current memory usage
-  const currentMemoryBytes = entries.length * 1200; // ~1.2KB per entry estimate
-  const currentMemoryMB = currentMemoryBytes / (1024 * 1024);
-
-  // Step 1: Time-based cleanup
-  const timeFiltered = entries.filter((entry) => entry.timestamp >= cutoff);
-  let entriesRemovedByTime = entries.length - timeFiltered.length;
-
-  // Step 2: Entry count-based cleanup (if still over limit)
-  let countFiltered = timeFiltered;
-  if (timeFiltered.length > maxEntries!) {
-    // Keep the most recent entries
-    const startIndex = Math.max(0, timeFiltered.length - maxEntries!);
-    countFiltered = timeFiltered.slice(startIndex);
-    entriesRemovedByTime += (timeFiltered.length - countFiltered.length);
-  }
-
-  // Step 3: Memory-based cleanup (if still over memory limit)
-  let memoryFiltered = countFiltered;
-  if (_config.enableProactiveCleanup && currentMemoryMB > _config.maxMemoryUsageMB) {
-    const targetEntries = Math.floor(maxEntries! * (_config.maxMemoryUsageMB / currentMemoryMB));
-    if (targetEntries < countFiltered.length) {
-      const startIndex = Math.max(0, countFiltered.length - targetEntries);
-      memoryFiltered = countFiltered.slice(startIndex);
+    // Backward compatibility: if only 2 arguments, return legacy format
+    if (arguments.length === 2) {
+        const cutoff = Date.now() / 1000 - (retentionDays * 24 * 60 * 60);
+        return entries.filter((entry) => entry.timestamp >= cutoff);
     }
-  }
 
-  // Calculate timestamps for report
-  const timestamps = memoryFiltered.map((e) => e.timestamp).sort((a, b) => a - b);
-  const oldestEntry = timestamps.length > 0 ? timestamps[0] : undefined;
-  const newestEntry = timestamps.length > 0 ? timestamps[timestamps.length - 1] : undefined;
+    // New enhanced version with 3+ arguments
+    const _config = { ...DEFAULT_STATISTICS_MEMORY_CONFIG, ...memoryConfig };
+    const now = Date.now() / 1000;
+    const cutoff = now - (retentionDays * 24 * 60 * 60);
 
-  // Check if cleanup was performed
-  const cleanupPerformed = entriesRemovedByTime > 0 || memoryFiltered.length !== countFiltered.length;
-  const finalMemoryBytes = memoryFiltered.length * 1200;
-  const finalMemoryMB = finalMemoryBytes / (1024 * 1024);
+    // Calculate current memory usage
+    const currentMemoryBytes = entries.length * 1200; // ~1.2KB per entry estimate
+    const currentMemoryMB = currentMemoryBytes / (1024 * 1024);
 
-  // Log cleanup action if significant
-  if (cleanupPerformed && typeof console !== 'undefined' && console.log) {
+    // Step 1: Time-based cleanup
+    const timeFiltered = entries.filter((entry) => entry.timestamp >= cutoff);
+    let entriesRemovedByTime = entries.length - timeFiltered.length;
+
+    // Step 2: Entry count-based cleanup (if still over limit)
+    let countFiltered = timeFiltered;
+    if (timeFiltered.length > maxEntries!) {
+    // Keep the most recent entries
+        const startIndex = Math.max(0, timeFiltered.length - maxEntries!);
+        countFiltered = timeFiltered.slice(startIndex);
+        entriesRemovedByTime += (timeFiltered.length - countFiltered.length);
+    }
+
+    // Step 3: Memory-based cleanup (if still over memory limit)
+    let memoryFiltered = countFiltered;
+    if (_config.enableProactiveCleanup && currentMemoryMB > _config.maxMemoryUsageMB) {
+        const targetEntries = Math.floor(maxEntries! * (_config.maxMemoryUsageMB / currentMemoryMB));
+        if (targetEntries < countFiltered.length) {
+            const startIndex = Math.max(0, countFiltered.length - targetEntries);
+            memoryFiltered = countFiltered.slice(startIndex);
+        }
+    }
+
+    // Calculate timestamps for report
+    const timestamps = memoryFiltered.map((e) => e.timestamp).sort((a, b) => a - b);
+    const oldestEntry = timestamps.length > 0 ? timestamps[0] : undefined;
+    const newestEntry = timestamps.length > 0 ? timestamps[timestamps.length - 1] : undefined;
+
+    // Check if cleanup was performed
+    const cleanupPerformed = entriesRemovedByTime > 0 || memoryFiltered.length !== countFiltered.length;
+    const finalMemoryBytes = memoryFiltered.length * 1200;
+    const finalMemoryMB = finalMemoryBytes / (1024 * 1024);
+
+    // Log cleanup action if significant
+    if (cleanupPerformed && typeof console !== 'undefined' && console.log) {
     // console.log(`Statistics: Cleaned up ${entriesRemovedByTime} entries, retained ${memoryFiltered.length}`);
-    console.log(`Memory usage: ${currentMemoryMB.toFixed(2)}MB -> ${finalMemoryMB.toFixed(2)}MB`);
-  }
+        console.log(`Memory usage: ${currentMemoryMB.toFixed(2)}MB -> ${finalMemoryMB.toFixed(2)}MB`);
+    }
 
-  return {
-    cleanedEntries: memoryFiltered,
-    cleanupReport: {
-      totalEntries: memoryFiltered.length,
-      estimatedMemoryBytes: finalMemoryBytes,
-      estimatedMemoryMB: finalMemoryMB,
-      oldestEntryTimestamp: oldestEntry,
-      newestEntryTimestamp: newestEntry,
-      cleanupPerformed,
-      entriesRemoved: entriesRemovedByTime,
-      retentionDays,
-      isNearLimit: memoryFiltered.length > (maxEntries! * _config.cleanupThreshold),
-    },
-  };
+    return {
+        cleanedEntries: memoryFiltered,
+        cleanupReport: {
+            totalEntries: memoryFiltered.length,
+            estimatedMemoryBytes: finalMemoryBytes,
+            estimatedMemoryMB: finalMemoryMB,
+            oldestEntryTimestamp: oldestEntry,
+            newestEntryTimestamp: newestEntry,
+            cleanupPerformed,
+            entriesRemoved: entriesRemovedByTime,
+            retentionDays,
+            isNearLimit: memoryFiltered.length > (maxEntries! * _config.cleanupThreshold),
+        },
+    };
 }
 
 /**
@@ -732,75 +732,75 @@ export function cleanupOldEntries(
  * @param calculationDetails - Additional calculation details
  */
 export function logStatisticsEntryOptimized(
-  entry: StatisticsEntry,
-  settings: { debug: boolean; transparency: boolean },
-  logger: (message: string) => void,
-  calculationDetails?: {
+    entry: StatisticsEntry,
+    settings: { debug: boolean; transparency: boolean },
+    logger: (message: string) => void,
+    calculationDetails?: {
     method: string,
     inputs: Record<string, any>,
     intermediateSteps?: any[],
   },
 ): void {
-  if (!settings.debug && !settings.transparency) return;
+    if (!settings.debug && !settings.transparency) return;
 
-  const timestamp = new Date(entry.timestamp * 1000).toISOString();
-  const energyStr = Math.abs(entry.energyAmount).toFixed(3);
-  const durationStr = entry.duration.toString();
+    const timestamp = new Date(entry.timestamp * 1000).toISOString();
+    const energyStr = Math.abs(entry.energyAmount).toFixed(3);
+    const durationStr = entry.duration.toString();
 
-  // Build base log entry efficiently
-  const logParts = [`[${timestamp}] ${entry.type.toUpperCase()}`];
-  logParts.push(`- Energy: ${energyStr} kWh, Duration: ${durationStr} min`);
+    // Build base log entry efficiently
+    const logParts = [`[${timestamp}] ${entry.type.toUpperCase()}`];
+    logParts.push(`- Energy: ${energyStr} kWh, Duration: ${durationStr} min`);
 
-  if (entry.priceAtTime) {
-    const profitSavingsResult = calculateProfitSavings(entry);
-    const { profitSavings } = profitSavingsResult;
+    if (entry.priceAtTime) {
+        const profitSavingsResult = calculateProfitSavings(entry);
+        const { profitSavings } = profitSavingsResult;
 
-    const priceStr = entry.priceAtTime.toFixed(4);
-    const profitStr = profitSavings.toFixed(2);
+        const priceStr = entry.priceAtTime.toFixed(4);
+        const profitStr = profitSavings.toFixed(2);
 
-    logParts.push(`, Price: €${priceStr}/kWh, Profit/Savings: €${profitStr}`);
+        logParts.push(`, Price: €${priceStr}/kWh, Profit/Savings: €${profitStr}`);
 
-    // Log warnings and recovery actions if any (batch processing)
-    if (profitSavingsResult.warnings.length > 0
+        // Log warnings and recovery actions if any (batch processing)
+        if (profitSavingsResult.warnings.length > 0
         || (profitSavingsResult.audit.recoveryActions && profitSavingsResult.audit.recoveryActions.length > 0)) {
-      logger(logParts.join(''));
+            logger(logParts.join(''));
 
-      // Clear parts for additional messages
-      logParts.length = 0;
+            // Clear parts for additional messages
+            logParts.length = 0;
 
-      for (const warning of profitSavingsResult.warnings) {
-        logger(`  Warning: ${warning}`);
-      }
+            for (const warning of profitSavingsResult.warnings) {
+                logger(`  Warning: ${warning}`);
+            }
 
-      if (profitSavingsResult.audit.recoveryActions && profitSavingsResult.audit.recoveryActions.length > 0) {
-        for (const action of profitSavingsResult.audit.recoveryActions) {
-          logger(`  Recovery: ${action}`);
+            if (profitSavingsResult.audit.recoveryActions && profitSavingsResult.audit.recoveryActions.length > 0) {
+                for (const action of profitSavingsResult.audit.recoveryActions) {
+                    logger(`  Recovery: ${action}`);
+                }
+            }
+            return; // Already logged
         }
-      }
-      return; // Already logged
+    } else {
+        logParts.push(', Price: N/A');
     }
-  } else {
-    logParts.push(', Price: N/A');
-  }
 
-  logger(logParts.join(''));
+    logger(logParts.join(''));
 
-  if (settings.transparency && calculationDetails) {
-    logger(`  Calculation Method: ${calculationDetails.method}`);
+    if (settings.transparency && calculationDetails) {
+        logger(`  Calculation Method: ${calculationDetails.method}`);
 
-    // Optimize JSON.stringify by limiting depth and using minimal spacing
-    const inputsStr = JSON.stringify(calculationDetails.inputs, null, 0); // No indentation
-    logger(`  Inputs: ${inputsStr}`);
+        // Optimize JSON.stringify by limiting depth and using minimal spacing
+        const inputsStr = JSON.stringify(calculationDetails.inputs, null, 0); // No indentation
+        logger(`  Inputs: ${inputsStr}`);
 
-    if (calculationDetails.intermediateSteps) {
-      const stepsStr = JSON.stringify(calculationDetails.intermediateSteps, null, 0);
-      logger(`  Intermediate Steps: ${stepsStr}`);
+        if (calculationDetails.intermediateSteps) {
+            const stepsStr = JSON.stringify(calculationDetails.intermediateSteps, null, 0);
+            logger(`  Intermediate Steps: ${stepsStr}`);
+        }
     }
-  }
 
-  if (entry.startEnergyMeter !== undefined && entry.endEnergyMeter !== undefined) {
-    logger(`  Meter Reading: ${entry.startEnergyMeter} -> ${entry.endEnergyMeter}`);
-  }
+    if (entry.startEnergyMeter !== undefined && entry.endEnergyMeter !== undefined) {
+        logger(`  Meter Reading: ${entry.startEnergyMeter} -> ${entry.endEnergyMeter}`);
+    }
 }
 
 /**
@@ -811,16 +811,16 @@ export function logStatisticsEntryOptimized(
  * @param calculationDetails - Additional calculation details
  */
 export function logStatisticsEntry(
-  entry: StatisticsEntry,
-  settings: { debug: boolean; transparency: boolean },
-  logger: (message: string) => void,
-  calculationDetails?: {
+    entry: StatisticsEntry,
+    settings: { debug: boolean; transparency: boolean },
+    logger: (message: string) => void,
+    calculationDetails?: {
     method: string,
     inputs: Record<string, any>,
     intermediateSteps?: any[],
   },
 ): void {
-  logStatisticsEntryOptimized(entry, settings, logger, calculationDetails);
+    logStatisticsEntryOptimized(entry, settings, logger, calculationDetails);
 }
 
 /**
@@ -831,9 +831,9 @@ export function logStatisticsEntry(
  * @returns Array of audit trail entries with enhanced calculation details
  */
 export function getCalculationAuditTrail(
-  entries: StatisticsEntry[],
-  startTime: number,
-  endTime: number,
+    entries: StatisticsEntry[],
+    startTime: number,
+    endTime: number,
 ): Array<{
   entry: StatisticsEntry,
   verification: {
@@ -846,54 +846,54 @@ export function getCalculationAuditTrail(
     details: string,
   },
 }> {
-  const filteredEntries = entries.filter((e) => e.timestamp >= startTime && e.timestamp < endTime);
+    const filteredEntries = entries.filter((e) => e.timestamp >= startTime && e.timestamp < endTime);
 
-  return filteredEntries.map((entry) => {
-    const energyValidation = validateEnergyAmount(Math.abs(entry.energyAmount));
-    const energyValid = energyValidation.isValid;
+    return filteredEntries.map((entry) => {
+        const energyValidation = validateEnergyAmount(Math.abs(entry.energyAmount));
+        const energyValid = energyValidation.isValid;
 
-    const timestampValidation = validateTimestamp(entry.timestamp);
-    const timestampValid = timestampValidation.isValid;
+        const timestampValidation = validateTimestamp(entry.timestamp);
+        const timestampValid = timestampValidation.isValid;
 
-    const profitSavingsResult = calculateProfitSavings(entry);
-    const { profitSavings } = profitSavingsResult;
-    const profitValid = !isNaN(profitSavings) && isFinite(profitSavings);
+        const profitSavingsResult = calculateProfitSavings(entry);
+        const { profitSavings } = profitSavingsResult;
+        const profitValid = !Number.isNaN(Number(profitSavings)) && Number.isFinite(Number(profitSavings));
 
-    const precisionLoss = profitSavingsResult.audit.precisionLoss || 0;
-    const outlierDetected = profitSavingsResult.audit.isOutlier || false;
-    const recoveryActions = profitSavingsResult.audit.recoveryActions || [];
+        const precisionLoss = profitSavingsResult.audit.precisionLoss || 0;
+        const outlierDetected = profitSavingsResult.audit.isOutlier || false;
+        const recoveryActions = profitSavingsResult.audit.recoveryActions || [];
 
-    let details = `Energy: ${Math.abs(entry.energyAmount).toFixed(3)} kWh (${energyValid ? 'valid' : 'invalid'})`;
-    if (entry.priceAtTime) {
-      details += `, Profit/Savings: €${profitSavings.toFixed(2)} (${profitValid ? 'valid' : 'invalid'})`;
-    }
-    details += `, Timestamp: ${new Date(entry.timestamp).toISOString()} (${timestampValid ? 'valid' : 'invalid'})`;
+        let details = `Energy: ${Math.abs(entry.energyAmount).toFixed(3)} kWh (${energyValid ? 'valid' : 'invalid'})`;
+        if (entry.priceAtTime) {
+            details += `, Profit/Savings: €${profitSavings.toFixed(2)} (${profitValid ? 'valid' : 'invalid'})`;
+        }
+        details += `, Timestamp: ${new Date(entry.timestamp).toISOString()} (${timestampValid ? 'valid' : 'invalid'})`;
 
-    if (precisionLoss > FINANCIAL_CONSTANTS.PRECISION_THRESHOLD) {
-      details += `, Precision Loss: ${(precisionLoss * 100).toFixed(4)}%`;
-    }
+        if (precisionLoss > FINANCIAL_CONSTANTS.PRECISION_THRESHOLD) {
+            details += `, Precision Loss: ${(precisionLoss * 100).toFixed(4)}%`;
+        }
 
-    if (outlierDetected) {
-      details += ', Outlier Detected';
-    }
+        if (outlierDetected) {
+            details += ', Outlier Detected';
+        }
 
-    if (recoveryActions.length > 0) {
-      details += `, Recovery Actions: ${recoveryActions.length}`;
-    }
+        if (recoveryActions.length > 0) {
+            details += `, Recovery Actions: ${recoveryActions.length}`;
+        }
 
-    return {
-      entry,
-      verification: {
-        energyValid,
-        profitValid,
-        timestampValid,
-        precisionLoss,
-        outlierDetected,
-        recoveryActions,
-        details,
-      },
-    };
-  });
+        return {
+            entry,
+            verification: {
+                energyValid,
+                profitValid,
+                timestampValid,
+                precisionLoss,
+                outlierDetected,
+                recoveryActions,
+                details,
+            },
+        };
+    });
 }
 
 /**
@@ -901,13 +901,13 @@ export function getCalculationAuditTrail(
  * @returns Default StatisticsSettings with memory optimization
  */
 export function getDefaultStatisticsSettings(): StatisticsSettings {
-  return {
-    enabled: false,
-    retentionDays: 30,
-    maxEntries: 10000, // Default maximum entries
-    enableMemoryOptimization: true, // Enable memory optimization by default
-    exportFormat: 'json',
-  };
+    return {
+        enabled: false,
+        retentionDays: 30,
+        maxEntries: 10000, // Default maximum entries
+        enableMemoryOptimization: true, // Enable memory optimization by default
+        exportFormat: 'json',
+    };
 }
 
 /**
@@ -921,56 +921,56 @@ export function getDefaultStatisticsSettings(): StatisticsSettings {
  * @returns Enhanced statistics entry
  */
 export function createStatisticsEntry(
-  type: 'charging' | 'discharging',
-  timestamp: number,
-  energyAmount: number,
-  duration: number,
-  priceAtTime?: number,
-  meterData?: { startEnergyMeter?: number; endEnergyMeter?: number },
+    type: 'charging' | 'discharging',
+    timestamp: number,
+    energyAmount: number,
+    duration: number,
+    priceAtTime?: number,
+    meterData?: { startEnergyMeter?: number; endEnergyMeter?: number },
 ): StatisticsEntry {
-  // Validate inputs
-  const timestampValidation = validateTimestamp(timestamp);
-  const energyValidation = validateEnergyAmount(Math.abs(energyAmount));
+    // Validate inputs
+    const timestampValidation = validateTimestamp(timestamp);
+    const energyValidation = validateEnergyAmount(Math.abs(energyAmount));
 
-  const warnings: string[] = [];
-  const recoveryActions: string[] = [];
+    const warnings: string[] = [];
+    const recoveryActions: string[] = [];
 
-  if (!timestampValidation.isValid) {
-    warnings.push(`Timestamp validation failed: ${timestampValidation.error}`);
-    recoveryActions.push('Using provided timestamp despite validation failure');
-  }
-
-  if (!energyValidation.isValid) {
-    warnings.push(`Energy validation failed: ${energyValidation.error}`);
-    recoveryActions.push('Using provided energy amount despite validation failure');
-  }
-
-  if (priceAtTime) {
-    const priceValidation = validateEnergyPrice(priceAtTime);
-    if (!priceValidation.isValid) {
-      warnings.push(`Price validation failed: ${priceValidation.error}`);
-      recoveryActions.push('Using provided price despite validation failure');
+    if (!timestampValidation.isValid) {
+        warnings.push(`Timestamp validation failed: ${timestampValidation.error}`);
+        recoveryActions.push('Using provided timestamp despite validation failure');
     }
-    warnings.push(...(priceValidation.warnings || []));
-  }
 
-  warnings.push(...(energyValidation.warnings || []));
+    if (!energyValidation.isValid) {
+        warnings.push(`Energy validation failed: ${energyValidation.error}`);
+        recoveryActions.push('Using provided energy amount despite validation failure');
+    }
 
-  return {
-    timestamp,
-    type,
-    energyAmount,
-    duration,
-    priceAtTime,
-    ...meterData,
-    calculationAudit: {
-      precisionLoss: 0, // Will be calculated during processing
-      validationWarnings: warnings,
-      calculationMethod: 'enhanced_entry_creation',
-      isOutlier: false, // Will be determined during processing
-      recoveryActions,
-    },
-  };
+    if (priceAtTime) {
+        const priceValidation = validateEnergyPrice(priceAtTime);
+        if (!priceValidation.isValid) {
+            warnings.push(`Price validation failed: ${priceValidation.error}`);
+            recoveryActions.push('Using provided price despite validation failure');
+        }
+        warnings.push(...(priceValidation.warnings || []));
+    }
+
+    warnings.push(...(energyValidation.warnings || []));
+
+    return {
+        timestamp,
+        type,
+        energyAmount,
+        duration,
+        priceAtTime,
+        ...meterData,
+        calculationAudit: {
+            precisionLoss: 0, // Will be calculated during processing
+            validationWarnings: warnings,
+            calculationMethod: 'enhanced_entry_creation',
+            isOutlier: false, // Will be determined during processing
+            recoveryActions,
+        },
+    };
 }
 
 /**
@@ -988,56 +988,56 @@ export function validateAndCleanEntries(entries: StatisticsEntry[]): {
     errors: string[];
   };
 } {
-  const cleanedEntries: StatisticsEntry[] = [];
-  const errors: string[] = [];
-  let warnings = 0;
-  let validEntries = 0;
+    const cleanedEntries: StatisticsEntry[] = [];
+    const errors: string[] = [];
+    let warnings = 0;
+    let validEntries = 0;
 
-  for (const entry of entries) {
-    try {
-      // Validate timestamp
-      const timestampValidation = validateTimestamp(entry.timestamp);
-      if (!timestampValidation.isValid) {
-        errors.push(`Invalid timestamp at index ${entries.indexOf(entry)}: ${timestampValidation.error}`);
-        continue;
-      }
+    for (const entry of entries) {
+        try {
+            // Validate timestamp
+            const timestampValidation = validateTimestamp(entry.timestamp);
+            if (!timestampValidation.isValid) {
+                errors.push(`Invalid timestamp at index ${entries.indexOf(entry)}: ${timestampValidation.error}`);
+                continue;
+            }
 
-      // Validate energy amount
-      const energyValidation = validateEnergyAmount(Math.abs(entry.energyAmount));
-      if (!energyValidation.isValid) {
-        errors.push(`Invalid energy amount at index ${entries.indexOf(entry)}: ${energyValidation.error}`);
-        continue;
-      }
+            // Validate energy amount
+            const energyValidation = validateEnergyAmount(Math.abs(entry.energyAmount));
+            if (!energyValidation.isValid) {
+                errors.push(`Invalid energy amount at index ${entries.indexOf(entry)}: ${energyValidation.error}`);
+                continue;
+            }
 
-      // Validate price if present
-      if (entry.priceAtTime !== undefined && entry.priceAtTime !== null) {
-        const priceValidation = validateEnergyPrice(entry.priceAtTime);
-        if (!priceValidation.isValid) {
-          errors.push(`Invalid price at index ${entries.indexOf(entry)}: ${priceValidation.error}`);
-          continue;
+            // Validate price if present
+            if (entry.priceAtTime !== undefined && entry.priceAtTime !== null) {
+                const priceValidation = validateEnergyPrice(entry.priceAtTime);
+                if (!priceValidation.isValid) {
+                    errors.push(`Invalid price at index ${entries.indexOf(entry)}: ${priceValidation.error}`);
+                    continue;
+                }
+                warnings += priceValidation.warnings?.length || 0;
+            }
+
+            warnings += energyValidation.warnings?.length || 0;
+            cleanedEntries.push(entry);
+            validEntries++;
+
+        } catch (error) {
+            errors.push(`Processing error at index ${entries.indexOf(entry)}: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
-        warnings += priceValidation.warnings?.length || 0;
-      }
-
-      warnings += energyValidation.warnings?.length || 0;
-      cleanedEntries.push(entry);
-      validEntries++;
-
-    } catch (error) {
-      errors.push(`Processing error at index ${entries.indexOf(entry)}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-  }
 
-  return {
-    cleanedEntries,
-    validationReport: {
-      totalEntries: entries.length,
-      validEntries,
-      invalidEntries: entries.length - validEntries,
-      warnings,
-      errors,
-    },
-  };
+    return {
+        cleanedEntries,
+        validationReport: {
+            totalEntries: entries.length,
+            validEntries,
+            invalidEntries: entries.length - validEntries,
+            warnings,
+            errors,
+        },
+    };
 }
 
 /**
@@ -1062,67 +1062,67 @@ export function getStatisticsSummary(entries: StatisticsEntry[]): {
     financialCalculatorStats: any;
   };
 } {
-  const validation = validateAndCleanEntries(entries);
-  const dailyStats = aggregateDailyStats(validation.cleanedEntries);
+    const validation = validateAndCleanEntries(entries);
+    const dailyStats = aggregateDailyStats(validation.cleanedEntries);
 
-  let totalChargeEnergy = 0;
-  let totalDischargeEnergy = 0;
-  let totalProfit = 0;
-  let totalSavings = 0;
-  let totalPrice = 0;
-  let priceCount = 0;
+    let totalChargeEnergy = 0;
+    let totalDischargeEnergy = 0;
+    let totalProfit = 0;
+    let totalSavings = 0;
+    let totalPrice = 0;
+    let priceCount = 0;
 
-  for (const day of dailyStats) {
-    totalChargeEnergy += day.totalChargeEnergy;
-    totalDischargeEnergy += day.totalDischargeEnergy;
-    totalProfit += day.totalProfit;
-    totalSavings += day.totalSavings;
-  }
-
-  // Calculate average price
-  for (const entry of validation.cleanedEntries) {
-    if (entry.priceAtTime) {
-      totalPrice += entry.priceAtTime;
-      priceCount++;
+    for (const day of dailyStats) {
+        totalChargeEnergy += day.totalChargeEnergy;
+        totalDischargeEnergy += day.totalDischargeEnergy;
+        totalProfit += day.totalProfit;
+        totalSavings += day.totalSavings;
     }
-  }
 
-  const averagePrice = priceCount > 0 ? totalPrice / priceCount : 0;
-
-  // Aggregate audit information
-  let validationFailures = 0;
-  let precisionLosses = 0;
-  let outliers = 0;
-  let recoveryActions = 0;
-
-  for (const day of dailyStats) {
-    if (day.auditInfo) {
-      validationFailures += day.auditInfo.validationFailures;
-      precisionLosses += day.auditInfo.precisionLosses;
-      outliers += day.auditInfo.outliers;
-      recoveryActions += day.auditInfo.recoveryActions;
+    // Calculate average price
+    for (const entry of validation.cleanedEntries) {
+        if (entry.priceAtTime) {
+            totalPrice += entry.priceAtTime;
+            priceCount++;
+        }
     }
-  }
 
-  const financialCalculatorStats = financialCalculator.getAuditStatistics();
+    const averagePrice = priceCount > 0 ? totalPrice / priceCount : 0;
 
-  return {
-    summary: {
-      totalEvents: validation.cleanedEntries.length,
-      totalChargeEnergy: bankersRounding(totalChargeEnergy, FINANCIAL_CONSTANTS.ENERGY_AMOUNT_DECIMALS),
-      totalDischargeEnergy: bankersRounding(totalDischargeEnergy, FINANCIAL_CONSTANTS.ENERGY_AMOUNT_DECIMALS),
-      totalProfit: bankersRounding(totalProfit, FINANCIAL_CONSTANTS.CURRENCY_DECIMALS),
-      totalSavings: bankersRounding(totalSavings, FINANCIAL_CONSTANTS.CURRENCY_DECIMALS),
-      averagePrice: bankersRounding(averagePrice, FINANCIAL_CONSTANTS.ENERGY_PRICE_DECIMALS),
-    },
-    audit: {
-      validationFailures,
-      precisionLosses,
-      outliers,
-      recoveryActions,
-      financialCalculatorStats,
-    },
-  };
+    // Aggregate audit information
+    let validationFailures = 0;
+    let precisionLosses = 0;
+    let outliers = 0;
+    let recoveryActions = 0;
+
+    for (const day of dailyStats) {
+        if (day.auditInfo) {
+            validationFailures += day.auditInfo.validationFailures;
+            precisionLosses += day.auditInfo.precisionLosses;
+            outliers += day.auditInfo.outliers;
+            recoveryActions += day.auditInfo.recoveryActions;
+        }
+    }
+
+    const financialCalculatorStats = financialCalculator.getAuditStatistics();
+
+    return {
+        summary: {
+            totalEvents: validation.cleanedEntries.length,
+            totalChargeEnergy: bankersRounding(totalChargeEnergy, FINANCIAL_CONSTANTS.ENERGY_AMOUNT_DECIMALS),
+            totalDischargeEnergy: bankersRounding(totalDischargeEnergy, FINANCIAL_CONSTANTS.ENERGY_AMOUNT_DECIMALS),
+            totalProfit: bankersRounding(totalProfit, FINANCIAL_CONSTANTS.CURRENCY_DECIMALS),
+            totalSavings: bankersRounding(totalSavings, FINANCIAL_CONSTANTS.CURRENCY_DECIMALS),
+            averagePrice: bankersRounding(averagePrice, FINANCIAL_CONSTANTS.ENERGY_PRICE_DECIMALS),
+        },
+        audit: {
+            validationFailures,
+            precisionLosses,
+            outliers,
+            recoveryActions,
+            financialCalculatorStats,
+        },
+    };
 }
 
 /**
@@ -1132,36 +1132,36 @@ export function getStatisticsSummary(entries: StatisticsEntry[]): {
 
 // Check if we're in a CommonJS environment and export accordingly
 if (typeof module !== 'undefined' && module.exports) {
-  // Export all key functions explicitly for CommonJS compatibility
-  // Note: Types/interfaces are not exported as values in CommonJS
-  module.exports = {
+    // Export all key functions explicitly for CommonJS compatibility
+    // Note: Types/interfaces are not exported as values in CommonJS
+    module.exports = {
     // Constants
-    DEFAULT_STATISTICS_MEMORY_CONFIG,
+        DEFAULT_STATISTICS_MEMORY_CONFIG,
 
-    // Core calculation functions
-    calculateEnergyAmount,
-    calculateProfitSavings,
+        // Core calculation functions
+        calculateEnergyAmount,
+        calculateProfitSavings,
 
-    // Aggregation and summary functions
-    aggregateDailyStats,
-    aggregateDailyStatsOptimized,
-    getStatisticsSummary,
-    getStatisticsSummaryOptimized,
-    calculateDetailedBreakdown,
+        // Aggregation and summary functions
+        aggregateDailyStats,
+        aggregateDailyStatsOptimized,
+        getStatisticsSummary,
+        getStatisticsSummaryOptimized,
+        calculateDetailedBreakdown,
 
-    // Memory management functions
-    cleanupOldEntries,
-    getHistoricalValuesOptimized,
-    generateStatisticsMemoryReport,
-    validateAndCleanEntries,
+        // Memory management functions
+        cleanupOldEntries,
+        getHistoricalValuesOptimized,
+        generateStatisticsMemoryReport,
+        validateAndCleanEntries,
 
-    // Logging functions
-    logStatisticsEntry,
-    logStatisticsEntryOptimized,
+        // Logging functions
+        logStatisticsEntry,
+        logStatisticsEntryOptimized,
 
-    // Utility functions
-    getCalculationAuditTrail,
-    getDefaultStatisticsSettings,
-    createStatisticsEntry,
-  };
+        // Utility functions
+        getCalculationAuditTrail,
+        getDefaultStatisticsSettings,
+        createStatisticsEntry,
+    };
 }

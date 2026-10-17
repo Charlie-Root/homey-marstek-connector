@@ -12,7 +12,8 @@
     "sv": "Dataålder (sek)",
     "pl": "Wiek danych (sek)",
     "ru": "Возраст данных (сек)",
-    "ko": "데이터 연령 (초)"
+    "ko": "데이터 연령 (초)",
+    "ar": "عمر البيانات (ثانية)"
   },
   "getable": true,
   "setable": false,

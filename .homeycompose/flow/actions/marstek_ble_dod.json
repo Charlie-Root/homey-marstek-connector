@@ -1,0 +1,50 @@
+{
+  "id": "marstek_ble_dod",
+  "title": {
+    "en": "Set Depth of Discharge (BLE)",
+    "nl": "Stel ontladingsdiepte in (BLE)",
+    "da": "Indstil afladningsdybde (BLE)",
+    "de": "Entladetiefe festlegen (BLE)",
+    "es": "Establecer profundidad de descarga (BLE)",
+    "fr": "Définir la profondeur de décharge (BLE)",
+    "it": "Imposta la profondità di scarica (BLE)",
+    "no": "Angi utladningsdybde (BLE)",
+    "sv": "Ställ in urladdningsdjup (BLE)",
+    "pl": "Ustaw głębokość rozładowania (BLE)",
+    "ru": "Установить глубину разряда (BLE)",
+    "ko": "방전 심도 설정 (BLE)",
+    "ar": "ضبط عمق التفريغ (BLE)"
+  },
+  "titleFormatted": {
+    "en": "Set Depth of Discharge to [[percent]] % (BLE)",
+    "nl": "Stel ontladingsdiepte in op [[percent]] % (BLE)",
+    "da": "Indstil afladningsdybde til [[percent]] % (BLE)",
+    "de": "Entladetiefe auf [[percent]] % festlegen (BLE)",
+    "es": "Establecer profundidad de descarga en [[percent]] % (BLE)",
+    "fr": "Définir la profondeur de décharge sur [[percent]] % (BLE)",
+    "it": "Imposta la profondità di scarica su [[percent]] % (BLE)",
+    "no": "Angi utladningsdybde til [[percent]] % (BLE)",
+    "sv": "Ställ in urladdningsdjup till [[percent]] % (BLE)",
+    "pl": "Ustaw głębokość rozładowania na [[percent]] % (BLE)",
+    "ru": "Установить глубину разряда на [[percent]] % (BLE)",
+    "ko": "방전 심도를 [[percent]] %로 설정 (BLE)",
+    "ar": "ضبط عمق التفريغ على [[percent]] % (BLE)"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus-ble"
+    },
+    {
+      "name": "percent",
+      "type": "number",
+      "min": 30,
+      "max": 88,
+      "step": 1,
+      "label": {
+        "en": "Depth of Discharge (%)", "nl": "Ontladingsdiepte (%)", "da": "Afladningsdybde (%)", "de": "Entladetiefe (%)", "es": "Profundidad de descarga (%)", "fr": "Profondeur de décharge (%)", "it": "Profondità di scarica (%)", "no": "Utladningsdybde (%)", "sv": "Urladdningsdjup (%)", "pl": "Głębokość rozładowania (%)", "ru": "Глубина разряда (%)", "ko": "방전 심도 (%)", "ar": "عمق التفريغ (%)"
+      }
+    }
+  ]
+}
