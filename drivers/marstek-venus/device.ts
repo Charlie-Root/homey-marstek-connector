@@ -406,11 +406,11 @@ export default class MarstekVenusLocalApiDevice extends Homey.Device {
                     const newCtState = result.ct_state.toString();
                     if (currentCtState !== newCtState) {
                         await this.setCapabilityValue('measure_ct_state', newCtState);
-                        // Trigger existing flow
-                        await this.homey.flow.getTriggerCard('marstek_ct_state_changed').trigger({ state: result.ct_state });
-                        // Trigger CT disconnected flow when state becomes 0 (disconnected)
-                        if (result.ct_state === 0 && this.lastCtState !== 0) {
-                            await this.homey.flow.getTriggerCard('marstek_ct_disconnected').trigger({
+                        // Trigger device flow (run listener matches the card's state argument)
+                        await this.homey.flow.getDeviceTriggerCard('marstek_ct_state_changed').trigger(this, {}, { state: result.ct_state });
+                        // Trigger CT disconnected flow only on an observed connected -> disconnected change
+                        if (result.ct_state === 0 && this.lastCtState === 1) {
+                            await this.homey.flow.getDeviceTriggerCard('marstek_ct_disconnected').trigger(this, {
                                 ct_state: result.ct_state,
                                 previous_state: this.lastCtState,
                             });
@@ -1840,18 +1840,18 @@ export default class MarstekVenusLocalApiDevice extends Homey.Device {
         }
 
         // Check if threshold was crossed (we trigger for all possible thresholds and directions)
-        // Homey's flow engine will filter to only active flows that match
+        // The run listener in the driver only runs flows whose threshold was crossed
         const crossedAbove = this.lastSocValue <= currentSoc; // SOC increased
         const crossedBelow = this.lastSocValue >= currentSoc; // SOC decreased
 
         if (crossedAbove || crossedBelow) {
         // Trigger for all possible threshold crossings
-        // Homey will only execute flows that match the current SOC and threshold conditions
-            await this.homey.flow.getTriggerCard('marstek_battery_soc_threshold').trigger({
+        // The driver run listener only runs flows whose SOC threshold was crossed
+            await this.homey.flow.getDeviceTriggerCard('marstek_battery_soc_threshold').trigger(this, {
                 soc: currentSoc,
-                threshold: currentSoc, // This will be matched against flow conditions
+                threshold: currentSoc,
                 direction: crossedAbove ? 'above' : 'below',
-            });
+            }, { previous: this.lastSocValue, current: currentSoc });
 
             if (this.debug) {
                 this.log(`SOC threshold trigger fired: ${this.lastSocValue}% -> ${currentSoc}%`);
@@ -1894,13 +1894,13 @@ export default class MarstekVenusLocalApiDevice extends Homey.Device {
         }
 
         if (stateChangeType) {
-        // Trigger the flow card - Homey will filter to flows that match this state change
-            await this.homey.flow.getTriggerCard('marstek_battery_charging_state_changed').trigger({
+        // Trigger the flow card - the driver run listener matches the state argument
+            await this.homey.flow.getDeviceTriggerCard('marstek_battery_charging_state_changed').trigger(this, {
                 state: stateChangeType,
-                previous_state: this.lastChargingState,
+                previous_state: this.lastChargingState ?? '',
                 soc,
                 power,
-            });
+            }, { state: stateChangeType });
 
             if (this.debug) {
                 this.log(`Charging state change trigger fired: ${this.lastChargingState} -> ${currentState} (${stateChangeType})`);
@@ -1922,18 +1922,18 @@ export default class MarstekVenusLocalApiDevice extends Homey.Device {
         }
 
         // Check if threshold was crossed (we trigger for all possible thresholds and directions)
-        // Homey's flow engine will filter to only active flows that match
+        // The run listener in the driver only runs flows whose threshold was crossed
         const crossedAbove = this.lastTemperatureValue <= currentTemperature; // Temperature increased
         const crossedBelow = this.lastTemperatureValue >= currentTemperature; // Temperature decreased
 
         if (crossedAbove || crossedBelow) {
         // Trigger for all possible threshold crossings
-        // Homey will only execute flows that match the current temperature and threshold conditions
-            await this.homey.flow.getTriggerCard('marstek_temperature_warning').trigger({
+        // The driver run listener only runs flows whose temperature threshold was crossed
+            await this.homey.flow.getDeviceTriggerCard('marstek_temperature_warning').trigger(this, {
                 temperature: currentTemperature,
-                threshold: currentTemperature, // This will be matched against flow conditions
+                threshold: currentTemperature,
                 direction: crossedAbove ? 'above' : 'below',
-            });
+            }, { previous: this.lastTemperatureValue, current: currentTemperature });
 
             if (this.debug) {
                 this.log(`Temperature warning trigger fired: ${this.lastTemperatureValue}°C -> ${currentTemperature}°C`);
@@ -2059,7 +2059,7 @@ export default class MarstekVenusLocalApiDevice extends Homey.Device {
 
                 // Trigger appropriate flow card when direction changes to import or export
                 if (currentDirection === 'import' && this.lastGridPowerDirection !== 'import') {
-                    await this.homey.flow.getTriggerCard('marstek_grid_import_starts').trigger({
+                    await this.homey.flow.getDeviceTriggerCard('marstek_grid_import_starts').trigger(this, {
                         power: gridPower,
                         direction: 'import',
                     });
@@ -2067,7 +2067,7 @@ export default class MarstekVenusLocalApiDevice extends Homey.Device {
                         this.log(`Grid import starts trigger fired: ${this.lastGridPowerDirection} -> ${currentDirection} (${gridPower}W)`);
                     }
                 } else if (currentDirection === 'export' && this.lastGridPowerDirection !== 'export') {
-                    await this.homey.flow.getTriggerCard('marstek_grid_export_starts').trigger({
+                    await this.homey.flow.getDeviceTriggerCard('marstek_grid_export_starts').trigger(this, {
                         power: gridPower,
                         direction: 'export',
                     });
@@ -2096,22 +2096,23 @@ export default class MarstekVenusLocalApiDevice extends Homey.Device {
             }
 
             // Check if threshold was crossed (we trigger for all possible thresholds and directions)
-            // Homey's flow engine will filter to only active flows that match
+            // The run listener in the driver only runs flows whose threshold was crossed
             const crossedAbove = this.lastPvPowerValue <= currentPvPower; // PV power increased
             const crossedBelow = this.lastPvPowerValue >= currentPvPower; // PV power decreased
 
             if (crossedAbove || crossedBelow) {
                 // Trigger for all possible threshold crossings
-                // Homey will only execute flows that match the current PV power and threshold conditions
-                await this.homey.flow.getTriggerCard('marstek_solar_generation_starts').trigger({
+                // The driver run listener only runs flows whose PV power threshold was crossed
+                const solarState = { previous: this.lastPvPowerValue, current: currentPvPower };
+                await this.homey.flow.getDeviceTriggerCard('marstek_solar_generation_starts').trigger(this, {
                     power: currentPvPower,
-                    threshold: currentPvPower, // This will be matched against flow conditions
-                });
+                    threshold: currentPvPower,
+                }, solarState);
 
-                await this.homey.flow.getTriggerCard('marstek_solar_generation_stops').trigger({
+                await this.homey.flow.getDeviceTriggerCard('marstek_solar_generation_stops').trigger(this, {
                     power: currentPvPower,
-                    threshold: currentPvPower, // This will be matched against flow conditions
-                });
+                    threshold: currentPvPower,
+                }, solarState);
 
                 if (this.debug) {
                     this.log(`Solar generation triggers fired: ${this.lastPvPowerValue}W -> ${currentPvPower}W`);
@@ -2142,7 +2143,7 @@ export default class MarstekVenusLocalApiDevice extends Homey.Device {
             }
 
             // Trigger the mode change flow card
-            await this.homey.flow.getTriggerCard('marstek_mode_changed').trigger({
+            await this.homey.flow.getDeviceTriggerCard('marstek_mode_changed').trigger(this, {
                 mode: currentMode,
                 previous_mode: this.lastMode,
             }, {

@@ -527,16 +527,6 @@ export default class MarstekVenusLocalApiDriver extends Homey.Driver {
             }) => this.setEnergyPrice(device, price),
         );
 
-        // Register trigger cards
-        const registerTrigger = (id: string) => {
-            try {
-                this.homey.flow.getTriggerCard(id);
-                if (this.debug) this.log(`Successfully registered trigger card: ${id}`);
-            } catch (err) {
-                this.error(`Failed to register trigger card ${id}:`, err);
-            }
-        };
-
         // Register condition cards
         const registerCondition = (id: string, handler: Function) => {
             try {
@@ -599,7 +589,7 @@ export default class MarstekVenusLocalApiDriver extends Homey.Driver {
             return ctState === '1';
         });
 
-        registerCondition('marstek_grid_power_condition', async ({
+        registerCondition('marstek_grid_power_threshold_condition', async ({
             device,
             comparison,
             threshold,
@@ -682,11 +672,30 @@ export default class MarstekVenusLocalApiDriver extends Homey.Driver {
             }
         });
 
-        // Register trigger cards
-        registerTrigger('marstek_mode_changed');
+        // Device triggers: run listeners select the flows whose arguments match the trigger state
+        type CrossingState = { previous: number, current: number };
+        const crossedUp = ({ previous, current }: CrossingState, threshold: number) => previous < threshold && current >= threshold;
+        const crossedDown = ({ previous, current }: CrossingState, threshold: number) => previous > threshold && current <= threshold;
+        const crossed = (state: CrossingState, threshold: number, direction: string) => (
+            direction === 'above' ? crossedUp(state, threshold) : crossedDown(state, threshold)
+        );
+        const registerDeviceTrigger = (id: string, listener: (args: any, state: any) => boolean) => {
+            try {
+                this.homey.flow.getDeviceTriggerCard(id).registerRunListener(async (args: any, state: any) => listener(args, state));
+                if (this.debug) this.log(`Successfully registered trigger card: ${id}`);
+            } catch (err) {
+                this.error(`Failed to register trigger card ${id}:`, err);
+            }
+        };
+        registerDeviceTrigger('marstek_battery_soc_threshold', (args, state) => crossed(state, Number(args.threshold), args.direction));
+        registerDeviceTrigger('marstek_temperature_warning', (args, state) => crossed(state, Number(args.threshold), args.direction));
+        registerDeviceTrigger('marstek_solar_generation_starts', (args, state) => crossedUp(state, Number(args.threshold)));
+        registerDeviceTrigger('marstek_solar_generation_stops', (args, state) => crossedDown(state, Number(args.threshold)));
+        registerDeviceTrigger('marstek_battery_charging_state_changed', (args, state) => args.state === state.state);
+        registerDeviceTrigger('marstek_mode_changed', (args, state) => args.mode === state.mode);
 
         // Register condition cards
-        registerCondition('marstek_mode_condition', async ({
+        registerCondition('marstek_mode_changed_condition', async ({
             device,
             mode,
         }: {
@@ -698,21 +707,21 @@ export default class MarstekVenusLocalApiDriver extends Homey.Driver {
             return currentMode === mode;
         });
 
-        registerCondition('marstek_temperature_condition', async ({
+        registerCondition('marstek_temperature_threshold_condition', async ({
             device,
             threshold,
-            direction,
+            comparison,
         }: {
         device: Homey.Device;
         threshold: number;
-        direction: string;
+        comparison: string;
       }) => {
             const temperature = await device.getCapabilityValue('measure_temperature');
             if (temperature === null || temperature === undefined) return false;
 
-            if (direction === 'above') {
+            if (comparison === 'above') {
                 return temperature > threshold;
-            } if (direction === 'below') {
+            } if (comparison === 'below') {
                 return temperature < threshold;
             }
             return false;
@@ -740,6 +749,27 @@ export default class MarstekVenusLocalApiDriver extends Homey.Driver {
             return gridPower < 0;
         });
 
+        // Compare a numeric capability value against a threshold
+        const compareCapability = async (device: Homey.Device, capabilityId: string, comparison: string, threshold: number, transform = (v: number) => v) => {
+            const value = await device.getCapabilityValue(capabilityId);
+            if (value === null || value === undefined) return false;
+            const actual = transform(value);
+            if (comparison === 'above') return actual > threshold;
+            if (comparison === 'below') return actual < threshold;
+            return false;
+        };
+        type ThresholdArgs = { device: Homey.Device; comparison: string; threshold: number };
+
+        registerCondition('marstek_battery_percentage_threshold_condition', async ({ device, comparison, threshold }: ThresholdArgs) => compareCapability(device, 'measure_battery', comparison, threshold));
+        registerCondition('marstek_solar_power_threshold_condition', async ({ device, comparison, threshold }: ThresholdArgs) => compareCapability(device, 'measure_power_pv', comparison, threshold));
+        // measure_power_ongrid: positive = import from grid, negative = export to grid
+        registerCondition('marstek_grid_import_power_condition', async ({ device, comparison, threshold }: ThresholdArgs) => compareCapability(device, 'measure_power_ongrid', comparison, threshold, (v) => Math.max(v, 0)));
+        registerCondition('marstek_grid_export_power_condition', async ({ device, comparison, threshold }: ThresholdArgs) => compareCapability(device, 'measure_power_ongrid', comparison, threshold, (v) => Math.max(-v, 0)));
+        registerCondition('marstek_charging_state_condition', async ({ device, state }: { device: Homey.Device; state: string }) => {
+            const chargingState = await device.getCapabilityValue('battery_charging_state');
+            return chargingState === state;
+        });
+
         registerCondition('marstek_rssi_condition', async ({
             device,
             threshold,
@@ -759,6 +789,10 @@ export default class MarstekVenusLocalApiDriver extends Homey.Driver {
             }
             return false;
         });
+
+        // Device trigger: only run flows whose state argument matches the new CT state
+        this.homey.flow.getDeviceTriggerCard('marstek_ct_state_changed')
+            .registerRunListener(async (args: { state: number }, state: { state: number }) => Number(args.state) === Number(state.state));
     }
 
     /**

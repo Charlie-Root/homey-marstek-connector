@@ -127,21 +127,28 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
      * @returns {Promise<void>} Resolves once capability values are cleared.
      */
     private async updateCapabilitiesWithNull() {
-        await this.setCapabilityValue('measure_battery', null);
-        await this.setCapabilityValue('measure_power', null);
-        await this.setCapabilityValue('measure_power.charge', null);
-        await this.setCapabilityValue('measure_power.discharge', null);
-        await this.setCapabilityValue('last_message_received', null);
-        await this.setCapabilityValue('measure_battery_profit_daily', null);
-        await this.setCapabilityValue('measure_battery_profit_hourly', null);
-        await this.setCapabilityValue('measure_battery_charge_energy_daily', null);
-        await this.setCapabilityValue('measure_battery_discharge_energy_daily', null);
-        await this.setCapabilityValue('measure_battery_savings_daily', null);
-        await this.setCapabilityValue('measure_battery_cost_daily', null);
-        await this.setCapabilityValue('measure_battery_net_profit_daily', null);
-        await this.setCapabilityValue('measure_calculation_timestamp', null);
-        await this.setCapabilityValue('measure_current_energy_price', null);
-        await this.setCapabilityValue('measure_calculation_method', null);
+        const capabilities = [
+            'measure_battery',
+            'measure_power',
+            'measure_power.charge',
+            'measure_power.discharge',
+            'last_message_received',
+            'measure_battery_profit_daily',
+            'measure_battery_profit_hourly',
+            'measure_battery_charge_energy_daily',
+            'measure_battery_discharge_energy_daily',
+            'measure_battery_savings_daily',
+            'measure_battery_cost_daily',
+            'measure_battery_net_profit_daily',
+            'measure_calculation_timestamp',
+            'measure_current_energy_price',
+            'measure_calculation_method',
+        ];
+        for (const cap of capabilities) {
+            // Devices paired before a capability was introduced need it added first
+            if (!this.hasCapability(cap)) await this.addCapability(cap);
+            await this.setCapabilityValue(cap, null);
+        }
     }
 
     /**
