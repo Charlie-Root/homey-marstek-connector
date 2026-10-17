@@ -123,11 +123,11 @@ export default class MarstekVenusCloudDriver extends Homey.Driver {
             );
             this.clients.set(credentials.username, newClient);
             return newClient;
-        } else {
-            if (this.debug) this.log('[cloud] Using available instance of client.');
-            client.setPassword(credentials.password);
-            return client;
         }
+        if (this.debug) this.log('[cloud] Using available instance of client.');
+        client.setPassword(credentials.password);
+        return client;
+
     }
 
     /**
@@ -139,7 +139,7 @@ export default class MarstekVenusCloudDriver extends Homey.Driver {
         return crypto.createHash('md5').update(password).digest('hex');
     }
 
-};
+}
 
 // Also use module.exports for Homey
 module.exports = MarstekVenusCloudDriver;

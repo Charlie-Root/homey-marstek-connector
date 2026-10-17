@@ -1,0 +1,82 @@
+{
+  "id": "marstek_ble_alarm_changed",
+  "title": {
+    "en": "Alarm code changed (BLE)",
+    "nl": "Alarmcode gewijzigd (BLE)",
+    "da": "Alarmkode ændret (BLE)",
+    "de": "Alarmcode geändert (BLE)",
+    "es": "Código de alarma cambiado (BLE)",
+    "fr": "Code d'alarme modifié (BLE)",
+    "it": "Codice allarme cambiato (BLE)",
+    "no": "Alarmkode endret (BLE)",
+    "sv": "Larmkod ändrad (BLE)",
+    "pl": "Kod alarmu zmieniony (BLE)",
+    "ru": "Код тревоги изменился (BLE)",
+    "ko": "알람 코드 변경됨 (BLE)",
+    "ar": "تغيّر رمز الإنذار (BLE)"
+  },
+  "hint": {
+    "en": "Triggers when the battery's BMS error or warning code changes (including when an alarm clears). The codes are raw values from the battery; include them when reporting issues so their meaning can be decoded over time.",
+    "nl": "Wordt geactiveerd wanneer de BMS-fout- of waarschuwingscode van de batterij verandert (ook wanneer een alarm wordt opgeheven). De codes zijn ruwe waarden van de batterij; vermeld ze bij het melden van problemen zodat hun betekenis in de loop van de tijd kan worden ontcijferd.",
+    "da": "Udløses, når batteriets BMS-fejl- eller advarselskode ændres (også når en alarm ophæves). Koderne er rå værdier fra batteriet; medtag dem ved fejlrapportering, så deres betydning kan afkodes over tid.",
+    "de": "Wird ausgelöst, wenn sich der BMS-Fehler- oder Warncode der Batterie ändert (auch wenn ein Alarm erlischt). Die Codes sind Rohwerte der Batterie; geben Sie sie bei Problemmeldungen an, damit ihre Bedeutung mit der Zeit entschlüsselt werden kann.",
+    "es": "Se activa cuando cambia el código de error o advertencia del BMS de la batería (incluso cuando se borra una alarma). Los códigos son valores sin procesar de la batería; inclúyalos al informar problemas para poder descifrar su significado con el tiempo.",
+    "fr": "Se déclenche lorsque le code d'erreur ou d'avertissement du BMS de la batterie change (y compris lorsqu'une alarme disparaît). Les codes sont des valeurs brutes de la batterie ; incluez-les lors du signalement de problèmes afin de pouvoir décoder leur signification au fil du temps.",
+    "it": "Si attiva quando cambia il codice di errore o avviso del BMS della batteria (anche quando un allarme si azzera). I codici sono valori grezzi della batteria; includili nelle segnalazioni di problemi così da poterne decodificare il significato nel tempo.",
+    "no": "Utløses når batteriets BMS-feil- eller advarselskode endres (også når en alarm fjernes). Kodene er råverdier fra batteriet; ta dem med ved feilrapportering slik at betydningen kan dekodes over tid.",
+    "sv": "Utlöses när batteriets BMS-fel- eller varningskod ändras (även när ett larm försvinner). Koderna är råvärden från batteriet; inkludera dem vid felrapportering så att deras betydelse kan avkodas med tiden.",
+    "pl": "Wyzwalane, gdy zmienia się kod błędu lub ostrzeżenia BMS baterii (również gdy alarm znika). Kody to surowe wartości z baterii; dołącz je do zgłoszeń problemów, aby z czasem można było rozszyfrować ich znaczenie.",
+    "ru": "Срабатывает при изменении кода ошибки или предупреждения BMS батареи (в том числе при сбросе тревоги). Коды — это сырые значения от батареи; указывайте их при сообщении о проблемах, чтобы со временем расшифровать их значение.",
+    "ko": "배터리 BMS 오류 또는 경고 코드가 변경될 때(알람이 해제될 때 포함) 트리거됩니다. 코드는 배터리의 원시 값입니다. 문제를 보고할 때 함께 제공하면 시간이 지나면서 의미를 해독할 수 있습니다.",
+    "ar": "يُفعَّل عندما يتغيّر رمز خطأ أو تحذير BMS للبطارية (بما في ذلك عند زوال الإنذار). الرموز قيم خام من البطارية؛ أرفقها عند الإبلاغ عن المشكلات حتى يمكن فك معناها بمرور الوقت."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus-ble"
+    }
+  ],
+  "tokens": [
+    {
+      "name": "error_code",
+      "type": "string",
+      "title": {
+        "en": "Error code",
+        "nl": "Foutcode",
+        "da": "Fejlkode",
+        "de": "Fehlercode",
+        "es": "Código de error",
+        "fr": "Code d'erreur",
+        "it": "Codice errore",
+        "no": "Feilkode",
+        "sv": "Felkod",
+        "pl": "Kod błędu",
+        "ru": "Код ошибки",
+        "ko": "오류 코드",
+        "ar": "رمز الخطأ"
+      },
+      "example": "0x0012"
+    },
+    {
+      "name": "warning_code",
+      "type": "string",
+      "title": {
+        "en": "Warning code",
+        "nl": "Waarschuwingscode",
+        "da": "Advarselskode",
+        "de": "Warncode",
+        "es": "Código de advertencia",
+        "fr": "Code d'avertissement",
+        "it": "Codice avviso",
+        "no": "Advarselskode",
+        "sv": "Varningskod",
+        "pl": "Kod ostrzeżenia",
+        "ru": "Код предупреждения",
+        "ko": "경고 코드",
+        "ar": "رمز التحذير"
+      },
+      "example": "0x00000000"
+    }
+  ]
+}

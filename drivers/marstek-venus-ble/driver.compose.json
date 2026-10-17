@@ -1,0 +1,157 @@
+{
+  "name": {
+    "en": "Marstek Venus (Bluetooth)",
+    "nl": "Marstek Venus (Bluetooth)",
+    "da": "Marstek Venus (Bluetooth)",
+    "de": "Marstek Venus (Bluetooth)",
+    "es": "Marstek Venus (Bluetooth)",
+    "fr": "Marstek Venus (Bluetooth)",
+    "it": "Marstek Venus (Bluetooth)",
+    "no": "Marstek Venus (Bluetooth)",
+    "sv": "Marstek Venus (Bluetooth)",
+    "pl": "Marstek Venus (Bluetooth)",
+    "ru": "Marstek Venus (Bluetooth)",
+    "ko": "마르스텍 비너스 (Bluetooth)",
+    "ar": "مارستك فينوس (Bluetooth)"
+  },
+  "class": "battery",
+  "capabilities": [
+    "battery_charging_state",
+    "measure_battery",
+    "measure_battery_soh",
+    "battery_work_mode",
+    "measure_power",
+    "measure_power_ongrid",
+    "measure_power_offgrid",
+    "measure_voltage",
+    "measure_current",
+    "measure_temperature",
+    "measure_temperature.mosfet",
+    "meter_power.charge",
+    "meter_power.discharge",
+    "meter_power.daily_charge",
+    "meter_power.daily_discharge",
+    "alarm_generic",
+    "battery_alarm_code",
+    "last_message_received"
+  ],
+  "energy": {
+    "homeBattery": true,
+    "meterPowerImportedCapability": "meter_power.charge",
+    "meterPowerExportedCapability": "meter_power.discharge"
+  },
+  "capabilitiesOptions": {
+    "measure_temperature.mosfet": {
+      "title": {
+        "en": "MOSFET temperature",
+        "nl": "MOSFET-temperatuur",
+        "da": "MOSFET-temperatur",
+        "de": "MOSFET-Temperatur",
+        "es": "Temperatura del MOSFET",
+        "fr": "Température MOSFET",
+        "it": "Temperatura MOSFET",
+        "no": "MOSFET-temperatur",
+        "sv": "MOSFET-temperatur",
+        "pl": "Temperatura MOSFET",
+        "ru": "Температура MOSFET",
+        "ko": "MOSFET 온도",
+        "ar": "درجة حرارة MOSFET"
+      }
+    },
+    "meter_power.charge": {
+      "title": {
+        "en": "Total charged",
+        "nl": "Totaal geladen",
+        "da": "Samlet opladet",
+        "de": "Gesamt geladen",
+        "es": "Total cargado",
+        "fr": "Total chargé",
+        "it": "Totale caricato",
+        "no": "Totalt ladet",
+        "sv": "Totalt laddat",
+        "pl": "Łącznie naładowano",
+        "ru": "Всего заряжено",
+        "ko": "총 충전량",
+        "ar": "إجمالي الشحن"
+      }
+    },
+    "meter_power.discharge": {
+      "title": {
+        "en": "Total discharged",
+        "nl": "Totaal ontladen",
+        "da": "Samlet afladet",
+        "de": "Gesamt entladen",
+        "es": "Total descargado",
+        "fr": "Total déchargé",
+        "it": "Totale scaricato",
+        "no": "Totalt utladet",
+        "sv": "Totalt urladdat",
+        "pl": "Łącznie rozładowano",
+        "ru": "Всего разряжено",
+        "ko": "총 방전량",
+        "ar": "إجمالي التفريغ"
+      }
+    },
+    "meter_power.daily_charge": {
+      "title": {
+        "en": "Charged today",
+        "nl": "Vandaag opgeladen",
+        "da": "Opladet i dag",
+        "de": "Heute geladen",
+        "es": "Cargado hoy",
+        "fr": "Chargé aujourd'hui",
+        "it": "Caricato oggi",
+        "no": "Ladet i dag",
+        "sv": "Laddat idag",
+        "pl": "Naładowano dziś",
+        "ru": "Заряжено сегодня",
+        "ko": "오늘 충전량",
+        "ar": "الشحن اليوم"
+      }
+    },
+    "meter_power.daily_discharge": {
+      "title": {
+        "en": "Discharged today",
+        "nl": "Vandaag ontladen",
+        "da": "Afladet i dag",
+        "de": "Heute entladen",
+        "es": "Descargado hoy",
+        "fr": "Déchargé aujourd'hui",
+        "it": "Scaricato oggi",
+        "no": "Utladet i dag",
+        "sv": "Urladdat idag",
+        "pl": "Rozładowano dziś",
+        "ru": "Разряжено сегодня",
+        "ko": "오늘 방전량",
+        "ar": "التفريغ اليوم"
+      }
+    }
+  },
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [
+    "ble"
+  ],
+  "images": {
+    "small": "{{driverAssetsPath}}/images/small.png",
+    "large": "{{driverAssetsPath}}/images/large.png",
+    "xlarge": "{{driverAssetsPath}}/images/xlarge.png"
+  },
+  "pair": [
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "next": "add_devices"
+      },
+      "options": {
+        "multiple": true
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ]
+}

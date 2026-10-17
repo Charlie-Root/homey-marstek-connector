@@ -1,0 +1,40 @@
+{
+  "id": "marstek_ble_system_reset",
+  "title": {
+    "en": "Restart the battery (BLE)",
+    "nl": "Batterij herstarten (BLE)",
+    "da": "Genstart batteriet (BLE)",
+    "de": "Batterie neu starten (BLE)",
+    "es": "Reiniciar la batería (BLE)",
+    "fr": "Redémarrer la batterie (BLE)",
+    "it": "Riavvia la batteria (BLE)",
+    "no": "Start batteriet på nytt (BLE)",
+    "sv": "Starta om batteriet (BLE)",
+    "pl": "Uruchom ponownie baterię (BLE)",
+    "ru": "Перезапустить батарею (BLE)",
+    "ko": "배터리 재시작 (BLE)",
+    "ar": "إعادة تشغيل البطارية (BLE)"
+  },
+  "hint": {
+    "en": "⚠️ Disruptive: forces the battery to restart, briefly interrupting power delivery. Use only when needed.",
+    "nl": "⚠️ Verstorend: dwingt de batterij tot herstart en onderbreekt kort de stroomlevering. Gebruik alleen indien nodig.",
+    "da": "⚠️ Forstyrrende: tvinger batteriet til at genstarte og afbryder kortvarigt strømforsyningen. Brug kun ved behov.",
+    "de": "⚠️ Störend: erzwingt einen Neustart der Batterie und unterbricht kurz die Stromlieferung. Nur bei Bedarf verwenden.",
+    "es": "⚠️ Disruptivo: obliga a la batería a reiniciarse, interrumpiendo brevemente el suministro de energía. Úselo solo cuando sea necesario.",
+    "fr": "⚠️ Perturbateur : force le redémarrage de la batterie, interrompant brièvement la fourniture d'énergie. À utiliser uniquement si nécessaire.",
+    "it": "⚠️ Invasivo: forza il riavvio della batteria, interrompendo brevemente l'erogazione di energia. Usare solo se necessario.",
+    "no": "⚠️ Forstyrrende: tvinger batteriet til å starte på nytt og avbryter kort strømleveringen. Bruk kun ved behov.",
+    "sv": "⚠️ Störande: tvingar batteriet att starta om och avbryter kort strömleveransen. Använd endast vid behov.",
+    "pl": "⚠️ Zakłócające: wymusza ponowne uruchomienie baterii, na chwilę przerywając dostawę energii. Używaj tylko w razie potrzeby.",
+    "ru": "⚠️ С прерыванием: принудительно перезапускает батарею, ненадолго прерывая подачу энергии. Используйте только при необходимости.",
+    "ko": "⚠️ 작동 중단: 배터리를 강제로 재시작하여 잠시 전력 공급을 중단합니다. 필요할 때만 사용하세요.",
+    "ar": "⚠️ مُعطِّل: يفرض إعادة تشغيل البطارية مع انقطاع قصير في إمداد الطاقة. استخدمه عند الحاجة فقط."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus-ble"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
   "id": "marstek_manual_mode",
   "title": {
     "en": "Set battery mode to 'Manual'",
-    "nl": "Stel batterijweiser in op 'Handmatig'",
+    "nl": "Stel batterijmodus in op 'Handmatig'",
     "da": "Indstil batteritilstand til 'Manuel'",
     "de": "Batteriemodus auf 'Manuell' einstellen",
     "es": "Establecer el modo de batería en 'Manual'",
@@ -12,7 +12,8 @@
     "sv": "Ställ in batteriläge på 'Manuell'",
     "pl": "Ustaw tryb baterii na 'Ręczny'",
     "ru": "Установить режим батареи на 'Ручной'",
-    "ko": "'수동'으로 배터리 모드 설정"
+    "ko": "'수동'으로 배터리 모드 설정",
+    "ar": "تعيين وضع البطارية إلى 'يدوي'"
   },
   "titleFormatted": {
     "en": "Set battery mode to 'Manual' using from [[start_time]] to [[end_time]] on [[days]] with [[power]] Watt and enable [[enable]]",
@@ -26,7 +27,8 @@
     "sv": "Ställ in batteriläge på 'Manuell' från [[start_time]] till [[end_time]] på [[days]] med [[power]] Watt och aktivera [[enable]]",
     "pl": "Ustaw tryb baterii na 'Ręczny' od [[start_time]] do [[end_time]] na [[days]] z [[power]] Wattem i włącz [[enable]]",
     "ru": "Установить режим батареи на 'Ручной' с [[start_time]] до [[end_time]] по [[days]] с [[power]] Ватт и включить [[enable]]",
-    "ko": "[[start_time]]에서 [[end_time]]까지 [[days]]에 [[power]] 와트로 '수동'으로 배터리 모드 설정 및 [[enable]]"
+    "ko": "[[start_time]]에서 [[end_time]]까지 [[days]]에 [[power]] 와트로 '수동'으로 배터리 모드 설정 및 [[enable]]",
+    "ar": "ضبط وضع البطارية على 'يدوي' من [[start_time]] إلى [[end_time]] في [[days]] بقدرة [[power]] واط وتفعيل [[enable]]"
   },
   "args": [
     {
@@ -49,7 +51,8 @@
         "sv": "Starttid",
         "pl": "Czas rozpoczęcia",
         "ru": "Время начала",
-        "ko": "시작 시간"
+        "ko": "시작 시간",
+        "ar": "وقت البدء"
       }
     },
     {
@@ -67,7 +70,8 @@
         "sv": "Sluttid",
         "pl": "Czas zakończenia",
         "ru": "Время окончания",
-        "ko": "종료 시간"
+        "ko": "종료 시간",
+        "ar": "وقت الانتهاء"
       }
     },
     {
@@ -83,7 +87,8 @@
         "sv": "Dag(ar)",
         "pl": "Dzień(i)",
         "ru": "День(и)",
-        "ko": "요일"
+        "ko": "요일",
+        "ar": "اليوم"
       },
       "name": "days",
       "type": "multiselect",
@@ -103,7 +108,8 @@
             "sv": "Måndag",
             "pl": "Poniedziałek",
             "ru": "Понедельник",
-            "ko": "월요일"
+            "ko": "월요일",
+            "ar": "الإثنين"
           }
         },
         {
@@ -120,7 +126,8 @@
             "sv": "Tisdag",
             "pl": "Wtorek",
             "ru": "Вторник",
-            "ko": "화요일"
+            "ko": "화요일",
+            "ar": "الثلاثاء"
           }
         },
         {
@@ -137,7 +144,8 @@
             "sv": "Onsdag",
             "pl": "Środa",
             "ru": "Среда",
-            "ko": "수요일"
+            "ko": "수요일",
+            "ar": "الأربعاء"
           }
         },
         {
@@ -154,7 +162,8 @@
             "sv": "Torsdag",
             "pl": "Czwartek",
             "ru": "Четверг",
-            "ko": "목요일"
+            "ko": "목요일",
+            "ar": "الخميس"
           }
         },
         {
@@ -171,7 +180,8 @@
             "sv": "Fredag",
             "pl": "Piątek",
             "ru": "Пятница",
-            "ko": "금요일"
+            "ko": "금요일",
+            "ar": "الجمعة"
           }
         },
         {
@@ -188,7 +198,8 @@
             "sv": "Lördag",
             "pl": "Sobota",
             "ru": "Суббота",
-            "ko": "토요일"
+            "ko": "토요일",
+            "ar": "السبت"
           }
         },
         {
@@ -205,7 +216,8 @@
             "sv": "Söndag",
             "pl": "Niedziela",
             "ru": "Воскресенье",
-            "ko": "일요일"
+            "ko": "일요일",
+            "ar": "الأحد"
           }
         }
       ]
@@ -225,7 +237,8 @@
         "sv": "Watt (negativ = laddning)",
         "pl": "Waty (ujemny = ładowanie)",
         "ru": "Вт (отрицательный = зарядка)",
-        "ko": "와트 (음수 = 충전)"
+        "ko": "와트 (음수 = 충전)",
+        "ar": "وات (سالب = شحن)"
       },
       "step": 1
     },
@@ -244,7 +257,8 @@
         "sv": "Aktivera schema",
         "pl": "Włącz harmonogram",
         "ru": "Включить расписание",
-        "ko": "일정 활성화"
+        "ko": "일정 활성화",
+        "ar": "تمكين الجدول"
       }
     }
   ]

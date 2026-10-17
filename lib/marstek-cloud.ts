@@ -105,10 +105,9 @@ export default class MarstekCloud {
                     if (this.debug) this.logger.log('[cloud] New list of devices received:', JSON.stringify(response.data));
                     this.devices = response.data;
                     return response;
-                } else {
-                    this.devices = undefined;
-                    throw new Error('Login did not return any devices.');
                 }
+                this.devices = undefined;
+                throw new Error('Login did not return any devices.');
 
             } catch (err) {
                 this.logger.error((err as Error).message || err);
@@ -225,7 +224,7 @@ export default class MarstekCloud {
      */
     async requestDeviceList() {
         // Request latest device details (again)
-        return await this.request(`/ems/api/v1/getDeviceList?token=${this.token}`);
+        return this.request(`/ems/api/v1/getDeviceList?token=${this.token}`);
     }
 
     /**
@@ -241,7 +240,7 @@ export default class MarstekCloud {
 
         return new Promise((resolve, reject) => {
             const request = {
-                method: method,
+                method,
                 protocol: url.protocol,
                 hostname: url.hostname,
                 port: url.port,
@@ -250,24 +249,24 @@ export default class MarstekCloud {
             };
             const req = httpModule.request(request, (res) => {
                 let data = '';
-                res.on('data', chunk => {
+                res.on('data', (chunk) => {
                     data += chunk;
                 });
                 res.on('end', () => {
                     try {
                         // Incorrect http status received
                         if (res.statusCode && res.statusCode >= 400) {
-                            throw new Error('Incorrect HTTP status code received: ' + res.statusCode);
+                            throw new Error(`Incorrect HTTP status code received: ${res.statusCode}`);
                         }
                         // Empty response
                         if (!data) {
                             this.logger.error('[cloud] Empty response received');
-                            return resolve(undefined);
+                            resolve(undefined);
+                            return;
                         }
                         // Finally parse and resolve
                         const parsed = JSON.parse(data);
                         resolve(parsed);
-                        return parsed;
                     } catch (err) {
                         this.logger.error('Exception during request: ', (err as Error).message || err);
                         reject(err);

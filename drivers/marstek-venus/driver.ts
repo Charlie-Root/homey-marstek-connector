@@ -18,12 +18,59 @@ interface MarsteRequest extends MessagePayload {
     id: number; // int16 max
 }
 
+// Factor defaults per device type and firmware version
+type FactorDefaults = Record<string, Record<number, Record<string, number>>>;
+const factorDefaults: FactorDefaults = {
+    default: {
+        0: {
+            factor_bat_capacity: 100,
+            factor_bat_soc: 1,
+            factor_bat_power: 10,
+            factor_bat_temp: 10,
+            factor_total_grid_input_energy: 100,
+            factor_total_grid_output_energy: 100,
+            factor_total_load_energy: 100,
+            factor_ongrid_power: -1,
+            factor_offgrid_power: -1,
+            factor_pv_power: -1,
+        },
+    },
+    VenusE: {
+        0: {
+        },
+        154: {
+            factor_bat_capacity: 1000,
+            factor_bat_power: 1,
+            factor_bat_temp: 1,
+            factor_total_grid_input_energy: 10,
+            factor_total_grid_output_energy: 10,
+            factor_total_load_energy: 10,
+        },
+    },
+    'VenusE 3.0': {
+        0: {
+            factor_bat_capacity: 1000,
+            factor_bat_power: 1,
+            factor_total_grid_input_energy: 1000,
+            factor_total_grid_output_energy: 1000,
+            factor_total_load_energy: 1000,
+        },
+        139: {
+            factor_bat_power: 10,
+            factor_bat_capacity: 100,
+        },
+        144: {
+            factor_bat_capacity: 1000,
+        },
+    },
+};
+
 /**
  * Driver responsible for managing Marstek Venus devices that communicate over UDP.
  * It provides device discovery, background polling, flow card actions and command handling.
  * @extends Homey.Driver
  */
-export default class MarstekVenusDriver extends Homey.Driver {
+export default class MarstekVenusLocalApiDriver extends Homey.Driver {
 
     // Add extra details during debugging
     private debug: boolean = config.isTestVersion;
@@ -59,7 +106,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves once initialisation completes.
      */
     async onInit() {
-        if (this.debug) this.log('MarstekVenusDriver has been initialized');
+        if (this.debug) this.log('MarstekVenusLocalApiDriver has been initialized');
         // Log Homey environment details for debugging
         this.log('Homey environment details:', {
             version: this.homey.manifest.version,
@@ -75,7 +122,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
      * @returns {Promise<void>} Resolves after cleaning up the shared socket connection.
      */
     async onUninit() {
-        if (this.debug) this.log('MarstekVenusDriver has been uninitialized');
+        if (this.debug) this.log('MarstekVenusLocalApiDriver has been uninitialized');
         // Make sure to destroy the socket instance
         if (this.socket) {
             this.socket.destroy();
@@ -223,9 +270,13 @@ export default class MarstekVenusDriver extends Homey.Driver {
             const interval = this.getPollInterval();
             if (this.debug) this.log('Started background polling with interval', interval);
             this.pollTimeout = this.homey.setInterval(() => {
-                this.poll().catch(err => { this.error('Error during polling', err) });
+                this.poll().catch((err) => {
+                    this.error('Error during polling', err);
+                });
             }, interval);
-            this.poll().catch(err => { this.error('Error during polling', err) });
+            this.poll().catch((err) => {
+                this.error('Error during polling', err);
+            });
         }
     }
 
@@ -309,6 +360,26 @@ export default class MarstekVenusDriver extends Homey.Driver {
         // Explicitly type the argument objects for each flow card
         register('marstek_auto_mode', async ({ device }: { device: Homey.Device }) => this.setModeAuto(device));
         register('marstek_ai_mode', async ({ device }: { device: Homey.Device }) => this.setModeAI(device));
+        register(
+            'marstek_ups_mode',
+            async ({
+                device,
+                enable,
+            }: {
+                device: Homey.Device,
+                enable: boolean,
+            }) => this.setModeUPS(device, enable),
+        );
+        register(
+            'marstek_led_control',
+            async ({
+                device,
+                state,
+            }: {
+                device: Homey.Device,
+                state: boolean,
+            }) => this.setLedState(device, state),
+        );
         register(
             'marstek_manual_mode',
             async ({
@@ -418,7 +489,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
     async setModeManual(device: Homey.Device, start_time: string, end_time: string, days: string[], power: number, enable: boolean) {
         const bitArray = [...'00000000'];
         days.forEach((day: string) => {
-            bitArray[7 - parseInt(day)] = '1';
+            bitArray[parseInt(day, 10)] = '1';
         });
         const bitString = bitArray.join('');
         const bitValue = parseInt(bitString, 2);
@@ -466,8 +537,8 @@ export default class MarstekVenusDriver extends Homey.Driver {
         if (Number.isNaN(numericPower) || Number.isNaN(numericSeconds)) {
             throw new Error('Power and seconds must be numbers');
         }
-        if (numericPower < 0 || numericSeconds < 0) {
-            throw new Error('Power and seconds must be zero or greater');
+        if (numericSeconds < 1) {
+            throw new Error('Seconds must be one or greater');
         }
 
         const config = {
@@ -499,7 +570,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
         }
         const end_time = `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
         // Days are always all days
-        const dayArray = ['0', '1', '2', '3', '4', '5', '6'];
+        const dayArray = ['1', '2', '3', '4', '5', '6', '7'];
         await this.setModeManual(device, start_time, end_time, dayArray, power, enable);
     }
 
@@ -521,6 +592,43 @@ export default class MarstekVenusDriver extends Homey.Driver {
             },
         };
         await this.setModeConfiguration(device, config);
+    }
+
+    /**
+     * Configures the device for UPS mode.
+     * @param {Homey.device} device - Target device instance.
+     * @param {boolean} enable Whether UPS mode should be enabled.
+     * @returns {Promise<void>} Resolves once the command succeeds.
+     */
+    async setModeUPS(device: Homey.Device, enable: boolean) {
+        const config = {
+            mode: 'UPS',
+            ups_cfg: {
+                enable: enable ? 1 : 0,
+            },
+        };
+        await this.setModeConfiguration(device, config);
+    }
+
+    /**
+     * Controls the device LEDs using the local API.
+     * @param {Homey.device} device Target device instance.
+     * @param {boolean} state Whether the LEDs should be switched on.
+     * @returns {Promise<void>} Resolves once the command succeeds.
+     */
+    async setLedState(device: Homey.Device, state: boolean) {
+        const result = await this.sendCommand(
+            device,
+            'Led.Ctrl',
+            {
+                id: 0,
+                state: state ? 1 : 0,
+            },
+        );
+
+        if (result && typeof result === 'object' && 'set_result' in result && !result.set_result) {
+            throw new Error('Device rejected the requested LED change');
+        }
     }
 
     /**
@@ -588,20 +696,11 @@ export default class MarstekVenusDriver extends Homey.Driver {
         };
 
         return new Promise((resolve, reject) => {
-            const timer = this.homey.setTimeout(() => {
-                this.error('Timeout while waiting for mode change response');
-                cleanup();
-                reject(new Error('Timed out waiting for device response'));
-            }, timeout);
-
-             const cleanup = () => {
-                socket.off(handler);
-                this.homey.clearTimeout(timer);
-            };
-
+            let timer: NodeJS.Timeout;
             const handler = (json: any, remote: dgram.RemoteInfo) => {
                 if (json.id === unique) {
-                    cleanup();
+                    socket.off(handler);
+                    this.homey.clearTimeout(timer);
                     if (json?.result) {
                         resolve(json.result ?? null);
                     } else {
@@ -610,13 +709,40 @@ export default class MarstekVenusDriver extends Homey.Driver {
                 }
             };
 
+            timer = this.homey.setTimeout(() => {
+                this.error('Timeout while waiting for mode change response');
+                socket.off(handler);
+                reject(new Error('Timed out waiting for device response'));
+            }, timeout);
+
             socket.on(handler);
 
             socket.send(JSON.stringify(payload), address).catch((err: Error) => {
-                cleanup();
+                socket.off(handler);
+                this.homey.clearTimeout(timer);
                 reject(err);
             });
         });
+    }
+
+    // Helper function to select and combine factor properties based on model and version
+    retrieveFactorDefaults(model: string, version: number) {
+        const baseDefaults = factorDefaults['default'][0];
+        const modelVersions = factorDefaults[model];
+        if (!modelVersions) return baseDefaults;
+        // find highest version of modelVersions that is less than or equal to version number
+        const versionDefaults = {
+            ...baseDefaults,
+            ...modelVersions[0],
+        };
+        // Keep applying factors up to the device version
+        for (const verStr of Object.keys(modelVersions)) {
+            const ver = parseInt(verStr, 10);
+            if (ver > 0 && ver <= version) {
+                Object.assign(versionDefaults, modelVersions[ver]);
+            }
+        }
+        return versionDefaults;
     }
 
     /**
@@ -640,6 +766,12 @@ export default class MarstekVenusDriver extends Homey.Driver {
                     // Detect if device is alread in array
                     const unique = json.src;
                     if (!devices.find((element) => element.data.id === unique)) {
+
+                        // Find factor defaults for this model and version
+                        const factorDefaults = this.retrieveFactorDefaults(json.result.device, json.result.ver);
+                        if (this.debug) this.log('Device default factors:', JSON.stringify(factorDefaults));
+
+                        // Add device to array
                         devices.push({
                             name: unique,
                             data: {
@@ -648,9 +780,11 @@ export default class MarstekVenusDriver extends Homey.Driver {
                             settings: {
                                 poll: !!this.homey.settings.get('default_poll_enabled'),
                                 interval: this.homey.settings.get('default_poll_interval') || 60,
+                                broadcast: true,
                                 src: unique,
                                 model: `${json.result.device} v${json.result.ver}`,
                                 firmware: String(json.result.ver),      // firmware number, make sure to cast to string due to label (read-only) configuration
+                                ...factorDefaults,                      // apply factor defaults
                             },
                             store: {
                                 address: remote.address,                // Store initial IP address
@@ -662,7 +796,7 @@ export default class MarstekVenusDriver extends Homey.Driver {
             socket.on(handler);
 
             // Message to detect batteries as documented in the API
-            const message = '{"id":"Homey-Detect","method":"Marstek.GetDevice","params":{"ble_mac":"0"}}';
+            const message = '{"id":31999,"method":"Marstek.GetDevice","params":{"ble_mac":"0"}}';
             const sendMessage = async () => {
                 if (address) {
                     if (this.debug) this.log('Detection sending to', address + ':' + (port || 30000), ':', message);
@@ -692,4 +826,4 @@ export default class MarstekVenusDriver extends Homey.Driver {
 }
 
 // Also use module.exports for Homey
-module.exports = MarstekVenusDriver;
+module.exports = MarstekVenusLocalApiDriver;

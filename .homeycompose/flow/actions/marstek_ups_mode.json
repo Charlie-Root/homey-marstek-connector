@@ -1,0 +1,59 @@
+{
+  "id": "marstek_ups_mode",
+  "title": {
+    "en": "Set battery mode to 'UPS'",
+    "nl": "Stel batterijmodus in op 'UPS'",
+    "da": "Indstil batteritilstanden til 'UPS'",
+    "de": "Setze den Batteriemodus auf 'UPS'",
+    "es": "Establecer el modo de bateria en 'UPS'",
+    "fr": "Regler le mode de la batterie sur 'UPS'",
+    "it": "Imposta la modalita batteria su 'UPS'",
+    "no": "Sett batterimodus til 'UPS'",
+    "sv": "Stall in batterilaget pa 'UPS'",
+    "pl": "Ustaw tryb baterii na 'UPS'",
+    "ru": "Ustanovit rezhim batarei na 'UPS'",
+    "ko": "Baeteori modeureul 'UPS'ro seoljeong",
+    "ar": "Set battery mode to 'UPS'"
+  },
+  "titleFormatted": {
+    "en": "Set battery mode to 'UPS' and enable [[enable]]",
+    "nl": "Stel batterijmodus in op 'UPS' en inschakelen [[enable]]",
+    "da": "Indstil batteritilstanden til 'UPS' og aktiver [[enable]]",
+    "de": "Setze den Batteriemodus auf 'UPS' und aktivieren [[enable]]",
+    "es": "Establecer el modo de bateria en 'UPS' y habilitar [[enable]]",
+    "fr": "Regler le mode de la batterie sur 'UPS' et activer [[enable]]",
+    "it": "Imposta la modalita batteria su 'UPS' e abilita [[enable]]",
+    "no": "Sett batterimodus til 'UPS' og aktiver [[enable]]",
+    "sv": "Stall in batterilaget pa 'UPS' och aktivera [[enable]]",
+    "pl": "Ustaw tryb baterii na 'UPS' i wlacz [[enable]]",
+    "ru": "Ustanovit rezhim batarei na 'UPS' i vklyuchit [[enable]]",
+    "ko": "Baeteori modeureul 'UPS'ro seoljeong mit [[enable]]",
+    "ar": "Set battery mode to 'UPS' and enable [[enable]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus"
+    },
+    {
+      "name": "enable",
+      "type": "checkbox",
+      "title": {
+        "en": "Enable",
+        "nl": "Inschakelen",
+        "da": "Aktiver",
+        "de": "Aktivieren",
+        "es": "Habilitar",
+        "fr": "Activer",
+        "it": "Abilita",
+        "no": "Aktiver",
+        "sv": "Aktivera",
+        "pl": "Wlacz",
+        "ru": "Vklyuchit",
+        "ko": "Hwalseonghwa",
+        "ar": "Enable"
+      }
+    }
+  ]
+}

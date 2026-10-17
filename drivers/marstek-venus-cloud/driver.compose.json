@@ -11,7 +11,8 @@
     "sv": "Marstek Venus (Cloud)",
     "pl": "Marstek Venus (Cloud)",
     "ru": "Marstek Venus (Cloud)",
-    "ko": "Marstek Venus (Cloud)"
+    "ko": "Marstek Venus (Cloud)",
+    "ar": "مارستك فينوس (سحابة)"
   },
   "class": "battery",
   "capabilities": [
@@ -38,7 +39,8 @@
         "sv": "Kraftnät (W)",
         "pl": "Sieć Elektryczna (W)",
         "ru": "Электросеть (Вт)",
-        "ko": "전력망 (W)"
+        "ko": "전력망 (W)",
+        "ar": "شبكة الكهرباء (واط)"
       }
     },
     "measure_power.charge": {
@@ -54,7 +56,8 @@
         "sv": "Laddningsnät (W)",
         "pl": "Sieć Ładowania (W)",
         "ru": "Сеть Зарядки (Вт)",
-        "ko": "충전망 (W)"
+        "ko": "충전망 (W)",
+        "ar": "شبكة الشحن (واط)"
       }
     },
     "measure_power.discharge": {
@@ -70,7 +73,8 @@
         "sv": "Utladdningsnät (W)",
         "pl": "Sieć Rozładowania (W)",
         "ru": "Сеть Разрядки (Вт)",
-        "ko": "방전망 (W)"
+        "ko": "방전망 (W)",
+        "ar": "شبكة التفريغ (واط)"
       }
     }
   },
@@ -102,7 +106,8 @@
           "sv": "Logga in på ditt Marstek-konto",
           "pl": "Zaloguj się na swoje konto Marstek",
           "ru": "Войдите в свою учетную запись Marstek",
-          "ko": "Marstek 계정에 로그인하세요"
+          "ko": "Marstek 계정에 로그인하세요",
+          "ar": "سجّل الدخول إلى حسابك في Marstek"
         },
         "usernameLabel": {
           "en": "E-mail",
@@ -116,7 +121,8 @@
           "sv": "E-post",
           "pl": "E-mail",
           "ru": "Эл. почта",
-          "ko": "이메일"
+          "ko": "이메일",
+          "ar": "البريد الإلكتروني"
         },
         "passwordLabel": {
           "en": "Password",
@@ -130,7 +136,8 @@
           "sv": "Lösenord",
           "pl": "Hasło",
           "ru": "Пароль",
-          "ko": "비밀번호"
+          "ko": "비밀번호",
+          "ar": "كلمة المرور"
         },
         "buttonLabel": {
           "en": "Sign in",
@@ -144,7 +151,8 @@
           "sv": "Logga in",
           "pl": "Zaloguj się",
           "ru": "Войти",
-          "ko": "로그인"
+          "ko": "로그인",
+          "ar": "تسجيل الدخول"
         }
       }
     },

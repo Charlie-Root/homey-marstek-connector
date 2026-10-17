@@ -2,7 +2,7 @@
   "id": "marstek_auto_mode",
   "title": {
     "en": "Set battery mode to 'Auto'",
-    "nl": "Stel de batterijmodus in op 'Auto'",
+    "nl": "Stel batterijmodus in op 'Auto'",
     "da": "Indstil batteritilstanden til 'Auto'",
     "de": "Setze den Batteriemodus auf 'Auto'",
     "es": "Establecer el modo de batería en 'Auto'",
@@ -12,7 +12,8 @@
     "sv": "Ställ in batteriläget på 'Auto'",
     "pl": "Ustaw tryb baterii na 'Auto'",
     "ru": "Установить режим батареи на 'Авто'",
-    "ko": "배터리 모드를 '자동'으로 설정"
+    "ko": "배터리 모드를 '자동'으로 설정",
+    "ar": "اضبط وضع البطارية على 'تلقائي'"
   },
   "args": [
     {

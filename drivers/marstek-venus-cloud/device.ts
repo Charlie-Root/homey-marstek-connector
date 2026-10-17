@@ -96,7 +96,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
             {
                 username: this.username,
                 password: this.password,
-            }
+            },
         );
 
         if (!this.client) {
@@ -185,9 +185,9 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
      */
     private async handleStatusPayload(status: any) {
         if (!status) {
-            this.error("[cloud] Payload not found or no data in payload", status);
+            this.error('[cloud] Payload not found or no data in payload', status);
             return;
-        };
+        }
         if (this.debug) this.log('[cloud] Device payload to proces', JSON.stringify(status));
 
         // Log report time
@@ -195,7 +195,9 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
         if (this.debug) this.log('[cloud] Last cloud update:', new Date(status.report_time * 1000));
 
         // State of Charge (%)
-        if (!isNaN(status.soc)) await this.setCapabilityValue('measure_battery', status.soc);
+        if (!Number.isNaN(Number(status.soc))) {
+            await this.setCapabilityValue('measure_battery', status.soc);
+        }
 
         // Power (charge minus discharge)
         await this.setCapabilityValue('measure_power', status.charge - status.discharge);
@@ -208,7 +210,7 @@ export default class MarstekVenusCloudDevice extends Homey.Device {
         return (this.getSetting('debug') === true) || config.isTestVersion;
     }
 
-};
+}
 
 // Also use module.exports for Homey
 module.exports = MarstekVenusCloudDevice;

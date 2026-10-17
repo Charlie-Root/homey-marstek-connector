@@ -1,6 +1,6 @@
 # Marstek Venus Connector
 
-This Homey app connects to a Marstek Venus battery system either through the local network or via the Marstek cloud service and retrieves battery statistics. It allows you to monitor the battery status, charge level, and other relevant information directly from your Homey smart home system. Using flows you can send commands to the battery to change mode (local API only). There is an auto-detect algorithm that tries to find your Marstek Venus batteries.
+This Homey app connects to a Marstek Venus battery system through the local network, over Bluetooth (BLE), or via the Marstek cloud service and retrieves battery statistics. It allows you to monitor the battery status, charge level, and other relevant information directly from your Homey smart home system. Using flows you can send commands to the battery to change mode (local API and Bluetooth). There is an auto-detect algorithm that tries to find your Marstek Venus batteries.
 
 ## FEATURES
 
@@ -19,11 +19,28 @@ When a device is detected and communication is working, the device will display 
 
 You can control the battery mode directly from the device page (AI, Auto, Force Charge, Force Discharge) or send commands to change the operating mode to 'Manual', 'AI', 'Passive' or 'Auto' using Homey flows ('Then...'). Force Charge and Force Discharge power levels are configurable in device settings. A simplified manual mode flow card allows setting manual mode with text input for start time and auto-calculated 2-hour duration.
 
+### BLUETOOTH DRIVER
+
+The **Marstek Venus (Bluetooth)** driver talks to the battery directly over Bluetooth Low Energy, without any network configuration. It works out of the box (no Wi-Fi or Local API setup needed) and exposes richer telemetry read straight from the battery management system:
+
+- State of Charge and **State of Health** (%)
+- Battery power (from the BMS), on-grid and off-grid port power, and charging state
+- Pack voltage and current
+- Battery and MOSFET temperature
+- Work mode and a fault (alarm) indicator, plus the raw BMS alarm code (with an "Alarm code changed" flow trigger providing error/warning code tags)
+- Charge and discharge totals (kWh), plus today's charged/discharged energy
+- Output power rating and Local API status (shown in device settings)
+
+It also provides flow action cards to control the battery over Bluetooth: set the work mode (off/on), set the output power limit (800 W / 2500 W), set Depth of Discharge, enable/disable EPS/backup power, restart the battery, and — handy for bootstrapping the local network driver — **Enable/disable the Local API on port 30000**. Note that, unlike the Local API, Bluetooth cannot set a scheduled "Manual" mode (time window + power) — only the coarse work-mode toggle.
+
+> Bluetooth connections are established on demand for each read/command and closed afterwards, because the battery accepts only one Bluetooth connection at a time. Keep the poll interval generous (default 60 s). The battery must be within Bluetooth range of your Homey.
+
 ## REQUIREMENTS
 
 This app requires Homey and a Marstek Venus battery system.
 
 - When using the **local API driver** the Homey and battery must be connected to the same network with the local API enabled (see below). Auto-detection of Marstek Venus batteries is supported on the same local network; it will search within the last octet (y) from 1 to 254.
+- When using the **Bluetooth driver** the battery must be within Bluetooth range of your Homey. No network or Local API setup is required. During pairing Homey scans for nearby Marstek batteries; select the one you want to add.
 - When using the **cloud driver** you need an active Marstek cloud/app account. During pairing Homey will ask for the username and password to authenticate with the Marstek cloud service.
 
 ### DEVICE PAIRING (CLOUD)
@@ -36,6 +53,10 @@ The Local API is disabled by default, this needs te be enabled on the Marstek Ve
 - Use the BLE Test Tool (https://rweijnen.github.io/marstek-venus-monitor/latest/) on your smartphone (or laptop) near the battery. Connect and use 'Enable Local API (30000)' button in 'System' tab.
 - Contact Marstek support to have them enable the Local API for you. This can take a few days.
 - In the settings of the Marstek Venus battery syste using the APP (newer versions), make sure the 'Local API' is enabled and the port number is set to 30000.
+
+### DEVICE PAIRING (BLUETOOTH)
+
+Choose the “Marstek Venus (Bluetooth)” device during pairing. Homey scans for nearby batteries advertising the Marstek Bluetooth service and lists them; select the battery you want to add. No network configuration is required. Tip: you can use the “Enable/disable Local API (BLE)” flow card afterwards to switch on the local UDP API over Bluetooth, so the “Marstek Venus (Local API)” driver can then discover the battery over the network.
 
 ## STEP BY STEP INSTRUCTIONS
 
@@ -51,7 +72,14 @@ You can devices from both API and Cloud. See settings of each battery for additi
 
 ## VERSION HISTORY
 
-- 0.8.9 - Added direct battery mode control from device page (AI, Auto, Force Charge, Force Discharge). Added current mode display. Added configurable force charge/discharge power settings. Added EM.GetStatus polling for phase powers and CT state. Added simplified manual mode flow card with auto-calculated 2-hour duration.
+- 0.10.1 - Added Bluetooth BLE driver for direct communication with the battery. Retrieval of battery statistics and sending commands to the battery is now possible over Bluetooth. Added flow cards for controlling the battery over Bluetooth.
+- Fork additions - Added direct battery mode control from device page (AI, Auto, Force Charge, Force Discharge). Added current mode display. Added configurable force charge/discharge power settings. Added EM.GetStatus polling for phase powers and CT state. Added simplified manual mode flow card with auto-calculated 2-hour duration.
+- 0.9.0 - **[current LIVE release]** Updated LIVE version of app; all fixes and improvements from TEST version are now included in the LIVE version.
+- 0.8.13 - Negative power values for passive mode flow card are now allowed. Updated module dependencies to latest versions and cleaned some code.
+- 0.8.12 - Dependency updates. New Homey SDK. Added flow card for new 'UPS' battery mode (with enabled argument). Added flow card for setting LED display status (on/off) through local API.
+- 0.8.11 - The stored IP address of local API devices are now shown in settings (read only).
+- 0.8.10 - Applied corrections to default factors for hardware/firmware combinations, based on community feedback. Broadcast setting now default true during device discovery. Missing factors are now set to default when updating the app.
+- 0.8.9 - Made all factors that are applied when receiving API data configurable. Also included default factors for different hardware and firmware versions.
 - 0.8.8 - UDP broadcast or sending individual UDP packages to individual batteries is now configurable (defaults to broadcast).
 - 0.8.7 - The 'ES.GetStatus' messages are no longer using UDP broadcast but now directly target the IP address of the device, sending out one request per device.
 - 0.8.6 - Debugging added when message details source does not match configured source(s).
@@ -59,7 +87,7 @@ You can devices from both API and Cloud. See settings of each battery for additi
 - 0.8.4 - Polling interval could not always be determined when upgrading the Homey app from previous versions, added a fallback interval value.
 - 0.8.3 - Bug removed that caused no data to be processed from the local API. Debug flag is now always set for TEST versions fo the app.
 - 0.8.2 - Default settings can be given during pairing of local API devices. Added escaping of strings during cloud login. Unique id for messages limited to 16bits integer.
-- 0.8.1 - **[current LIVE release]** Added settings to disable polling for data from local API, but flows sending battery commands are still possible, to alleviate communication issues when used together with CT002/CT003.
+- 0.8.1 - Added settings to disable polling for data from local API, but flows sending battery commands are still possible, to alleviate communication issues when used together with CT002/CT003.
 - 0.8.0 - Code structure changes and github cleanup. Converted source to TypeScript only.
 - 0.7.6 - Cloud data stopped updating when initial response of Marstek Cloud service was slow, causing a concurrency problem.
 - 0.7.5 - Incorrect password for Marstek Cloud could not be corrected without removing app first. Technical errors on the Marstek Cloud service are not correctly caught.
@@ -68,29 +96,18 @@ You can devices from both API and Cloud. See settings of each battery for additi
 - 0.7.2 - Temperature for firmware 154 was reported incorrectly. Added retry meganism to the flow cards that set battery mode. Improved readability of some library classes.
 - 0.7.1 - Added flow card for changing the battery charging mode through local API.
 - 0.7.0 - Added support for a Marstek cloud driver that retrieves battery statistics using your Marstek cloud account credentials.
-- 0.6.3 - Added a property that monitors the number of seconds the last message was received from battery. Added icons for custom capabilities.
-- 0.6.2 - Firmware setting was stored as incorrect settings type.
-- 0.6.1 - Firmware 154 seems to communicate values with a different multipliers. The app now detects the firmware and corrects this.
-- 0.6.0 - Auto re-connect implemented; retry port binding at every broadcast when listener is no longer available. Fixed errors on multiple devices trying to start connecting at the same time. Couple of other minor bugs in several places fixed.
-- 0.5.7 - Correctly implemented setting of Homey capabilities as async calls.
-- 0.5.6 - Scope seems no longer available during close event handling, so logging close event is now hard-coded to console.
-- 0.5.5 - The socket UDP dgram does not have a destroy function, calling this caused a crash during de-installation of the App.
-- 0.5.4 - Log structure changed to try to catch connectivity problems. Solved problem in clean-up function.
-- 0.5.3 - Applied bug fix to broadcast IP address discovery (caused problems when no address is found).
-- 0.5.2 - Added an increment unique id to all messages to battery. Restructured the way details are retrieved from messages into Homey capability values. Additional onUninit handling for removal of UDP listener. Added more capabilities received from battery (unverified).
-- 0.5.1 - Handling of errors on socket binding and broadcast flag settings for better debugging of future port binding errors. Removed some mandatory settings that gave problems during discovery.
-- 0.5.0 - Added additional readings from the battery API and energy system that are now visualised in Homey as their guideliness for batteries.
 (older history details are left out)
 
 ## NOTES
 
-- This app uses the 'API over UDP' features as mentioned in the API documentation. 
+- This app uses the 'API over UDP' features as mentioned in the Marstek API documentation. 
 - The app is developed and tested with a Venus E v2.0 battery system (firmware v153, communication module 202409090159). Let me know if any other models work as well!
 - When the device can't be auto-detected you can manually add the device using the IP address of the battery. If the device is not found, please check if the Marstek Venus battery is powered on and connected to the same network as Homey.
 - Support for multiple Marstek Venus batteries is implemented, but since I only have one battery to test with, some is uncharted.
 - When upgrading the app, it might be needed to remove already added battery devices first and then adding them again. 
 - The Marstek Cloud API is undocumented, so things might change without notice.
 - Battery mode changes have an automatic retry for a maximum of 5 tries with a 15 seconds timeout.
+- The Bluetooth connection, commands and data retrieval is undocumented territory, so things might change without notice.
 
 ## KNOWN ISSUES
 

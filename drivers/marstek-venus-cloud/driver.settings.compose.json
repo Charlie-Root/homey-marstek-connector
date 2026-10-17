@@ -14,7 +14,8 @@
       "sv": "Aktivera mer loggning (för diagnostikrapporter)",
       "pl": "Włącz więcej logowania (dla raportów diagnostycznych)",
       "ru": "Включить больше журналирования (для диагностических отчетов)",
-      "ko": "더 많은 로깅 활성화 (진단 보고서용)"
+      "ko": "더 많은 로깅 활성화 (진단 보고서용)",
+      "ar": "تفعيل المزيد من تسجيل الأحداث (لتقارير التشخيص)"
     },
     "hint": {
       "en": "Turn this on to log extra details for troubleshooting received values for this device.",
@@ -28,7 +29,8 @@
       "sv": "Slå på det här för att logga extra detaljer för felsökning av mottagna värden för den här enheten.",
       "pl": "Włącz to, aby logować dodatkowe szczegóły do rozwiązywania problemów z odbieranymi wartościami dla tego urządzenia.",
       "ru": "Включите это, чтобы журналировать дополнительные детали для устранения неполадок полученных значений для этого устройства.",
-      "ko": "이 장치에 대한 수신 값 문제 해결을 위해 추가 세부 정보를 기록하려면 이 기능을 켜십시오."
+      "ko": "이 장치에 대한 수신 값 문제 해결을 위해 추가 세부 정보를 기록하려면 이 기능을 켜십시오.",
+      "ar": "قم بتفعيل هذا الخيار لتسجيل تفاصيل إضافية للمساعدة في حل المشكلات المتعلقة بالقيم المستلمة لهذا الجهاز."
     },
     "value": false
   },
@@ -47,7 +49,8 @@
       "sv": "Konto",
       "pl": "Konto",
       "ru": "Аккаунт",
-      "ko": "계정"
+      "ko": "계정",
+      "ar": "الحساب"
     },
     "value": "(unknown)"
   }
