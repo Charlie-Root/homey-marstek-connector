@@ -445,6 +445,12 @@ export default class MarstekVenusBleDriver extends Homey.Driver {
         register('marstek_ble_dod', async ({ device, percent }) => this.sendCommandToDevice(device, Command.DOD_SET, dodPayload(Number(percent))));
         register('marstek_ble_eps', async ({ device, enable }) => this.sendCommandToDevice(device, Command.BACKUP_POWER, onOffPayload(!!enable)));
         register('marstek_ble_system_reset', async ({ device }) => this.sendCommandToDevice(device, Command.SYSTEM_RESET, systemResetPayload()));
+
+        // Backup power (EPS) trigger: only run flows whose on/off argument matches the new state.
+        this.homey.flow.getDeviceTriggerCard('marstek_ble_eps_changed')
+            .registerRunListener(async (args: { state: string }, state: { state: string }) => args.state === state.state);
+        this.homey.flow.getConditionCard('marstek_ble_eps_enabled')
+            .registerRunListener(async ({ device }: { device: Homey.Device }) => device.getCapabilityValue('backup_power_enabled') === true);
     }
 
 }

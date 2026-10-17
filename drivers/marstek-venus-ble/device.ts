@@ -23,6 +23,7 @@ const CAPABILITIES: string[] = [
     'meter_power.daily_discharge',
     'alarm_generic',
     'battery_alarm_code',
+    'backup_power_enabled',
     'last_message_received',
 ];
 
@@ -54,6 +55,9 @@ export default class MarstekVenusBleDevice extends Homey.Device {
     // Trigger card fired when the BMS error/warning code changes.
     private alarmChangedTrigger?: Homey.FlowCardTriggerDevice = undefined;
 
+    // Trigger card fired when the backup power (EPS) setting is switched on or off.
+    private epsChangedTrigger?: Homey.FlowCardTriggerDevice = undefined;
+
     /**
      * Called by Homey when the device is initialised.
      * Ensures capabilities exist and starts background polling when enabled.
@@ -67,6 +71,7 @@ export default class MarstekVenusBleDevice extends Homey.Device {
         }
 
         this.alarmChangedTrigger = this.homey.flow.getDeviceTriggerCard('marstek_ble_alarm_changed');
+        this.epsChangedTrigger = this.homey.flow.getDeviceTriggerCard('marstek_ble_eps_changed');
 
         if (this.getSetting('poll') !== false) this.startPolling();
     }
@@ -181,6 +186,17 @@ export default class MarstekVenusBleDevice extends Homey.Device {
             await this.setValue('meter_power.daily_charge', runtime.dailyCharge);
             await this.setValue('meter_power.daily_discharge', runtime.dailyDischarge);
             await this.setValue('battery_work_mode', mapWorkMode(runtime.workMode));
+
+            // Backup power (EPS) setting; fire the trigger when it changes (not on first read).
+            if (runtime.epsEnabled !== undefined) {
+                const previousEps = this.getCapabilityValue('backup_power_enabled');
+                await this.setValue('backup_power_enabled', runtime.epsEnabled);
+                if (previousEps !== null && previousEps !== runtime.epsEnabled) {
+                    await this.epsChangedTrigger
+                        ?.trigger(this, { enabled: runtime.epsEnabled }, { state: runtime.epsEnabled ? 'on' : 'off' })
+                        .catch((err) => this.error('Failed to trigger EPS changed:', err));
+                }
+            }
 
             // Reflect device state in the read-only settings labels (only when changed).
             const labels: Record<string, string> = {};

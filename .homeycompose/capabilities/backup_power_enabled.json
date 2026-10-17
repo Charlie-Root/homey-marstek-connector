@@ -1,0 +1,53 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Backup power (EPS)",
+    "nl": "Noodstroom (EPS)",
+    "da": "Nødstrøm (EPS)",
+    "de": "Notstrom (EPS)",
+    "es": "Energía de respaldo (EPS)",
+    "fr": "Alimentation de secours (EPS)",
+    "it": "Alimentazione di backup (EPS)",
+    "no": "Nødstrøm (EPS)",
+    "sv": "Reservkraft (EPS)",
+    "pl": "Zasilanie awaryjne (EPS)",
+    "ru": "Резервное питание (EPS)",
+    "ko": "백업 전원 (EPS)",
+    "ar": "الطاقة الاحتياطية (EPS)"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "insights": true,
+  "insightsTitleTrue": {
+    "en": "Backup power enabled",
+    "nl": "Noodstroom ingeschakeld",
+    "da": "Nødstrøm aktiveret",
+    "de": "Notstrom aktiviert",
+    "es": "Energía de respaldo activada",
+    "fr": "Alimentation de secours activée",
+    "it": "Alimentazione di backup attivata",
+    "no": "Nødstrøm aktivert",
+    "sv": "Reservkraft aktiverad",
+    "pl": "Zasilanie awaryjne włączone",
+    "ru": "Резервное питание включено",
+    "ko": "백업 전원 켜짐",
+    "ar": "تم تفعيل الطاقة الاحتياطية"
+  },
+  "insightsTitleFalse": {
+    "en": "Backup power disabled",
+    "nl": "Noodstroom uitgeschakeld",
+    "da": "Nødstrøm deaktiveret",
+    "de": "Notstrom deaktiviert",
+    "es": "Energía de respaldo desactivada",
+    "fr": "Alimentation de secours désactivée",
+    "it": "Alimentazione di backup disattivata",
+    "no": "Nødstrøm deaktivert",
+    "sv": "Reservkraft avaktiverad",
+    "pl": "Zasilanie awaryjne wyłączone",
+    "ru": "Резервное питание выключено",
+    "ko": "백업 전원 꺼짐",
+    "ar": "تم تعطيل الطاقة الاحتياطية"
+  },
+  "icon": "/assets/icon.svg"
+}

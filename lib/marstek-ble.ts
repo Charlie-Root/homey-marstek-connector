@@ -207,6 +207,7 @@ export interface RuntimeInfo {
     totalCharge: number; // kWh
     totalDischarge: number; // kWh
     powerRating?: number; // W (800/2500), only in longer (newer firmware) payloads
+    epsEnabled?: boolean; // Backup power (EPS) setting, offset 0x31
     localApiEnabled?: boolean; // Local UDP API state, only in longer payloads
     apiPort?: number; // Local UDP API port, only in longer payloads
 }
@@ -230,6 +231,9 @@ export function parseRuntimeInfo(p: Buffer): RuntimeInfo {
         totalCharge: p.readUInt32LE(0x29) / 100,
         totalDischarge: p.readUInt32LE(0x2d) / 100,
     };
+    // Backup power (EPS) setting (0x31, uint8): 1 = enabled, 0 = disabled. Verified on-device
+    // (2026-10) by toggling EPS in the Marstek app; not documented by the reference project.
+    if (p.length >= 0x32) info.epsEnabled = p.readUInt8(0x31) === 1;
     // Output power rating (0x4A, uint16 LE): 800 or 2500 W.
     if (p.length >= 0x4c) info.powerRating = p.readUInt16LE(0x4a);
     // Local API state (0x65, uint8) and port (0x66, uint16 LE).

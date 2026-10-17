@@ -1,0 +1,55 @@
+{
+  "id": "marstek_ble_eps_enabled",
+  "title": {
+    "en": "Backup power (EPS) is enabled (BLE)",
+    "nl": "Noodstroom (EPS) is ingeschakeld (BLE)",
+    "da": "Nødstrøm (EPS) er aktiveret (BLE)",
+    "de": "Notstrom (EPS) ist aktiviert (BLE)",
+    "es": "La energía de respaldo (EPS) está activada (BLE)",
+    "fr": "L'alimentation de secours (EPS) est activée (BLE)",
+    "it": "L'alimentazione di backup (EPS) è attivata (BLE)",
+    "no": "Nødstrøm (EPS) er aktivert (BLE)",
+    "sv": "Reservkraft (EPS) är aktiverad (BLE)",
+    "pl": "Zasilanie awaryjne (EPS) jest włączone (BLE)",
+    "ru": "Резервное питание (EPS) включено (BLE)",
+    "ko": "백업 전원 (EPS)이 켜져 있음 (BLE)",
+    "ar": "الطاقة الاحتياطية (EPS) مفعّلة (BLE)"
+  },
+  "titleFormatted": {
+    "en": "Backup power (EPS) !{{is|is not}} enabled (BLE)",
+    "nl": "Noodstroom (EPS) !{{is|is niet}} ingeschakeld (BLE)",
+    "da": "Nødstrøm (EPS) !{{er|er ikke}} aktiveret (BLE)",
+    "de": "Notstrom (EPS) !{{ist|ist nicht}} aktiviert (BLE)",
+    "es": "La energía de respaldo (EPS) !{{está|no está}} activada (BLE)",
+    "fr": "L'alimentation de secours (EPS) !{{est|n'est pas}} activée (BLE)",
+    "it": "L'alimentazione di backup (EPS) !{{è|non è}} attivata (BLE)",
+    "no": "Nødstrøm (EPS) !{{er|er ikke}} aktivert (BLE)",
+    "sv": "Reservkraft (EPS) !{{är|är inte}} aktiverad (BLE)",
+    "pl": "Zasilanie awaryjne (EPS) !{{jest|nie jest}} włączone (BLE)",
+    "ru": "Резервное питание (EPS) !{{включено|не включено}} (BLE)",
+    "ko": "백업 전원 (EPS)이 !{{켜져 있음|켜져 있지 않음}} (BLE)",
+    "ar": "الطاقة الاحتياطية (EPS) !{{مفعّلة|غير مفعّلة}} (BLE)"
+  },
+  "hint": {
+    "en": "Uses the backup power (EPS) setting read at the last Bluetooth poll.",
+    "nl": "Gebruikt de noodstroominstelling (EPS) van de laatste Bluetooth-polling.",
+    "da": "Bruger nødstrømsindstillingen (EPS) fra seneste Bluetooth-polling.",
+    "de": "Verwendet die Notstrom-Einstellung (EPS) der letzten Bluetooth-Abfrage.",
+    "es": "Usa la configuración de energía de respaldo (EPS) leída en el último sondeo Bluetooth.",
+    "fr": "Utilise le réglage d'alimentation de secours (EPS) lu lors de la dernière interrogation Bluetooth.",
+    "it": "Usa l'impostazione di alimentazione di backup (EPS) letta all'ultimo polling Bluetooth.",
+    "no": "Bruker nødstrømsinnstillingen (EPS) fra siste Bluetooth-avstemning.",
+    "sv": "Använder reservkraftsinställningen (EPS) från senaste Bluetooth-pollningen.",
+    "pl": "Używa ustawienia zasilania awaryjnego (EPS) z ostatniego odpytania Bluetooth.",
+    "ru": "Использует настройку резервного питания (EPS), считанную при последнем опросе Bluetooth.",
+    "ko": "마지막 블루투스 폴링에서 읽은 백업 전원(EPS) 설정을 사용합니다.",
+    "ar": "يستخدم إعداد الطاقة الاحتياطية (EPS) المقروء في آخر استطلاع عبر البلوتوث."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus-ble"
+    }
+  ]
+}

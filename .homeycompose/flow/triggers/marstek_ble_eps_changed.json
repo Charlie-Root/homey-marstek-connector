@@ -1,0 +1,134 @@
+{
+  "id": "marstek_ble_eps_changed",
+  "title": {
+    "en": "Backup power (EPS) turned on or off (BLE)",
+    "nl": "Noodstroom (EPS) aan- of uitgezet (BLE)",
+    "da": "Nødstrøm (EPS) slået til eller fra (BLE)",
+    "de": "Notstrom (EPS) ein- oder ausgeschaltet (BLE)",
+    "es": "Energía de respaldo (EPS) activada o desactivada (BLE)",
+    "fr": "Alimentation de secours (EPS) activée ou désactivée (BLE)",
+    "it": "Alimentazione di backup (EPS) attivata o disattivata (BLE)",
+    "no": "Nødstrøm (EPS) slått på eller av (BLE)",
+    "sv": "Reservkraft (EPS) slogs på eller av (BLE)",
+    "pl": "Zasilanie awaryjne (EPS) włączone lub wyłączone (BLE)",
+    "ru": "Резервное питание (EPS) включено или выключено (BLE)",
+    "ko": "백업 전원 (EPS) 켜짐 또는 꺼짐 (BLE)",
+    "ar": "تم تشغيل أو إيقاف الطاقة الاحتياطية (EPS) (BLE)"
+  },
+  "titleFormatted": {
+    "en": "Backup power (EPS) turned [[state]] (BLE)",
+    "nl": "Noodstroom (EPS) [[state]]gezet (BLE)",
+    "da": "Nødstrøm (EPS) slået [[state]] (BLE)",
+    "de": "Notstrom (EPS) [[state]]geschaltet (BLE)",
+    "es": "Energía de respaldo (EPS) [[state]] (BLE)",
+    "fr": "Alimentation de secours (EPS) [[state]] (BLE)",
+    "it": "Alimentazione di backup (EPS) [[state]] (BLE)",
+    "no": "Nødstrøm (EPS) slått [[state]] (BLE)",
+    "sv": "Reservkraft (EPS) slogs [[state]] (BLE)",
+    "pl": "Zasilanie awaryjne (EPS) [[state]] (BLE)",
+    "ru": "Резервное питание (EPS) [[state]] (BLE)",
+    "ko": "백업 전원 (EPS) [[state]] (BLE)",
+    "ar": "الطاقة الاحتياطية (EPS) [[state]] (BLE)"
+  },
+  "hint": {
+    "en": "Triggers when the backup power (EPS) setting of the battery is switched on or off, for example from the Marstek app. Detected at the next Bluetooth poll.",
+    "nl": "Wordt geactiveerd wanneer de noodstroominstelling (EPS) van de batterij aan- of uitgezet wordt, bijvoorbeeld via de Marstek-app. Gedetecteerd bij de volgende Bluetooth-polling.",
+    "da": "Udløses, når batteriets nødstrømsindstilling (EPS) slås til eller fra, f.eks. fra Marstek-appen. Registreres ved næste Bluetooth-polling.",
+    "de": "Wird ausgelöst, wenn die Notstrom-Einstellung (EPS) der Batterie ein- oder ausgeschaltet wird, z. B. über die Marstek-App. Erkannt bei der nächsten Bluetooth-Abfrage.",
+    "es": "Se activa cuando la configuración de energía de respaldo (EPS) de la batería se activa o desactiva, por ejemplo desde la app Marstek. Se detecta en el siguiente sondeo Bluetooth.",
+    "fr": "Se déclenche lorsque le réglage d'alimentation de secours (EPS) de la batterie est activé ou désactivé, par exemple depuis l'app Marstek. Détecté lors de la prochaine interrogation Bluetooth.",
+    "it": "Si attiva quando l'impostazione di alimentazione di backup (EPS) della batteria viene attivata o disattivata, ad esempio dall'app Marstek. Rilevato al successivo polling Bluetooth.",
+    "no": "Utløses når batteriets nødstrømsinnstilling (EPS) slås på eller av, f.eks. fra Marstek-appen. Oppdages ved neste Bluetooth-avstemning.",
+    "sv": "Utlöses när batteriets reservkraftsinställning (EPS) slås på eller av, t.ex. från Marstek-appen. Upptäcks vid nästa Bluetooth-pollning.",
+    "pl": "Uruchamiane, gdy ustawienie zasilania awaryjnego (EPS) baterii zostanie włączone lub wyłączone, np. w aplikacji Marstek. Wykrywane przy następnym odpytaniu Bluetooth.",
+    "ru": "Срабатывает, когда настройка резервного питания (EPS) батареи включается или выключается, например в приложении Marstek. Обнаруживается при следующем опросе Bluetooth.",
+    "ko": "배터리의 백업 전원(EPS) 설정이 켜지거나 꺼질 때(예: Marstek 앱에서) 실행됩니다. 다음 블루투스 폴링 시 감지됩니다.",
+    "ar": "يتم التشغيل عند تشغيل أو إيقاف إعداد الطاقة الاحتياطية (EPS) للبطارية، على سبيل المثال من تطبيق Marstek. يتم اكتشافه عند الاستطلاع التالي عبر البلوتوث."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=marstek-venus-ble"
+    },
+    {
+      "name": "state",
+      "type": "dropdown",
+      "title": {
+        "en": "State",
+        "nl": "Status",
+        "da": "Tilstand",
+        "de": "Zustand",
+        "es": "Estado",
+        "fr": "État",
+        "it": "Stato",
+        "no": "Tilstand",
+        "sv": "Läge",
+        "pl": "Stan",
+        "ru": "Состояние",
+        "ko": "상태",
+        "ar": "الحالة"
+      },
+      "values": [
+        {
+          "id": "on",
+          "title": {
+            "en": "on",
+            "nl": "aan",
+            "da": "til",
+            "de": "ein",
+            "es": "activada",
+            "fr": "activée",
+            "it": "attivata",
+            "no": "på",
+            "sv": "på",
+            "pl": "włączone",
+            "ru": "включено",
+            "ko": "켜짐",
+            "ar": "تشغيل"
+          }
+        },
+        {
+          "id": "off",
+          "title": {
+            "en": "off",
+            "nl": "uit",
+            "da": "fra",
+            "de": "aus",
+            "es": "desactivada",
+            "fr": "désactivée",
+            "it": "disattivata",
+            "no": "av",
+            "sv": "av",
+            "pl": "wyłączone",
+            "ru": "выключено",
+            "ko": "꺼짐",
+            "ar": "إيقاف"
+          }
+        }
+      ]
+    }
+  ],
+  "tokens": [
+    {
+      "name": "enabled",
+      "type": "boolean",
+      "title": {
+        "en": "Backup power enabled",
+        "nl": "Noodstroom ingeschakeld",
+        "da": "Nødstrøm aktiveret",
+        "de": "Notstrom aktiviert",
+        "es": "Energía de respaldo activada",
+        "fr": "Alimentation de secours activée",
+        "it": "Alimentazione di backup attivata",
+        "no": "Nødstrøm aktivert",
+        "sv": "Reservkraft aktiverad",
+        "pl": "Zasilanie awaryjne włączone",
+        "ru": "Резервное питание включено",
+        "ko": "백업 전원 켜짐",
+        "ar": "تم تفعيل الطاقة الاحتياطية"
+      },
+      "example": true
+    }
+  ]
+}

@@ -33,6 +33,7 @@
     "meter_power.daily_discharge",
     "alarm_generic",
     "battery_alarm_code",
+    "backup_power_enabled",
     "last_message_received"
   ],
   "energy": {
